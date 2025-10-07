@@ -7,6 +7,7 @@ import React, {
 	ReactNode,
 } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 type AuthContextType = {
 	error: string | null;
@@ -24,8 +25,15 @@ type AuthContextType = {
 		password: string,
 		confirmPassword: string
 	) => Promise<string | boolean>;
+	socialSignup: (response: GoogleCredentialResponse) => Promise<boolean>;
 	logout: () => void;
 };
+
+export interface GoogleCredentialResponse {
+	clientId: string;
+	credential: string; // JWT ID token
+	select_by: string;
+}
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -78,7 +86,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 				body: JSON.stringify({ username, password }),
 			});
 			const data = await response.json();
-			console.log("response: ", data);
 			if (!response.ok || !data.access) {
 				throw new Error(
 					data.error || data.detail || "Invalid username or password"
@@ -124,7 +131,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 				}),
 			});
 			const data = await response.json();
-			console.log("response: ", data);
 			if (!response.ok || !data.access || response.status !== 200) {
 				setError(data.error || data.detail || "Internal Server Error");
 				throw new Error(
@@ -143,6 +149,50 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 		}
 	};
 
+	const socialSignup = async (response: GoogleCredentialResponse) => {
+		// Decode JWT to get email
+		const payload = JSON.parse(atob(response.credential.split(".")[1]));
+		const email = payload.email;
+
+		try {
+			// POST to your backend endpoint
+			const signupResponse = await fetch(
+				`${baseURL}/auth/social/signup/`,
+				{
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({ email }),
+				}
+			);
+
+			if (!signupResponse.ok) {
+				throw new Error(`Backend error: ${signupResponse.status}`);
+			}
+
+			const backendData = await signupResponse.json();
+
+			setIsAuthenticated(true);
+			setAccessToken(backendData?.access_token);
+
+			localStorage.setItem("accessToken", backendData?.access_token);
+			// Optionally store refresh token if provided
+			if (backendData?.refresh_token) {
+				localStorage.setItem(
+					"refreshToken",
+					backendData?.refresh_token
+				);
+			}
+
+			// On success, treat as login: toast and navigate
+			toast.success("Signed in with Google!");
+			navigate("/");
+			return true;
+		} catch (error) {
+			console.error("Google Auth failed:", error);
+			toast.error("Google sign in failed. Please try again.");
+		}
+	};
+
 	const logout = () => {
 		setAccessToken("");
 		setIsAuthenticated(false);
@@ -156,6 +206,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 			value={{
 				login,
 				register,
+				socialSignup,
 				logout,
 				error,
 				loading,

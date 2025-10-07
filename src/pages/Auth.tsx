@@ -22,8 +22,9 @@ import {
 	Trophy,
 	Users,
 } from "lucide-react";
+import { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -94,9 +95,17 @@ const signUpSchema = z
 type LoginFormData = z.infer<typeof signInSchema>;
 type SignUpFormData = z.infer<typeof signUpSchema>;
 
+declare global {
+	interface Window {
+		google: any; // For GIS types
+	}
+}
+
 export default function Auth() {
 	const navigate = useNavigate();
-	const { isAuthenticated, login, register, error, loading } = useAuth();
+	const location = useLocation();
+	const { isAuthenticated, login, register, error, loading, socialSignup } =
+		useAuth();
 
 	const queryParams = new URLSearchParams(location.search);
 	const ref = queryParams.get("ref");
@@ -128,13 +137,59 @@ export default function Auth() {
 		},
 	});
 
+	const googleSignupRef = useRef<HTMLDivElement>(null);
+	const googleSigninRef = useRef<HTMLDivElement>(null);
+
+	useEffect(() => {
+		// Initialize Google Identity Services if script is loaded
+		if (window.google?.accounts?.id) {
+			const CLIENT_ID =
+				"600710270979-asfe1sq12p2l30m09vmfv0ov6hqhqavk.apps.googleusercontent.com"; // Replace with your Google Client ID
+
+			window.google.accounts.id.initialize({
+				client_id: CLIENT_ID,
+				callback: socialSignup,
+				ux_mode: "popup",
+			});
+
+			// Render signup button
+			if (googleSignupRef.current) {
+				window.google.accounts.id.renderButton(
+					googleSignupRef.current,
+					{
+						type: "standard",
+						theme: "outline",
+						size: "large",
+						text: "signup_with",
+						shape: "rectangular",
+						logo_alignment: "left",
+					}
+				);
+			}
+
+			// Render signin button
+			if (googleSigninRef.current) {
+				window.google.accounts.id.renderButton(
+					googleSigninRef.current,
+					{
+						type: "standard",
+						theme: "outline",
+						size: "large",
+						text: "signin_with",
+						shape: "rectangular",
+						logo_alignment: "left",
+					}
+				);
+			}
+		}
+	}, []);
+
 	const onLoginFormSubmit = async (data: LoginFormData) => {
 		const success = await login(
 			data.username,
 			data.password,
 			data.isRemember ?? false
 		);
-		console.log("Login Response: ", success);
 		if (success) {
 			toast.success("Login successful");
 			navigate("/");
@@ -150,7 +205,6 @@ export default function Auth() {
 			data.password,
 			data.confirmPassword
 		);
-		console.log("Registration Response: ", success);
 		if (success) {
 			toast.success(
 				"An email has been sent to you with a link to confirm your account."
@@ -428,6 +482,10 @@ export default function Auth() {
 													</div>
 												)}
 											</Button>
+											<div
+												ref={googleSignupRef}
+												className="w-full"
+											/>
 										</form>
 									</TabsContent>
 
@@ -526,6 +584,10 @@ export default function Auth() {
 													</div>
 												)}
 											</Button>
+											<div
+												ref={googleSigninRef}
+												className="w-full"
+											/>
 										</form>
 									</TabsContent>
 								</Tabs>
