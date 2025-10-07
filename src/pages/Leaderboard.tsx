@@ -1,150 +1,152 @@
+import { useLeaderboard } from "@/hooks/use-leaderboard";
 import { SearchIcon, TrophyIcon } from "lucide-react";
 import { useState } from "react";
 export function Leaderboard() {
 	const [searchQuery, setSearchQuery] = useState("");
-	const leaderboardData = [
-		{
-			rank: 1,
-			username: "Alex Johnson",
-			points: 1840,
-			completed: 87,
-			accuracy: 94,
-		},
-		{
-			rank: 2,
-			username: "Sarah Williams",
-			points: 1720,
-			completed: 83,
-			accuracy: 92,
-		},
-		{
-			rank: 3,
-			username: "Michael Chen",
-			points: 1680,
-			completed: 79,
-			accuracy: 95,
-		},
-		{
-			rank: 4,
-			username: "Emma Davis",
-			points: 1520,
-			completed: 76,
-			accuracy: 89,
-		},
-		{
-			rank: 5,
-			username: "James Wilson",
-			points: 1480,
-			completed: 72,
-			accuracy: 91,
-		},
-		{
-			rank: 6,
-			username: "Olivia Taylor",
-			points: 1360,
-			completed: 68,
-			accuracy: 88,
-		},
-		{
-			rank: 7,
-			username: "Daniel Brown",
-			points: 1300,
-			completed: 65,
-			accuracy: 90,
-		},
-		{
-			rank: 8,
-			username: "Sophia Miller",
-			points: 1240,
-			completed: 61,
-			accuracy: 87,
-		},
-		{
-			rank: 9,
-			username: "Noah Martinez",
-			points: 1180,
-			completed: 58,
-			accuracy: 85,
-		},
-		{
-			rank: 10,
-			username: "Ava Anderson",
-			points: 1120,
-			completed: 55,
-			accuracy: 86,
-		},
-		{
-			rank: 11,
-			username: "Ethan Wilson",
-			points: 1080,
-			completed: 53,
-			accuracy: 84,
-		},
-		{
-			rank: 12,
-			username: "Isabella Thomas",
-			points: 1050,
-			completed: 51,
-			accuracy: 87,
-		},
-		{
-			rank: 13,
-			username: "Lucas Garcia",
-			points: 1020,
-			completed: 49,
-			accuracy: 83,
-		},
-		{
-			rank: 14,
-			username: "Mia Rodriguez",
-			points: 990,
-			completed: 48,
-			accuracy: 85,
-		},
-		{
-			rank: 15,
-			username: "Benjamin Lee",
-			points: 960,
-			completed: 46,
-			accuracy: 82,
-		},
-		{
-			rank: 16,
-			username: "Charlotte White",
-			points: 930,
-			completed: 45,
-			accuracy: 84,
-		},
-		{
-			rank: 17,
-			username: "Mason Harris",
-			points: 910,
-			completed: 44,
-			accuracy: 81,
-		},
-		{
-			rank: 18,
-			username: "Amelia Clark",
-			points: 890,
-			completed: 43,
-			accuracy: 83,
-		},
-		{
-			rank: 19,
-			username: "Henry Lewis",
-			points: 870,
-			completed: 42,
-			accuracy: 80,
-		},
-		{
-			rank: 20,
-			username: "Harper Walker",
-			points: 850,
-			completed: 41,
-			accuracy: 82,
-		},
-	];
-	const filteredData = leaderboardData.filter((user) =>
+	const { leaderboard, loading, error } = useLeaderboard();
+	// const leaderboardData = [
+	// 	{
+	// 		rank: 1,
+	// 		username: "Alex Johnson",
+	// 		points: 1840,
+	// 		completed: 87,
+	// 		accuracy: 94,
+	// 	},
+	// 	{
+	// 		rank: 2,
+	// 		username: "Sarah Williams",
+	// 		points: 1720,
+	// 		completed: 83,
+	// 		accuracy: 92,
+	// 	},
+	// 	{
+	// 		rank: 3,
+	// 		username: "Michael Chen",
+	// 		points: 1680,
+	// 		completed: 79,
+	// 		accuracy: 95,
+	// 	},
+	// 	{
+	// 		rank: 4,
+	// 		username: "Emma Davis",
+	// 		points: 1520,
+	// 		completed: 76,
+	// 		accuracy: 89,
+	// 	},
+	// 	{
+	// 		rank: 5,
+	// 		username: "James Wilson",
+	// 		points: 1480,
+	// 		completed: 72,
+	// 		accuracy: 91,
+	// 	},
+	// 	{
+	// 		rank: 6,
+	// 		username: "Olivia Taylor",
+	// 		points: 1360,
+	// 		completed: 68,
+	// 		accuracy: 88,
+	// 	},
+	// 	{
+	// 		rank: 7,
+	// 		username: "Daniel Brown",
+	// 		points: 1300,
+	// 		completed: 65,
+	// 		accuracy: 90,
+	// 	},
+	// 	{
+	// 		rank: 8,
+	// 		username: "Sophia Miller",
+	// 		points: 1240,
+	// 		completed: 61,
+	// 		accuracy: 87,
+	// 	},
+	// 	{
+	// 		rank: 9,
+	// 		username: "Noah Martinez",
+	// 		points: 1180,
+	// 		completed: 58,
+	// 		accuracy: 85,
+	// 	},
+	// 	{
+	// 		rank: 10,
+	// 		username: "Ava Anderson",
+	// 		points: 1120,
+	// 		completed: 55,
+	// 		accuracy: 86,
+	// 	},
+	// 	{
+	// 		rank: 11,
+	// 		username: "Ethan Wilson",
+	// 		points: 1080,
+	// 		completed: 53,
+	// 		accuracy: 84,
+	// 	},
+	// 	{
+	// 		rank: 12,
+	// 		username: "Isabella Thomas",
+	// 		points: 1050,
+	// 		completed: 51,
+	// 		accuracy: 87,
+	// 	},
+	// 	{
+	// 		rank: 13,
+	// 		username: "Lucas Garcia",
+	// 		points: 1020,
+	// 		completed: 49,
+	// 		accuracy: 83,
+	// 	},
+	// 	{
+	// 		rank: 14,
+	// 		username: "Mia Rodriguez",
+	// 		points: 990,
+	// 		completed: 48,
+	// 		accuracy: 85,
+	// 	},
+	// 	{
+	// 		rank: 15,
+	// 		username: "Benjamin Lee",
+	// 		points: 960,
+	// 		completed: 46,
+	// 		accuracy: 82,
+	// 	},
+	// 	{
+	// 		rank: 16,
+	// 		username: "Charlotte White",
+	// 		points: 930,
+	// 		completed: 45,
+	// 		accuracy: 84,
+	// 	},
+	// 	{
+	// 		rank: 17,
+	// 		username: "Mason Harris",
+	// 		points: 910,
+	// 		completed: 44,
+	// 		accuracy: 81,
+	// 	},
+	// 	{
+	// 		rank: 18,
+	// 		username: "Amelia Clark",
+	// 		points: 890,
+	// 		completed: 43,
+	// 		accuracy: 83,
+	// 	},
+	// 	{
+	// 		rank: 19,
+	// 		username: "Henry Lewis",
+	// 		points: 870,
+	// 		completed: 42,
+	// 		accuracy: 80,
+	// 	},
+	// 	{
+	// 		rank: 20,
+	// 		username: "Harper Walker",
+	// 		points: 850,
+	// 		completed: 41,
+	// 		accuracy: 82,
+	// 	},
+	// ];
+	const filteredData = leaderboard.filter((user) =>
 		user.username.toLowerCase().includes(searchQuery.toLowerCase())
 	);
 	const renderRank = (rank: number) => {
@@ -290,9 +292,9 @@ export function Leaderboard() {
 				</div>
 				{/* Mobile-friendly list */}
 				<div className="divide-y divide-gray-200">
-					{filteredData.map((user) => (
+					{filteredData.map((user, index) => (
 						<div
-							key={user.rank}
+							key={index}
 							className="sm:grid sm:grid-cols-6 hover:bg-gray-50 transition-colors"
 						>
 							{/* Mobile view - card style */}
@@ -300,7 +302,7 @@ export function Leaderboard() {
 								<div className="flex justify-between items-center">
 									<div className="flex items-center gap-2">
 										<div className="w-8 h-8 flex items-center justify-center">
-											{renderRank(user.rank)}
+											{renderRank(++index)}
 										</div>
 										<span className="font-medium text-gray-900">
 											{user.username}

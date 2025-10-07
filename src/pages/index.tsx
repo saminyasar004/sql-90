@@ -7,14 +7,20 @@ import { Navigation } from "@/components/common/navigation";
 import { Leaderboard } from "./Leaderboard";
 import { CheckoutModal } from "@/components/common/checkout-modal";
 import { ToastContainer } from "@/components/common/toast";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
+import { useAuth } from "@/hooks/use-auth";
+import { LeaderboardProvider } from "@/hooks/use-leaderboard";
 
-function AppContent() {
+export default function Index() {
 	const [activeView, setActiveView] = useState("questions"); // 'questions' or 'leaderboard'
 	const [selectedQuestionId, setSelectedQuestionId] = useState(1);
 	const [showCheckoutModal, setShowCheckoutModal] = useState(false);
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 	const { toasts, removeToast } = useGame();
+	const { isAuthenticated, logout } = useAuth();
+
+	if (!isAuthenticated) return <Navigate to="/auth" replace />;
+
 	return (
 		<div className="flex flex-col h-screen bg-gray-50">
 			{/* Header with container */}
@@ -63,17 +69,28 @@ function AppContent() {
 						>
 							Leaderboard
 						</button>
-						<Link to={"/auth"}>
-							<button className="px-4 py-2 text-white rounded-md font-medium hover:bg-[#006666] transition-colors">
-								Sign In
+						{isAuthenticated && (
+							<button
+								onClick={() => setShowCheckoutModal(true)}
+								className="ml-4 px-4 py-2 bg-[#40D693] text-white rounded-md font-medium hover:bg-[#35b47c] transition-colors"
+							>
+								Unlock Solutions 🔒
 							</button>
-						</Link>
-						<button
-							onClick={() => setShowCheckoutModal(true)}
-							className="ml-4 px-4 py-2 bg-[#40D693] text-white rounded-md font-medium hover:bg-[#35b47c] transition-colors"
-						>
-							Unlock Solutions 🔒
-						</button>
+						)}
+						{!isAuthenticated ? (
+							<Link to={"/auth"}>
+								<button className="px-4 py-2 text-white rounded-md font-medium hover:bg-[#006666] transition-colors">
+									Sign In
+								</button>
+							</Link>
+						) : (
+							<button
+								onClick={logout}
+								className="px-4 py-2 text-white rounded-md font-medium bg-warning hover:bg-warning/80 transition-colors"
+							>
+								Logout
+							</button>
+						)}
 					</div>
 					{/* Mobile navigation menu */}
 					{mobileMenuOpen && (
@@ -149,7 +166,9 @@ function AppContent() {
 					</div>
 				) : (
 					<div className="w-full overflow-auto">
-						<Leaderboard />
+						<LeaderboardProvider>
+							<Leaderboard />
+						</LeaderboardProvider>
 					</div>
 				)}
 			</div>
@@ -160,12 +179,5 @@ function AppContent() {
 			{/* Toast notifications */}
 			<ToastContainer toasts={toasts} removeToast={removeToast} />
 		</div>
-	);
-}
-export default function Index() {
-	return (
-		<GameProvider>
-			<AppContent />
-		</GameProvider>
 	);
 }

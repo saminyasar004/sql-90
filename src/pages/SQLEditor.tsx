@@ -3,16 +3,41 @@ import Editor from "react-simple-code-editor";
 import { highlight, languages } from "prismjs";
 import "prismjs/components/prism-sql";
 import "prismjs/themes/prism.css";
-export function SQLEditor({ value, onChange }) {
+import {
+	Select,
+	SelectContent,
+	SelectGroup,
+	SelectItem,
+	SelectLabel,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
+
+export function SQLEditor({ value, onChange, dbType, setDbType }) {
 	// Calculate line numbers for the current code
 	const getLineNumbers = (code) => {
 		const lines = code.split("\n");
 		return lines.map((_, i) => i + 1).join("\n");
 	};
+
 	return (
 		<div className="border border-gray-300 rounded-md overflow-hidden">
-			<div className="bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 border-b border-gray-300">
-				SQL Editor
+			<div className="bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 border-b border-gray-300 w-full flex items-center justify-between">
+				<div className="">SQL Editor</div>
+				<Select defaultValue={dbType} onValueChange={setDbType}>
+					<SelectTrigger className="w-[180px]">
+						<SelectValue placeholder="Select SQL Dialect" />
+					</SelectTrigger>
+					<SelectContent>
+						<SelectGroup>
+							<SelectLabel>Select SQL Dialect</SelectLabel>
+							<SelectItem value="mysql">MySQL</SelectItem>
+							<SelectItem value="postgresql">
+								PostgreSQL
+							</SelectItem>
+						</SelectGroup>
+					</SelectContent>
+				</Select>
 			</div>
 			<div className="bg-white flex">
 				{/* Line numbers */}

@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { questions } from "../data/questions";
+import { useEffect, useState } from "react";
 import {
 	ChevronDownIcon,
 	ChevronUpIcon,
@@ -12,6 +11,14 @@ import { useGame } from "@/hooks/use-game";
 import { SchemaViewer } from "./SchemaViewer";
 import { SQLEditor } from "./SQLEditor";
 import { ResultsView } from "./ResultsView";
+import { QuestionProps, useQuestion } from "@/hooks/use-question";
+import { useAuth } from "@/hooks/use-auth";
+import { baseURL } from "@/config/dotenv";
+
+interface IndividualQuestionProps extends QuestionProps {
+	description: string;
+}
+
 export function QuestionView({
 	questionId,
 	onShowCheckout,
@@ -21,20 +28,61 @@ export function QuestionView({
 	onShowCheckout: () => void;
 	onSelectQuestion: React.Dispatch<React.SetStateAction<number>>;
 }) {
+	const { questions, isLoading } = useQuestion();
+	const { accessToken } = useAuth();
+
+	const [question, setQuestion] = useState<IndividualQuestionProps | null>(
+		null
+	);
+
 	const [showSchema, setShowSchema] = useState(false);
 	const [sqlQuery, setSqlQuery] = useState("");
-	const [queryResult, setQueryResult] = useState<{
-		columns: string[];
-		rows: { id: number; name: string; value: number }[];
-	} | null>(null);
+	const [queryResult, setQueryResult] = useState<
+		| [
+				{
+					[key: string]: string | number | null;
+				}
+		  ]
+		| null
+	>(null);
 	const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
 	const [showingSolution, setShowingSolution] = useState(false);
+	const [checkingAnswer, setCheckingAnswer] = useState(false);
+	const [runningQuery, setRunningQuery] = useState(false);
+	const [solutionMySQL, setSolutionMySQL] = useState("");
+	const [solutionPostgreSQL, setSolutionPostgreSQL] = useState("");
+	const [dbType, setDbType] = useState("mysql");
 	const { markQuestionComplete, addToast } = useGame();
 	// Find the current question
-	const question =
-		questions.find((q) => q.id === Number(questionId)) || questions[0];
+
+	// const question =
+	// 	questions.find((q) => q.id === Number(questionId)) || questions[0];
 	// Check if this question has a free solution (first 5 questions)
-	const hasFreeAccess = question.id <= 5;
+
+	const fetchQuestionById = async (id: number) => {
+		if (!accessToken) return;
+		try {
+			const response = await fetch(`${baseURL}/api/problems/${id}/`, {
+				headers: {
+					Authorization: `Bearer ${accessToken}`,
+					"Content-Type": "application/json",
+				},
+			});
+			const data = await response.json();
+			if (!response.ok) {
+				throw new Error("Failed to fetch question");
+			}
+			setQuestion(data);
+		} catch (err) {
+			console.log("Error fetching question: ", err);
+		}
+	};
+
+	useEffect(() => {
+		fetchQuestionById(questionId);
+	}, [questionId]);
+
+	const hasFreeAccess = question?.is_premium === false;
 	// Navigation logic
 	const handleNavigate = (direction: "prev" | "next") => {
 		const currentIndex = questions.findIndex(
@@ -53,87 +101,173 @@ export function QuestionView({
 			onSelectQuestion(nextQuestion.id);
 		}
 	};
-	const handleRunQuery = () => {
-		// In a real app, this would send the query to a backend
-		// For this demo, we'll simulate a response
-		const mockResult = {
-			columns: ["id", "name", "value"],
-			rows: [
-				{
-					id: 1,
-					name: "Item 1",
-					value: 100,
+
+	const handleRunQuery = async () => {
+		setQueryResult(null); // Show loading state
+		setIsCorrect(null); // Reset correctness state
+		setRunningQuery(true);
+
+		try {
+			const response = await fetch(`${baseURL}/api/submit/`, {
+				headers: {
+					Authorization: `Bearer ${accessToken}`,
+					"Content-Type": "application/json",
 				},
-				{
-					id: 2,
-					name: "Item 2",
-					value: 200,
-				},
-				{
-					id: 3,
-					name: "Item 3",
-					value: 300,
-				},
-			],
-		};
-		setQueryResult(mockResult);
-		// Check if query is correct (simplified for demo)
-		const isQueryCorrect =
-			sqlQuery.toLowerCase().includes("select") &&
-			sqlQuery.toLowerCase().includes("from");
-		setIsCorrect(isQueryCorrect);
-	};
-	const handleCheckAnswer = () => {
-		// In a real app, this would validate the query against the expected solution
-		// For this demo, we'll use the same simplified validation
-		const isQueryCorrect =
-			sqlQuery.toLowerCase().includes("select") &&
-			sqlQuery.toLowerCase().includes("from");
-		setIsCorrect(isQueryCorrect);
-		// If correct and not already completed, mark as completed
-		if (isQueryCorrect && !question.completed) {
-			// Mark question as completed in our game context
-			markQuestionComplete(question.id);
-			// In a real app, we would update the question in the database
-			question.completed = true;
-			// Show success toast
-			addToast(`✅ You solved Question ${question.id}!`, "success");
-			// Calculate points earned
-			const pointsEarned =
-				question.id <= 40 ? 10 : question.id <= 70 ? 20 : 40;
-			addToast(
-				`🎉 +${pointsEarned} points added to your score!`,
-				"success"
-			);
-		}
-		// Display the result if not already shown
-		if (!queryResult) {
-			const mockResult = {
-				columns: ["id", "name", "value"],
-				rows: [
-					{
-						id: 1,
-						name: "Item 1",
-						value: 100,
-					},
-					{
-						id: 2,
-						name: "Item 2",
-						value: 200,
-					},
-					{
-						id: 3,
-						name: "Item 3",
-						value: 300,
-					},
-				],
-			};
-			setQueryResult(mockResult);
+				method: "POST",
+				body: JSON.stringify({
+					problem_id: questionId,
+					sql: sqlQuery,
+					db_type: dbType,
+				}),
+			});
+
+			const data = await response.json();
+
+			if (!response.ok) {
+				// If the API returns an error, show it in ResultsView
+				setQueryResult({
+					error: data?.message || "Failed to submit solution",
+				} as any);
+				return;
+			}
+
+			setQueryResult(data?.data || null);
+			if (data?.status === "Success") {
+				setIsCorrect(true);
+			} else if (data?.status === "Error") {
+				// If the API returns an error, show it in ResultsView
+				setQueryResult({
+					error: data?.message || "Failed to submit solution",
+				} as any);
+				return;
+			} else {
+				setIsCorrect(false);
+			}
+
+			// If your API returns a correctness flag, set it here:
+			if (typeof data?.is_correct === "boolean") {
+				setIsCorrect(data.is_correct);
+				if (
+					data.is_correct &&
+					question &&
+					question.status === "unseen"
+				) {
+					markQuestionComplete(question.id);
+					addToast(
+						`✅ You solved Question ${question.id}!`,
+						"success"
+					);
+					const pointsEarned =
+						question.id <= 40 ? 10 : question.id <= 70 ? 20 : 40;
+					addToast(
+						`🎉 +${pointsEarned} points added to your score!`,
+						"success"
+					);
+				}
+			}
+		} catch (err) {
+			setQueryResult({
+				error: "Network error. Please try again.",
+			} as any);
+		} finally {
+			setRunningQuery(false);
 		}
 	};
-	const handleShowSolution = () => {
+
+	const handleCheckAnswer = async () => {
+		setQueryResult(null); // Show loading state
+		setIsCorrect(null); // Reset correctness state
+		setCheckingAnswer(true);
+
+		try {
+			const response = await fetch(`${baseURL}/api/submit/`, {
+				headers: {
+					Authorization: `Bearer ${accessToken}`,
+					"Content-Type": "application/json",
+				},
+				method: "POST",
+				body: JSON.stringify({
+					problem_id: questionId,
+					sql: sqlQuery,
+					db_type: dbType,
+				}),
+			});
+
+			const data = await response.json();
+
+			if (!response.ok) {
+				// If the API returns an error, show it in ResultsView
+				setQueryResult({
+					error: data?.message || "Failed to submit solution",
+				} as any);
+				return;
+			}
+
+			setQueryResult(data?.data || null);
+			if (data?.status === "Success") {
+				setIsCorrect(true);
+			} else if (data?.status === "Error") {
+				// If the API returns an error, show it in ResultsView
+				setQueryResult({
+					error: data?.message || "Failed to submit solution",
+				} as any);
+				return;
+			} else {
+				setIsCorrect(false);
+			}
+
+			// If your API returns a correctness flag, set it here:
+			if (typeof data?.is_correct === "boolean") {
+				setIsCorrect(data.is_correct);
+				if (
+					data.is_correct &&
+					question &&
+					question.status === "unseen"
+				) {
+					markQuestionComplete(question.id);
+					addToast(
+						`✅ You solved Question ${question.id}!`,
+						"success"
+					);
+					const pointsEarned =
+						question.id <= 40 ? 10 : question.id <= 70 ? 20 : 40;
+					addToast(
+						`🎉 +${pointsEarned} points added to your score!`,
+						"success"
+					);
+				}
+			}
+		} catch (err) {
+			setQueryResult({
+				error: "Network error. Please try again.",
+			} as any);
+		} finally {
+			setCheckingAnswer(false);
+		}
+	};
+
+	const handleShowSolution = async () => {
 		// If it's one of the first 5 questions, show the solution directly
 		if (hasFreeAccess) {
+			// Fetch solutions if not already fetched
+			if (!solutionMySQL || !solutionPostgreSQL) {
+				const response = await fetch(
+					`${baseURL}/api/problems/${questionId}/`,
+					{
+						headers: {
+							Authorization: `Bearer ${accessToken}`,
+						},
+					}
+				);
+
+				if (!response.ok) {
+					throw new Error("Failed to fetch solutions");
+				}
+				const data = await response.json();
+				setSolutionMySQL(data.solution_mysql);
+				setSolutionPostgreSQL(data.solution_postgresql);
+			}
+
 			setShowingSolution(true);
 		} else {
 			// Otherwise, show checkout modal
@@ -159,6 +293,23 @@ export function QuestionView({
 			return "This solution demonstrates the key SQL concepts needed to solve the problem efficiently. Note the structure of the query, the choice of clauses, and how the data is filtered and presented to match the requirements.";
 		}
 	};
+
+	useEffect(() => {
+		setSolutionMySQL("");
+		setSolutionPostgreSQL("");
+		setShowingSolution(false);
+	}, [questionId]);
+
+	if (isLoading || !question) {
+		return (
+			<div className="p-4 sm:p-6 max-w-5xl mx-auto h-full overflow-y-auto md:max-h-[calc(100vh-13rem)]">
+				<div className="flex justify-center items-center h-full">
+					<p className="text-gray-500">Loading question...</p>
+				</div>
+			</div>
+		);
+	}
+
 	return (
 		<div className="p-4 sm:p-6 max-w-5xl mx-auto h-full overflow-y-auto md:max-h-[calc(100vh-13rem)]">
 			{/* Question header - more compact on mobile */}
@@ -173,20 +324,12 @@ export function QuestionView({
 								: "bg-blue-100 text-blue-700"
 						}`}
 					>
-						{question.id <= 40
-							? "Easy"
-							: question.id <= 70
-							? "Intermediate"
-							: "Hard"}
+						{question?.difficulty}
 					</span>
 					<span className="text-xs sm:text-sm text-gray-500 px-2 py-0.5 sm:py-1 bg-gray-100 rounded-md">
-						{question.id <= 40
-							? "10 points"
-							: question.id <= 70
-							? "20 points"
-							: "40 points"}
+						{question?.points + " Points"}
 					</span>
-					{question.completed && (
+					{question.status === "completed" && (
 						<span className="text-xs sm:text-sm text-green-600 px-2 py-0.5 sm:py-1 bg-green-50 rounded-md flex items-center">
 							<svg
 								className="w-3 h-3 mr-1"
@@ -231,19 +374,26 @@ export function QuestionView({
 			</div>
 			{/* SQL Editor - reduced height on mobile */}
 			<div className="mb-3 sm:mb-4">
-				<SQLEditor value={sqlQuery} onChange={setSqlQuery} />
+				<SQLEditor
+					dbType={dbType}
+					setDbType={setDbType}
+					value={sqlQuery}
+					onChange={setSqlQuery}
+				/>
 			</div>
 			{/* Action buttons - improved mobile layout */}
 			<div className="flex flex-wrap gap-2 mb-6">
 				<button
 					onClick={handleRunQuery}
-					className="flex-1 sm:flex-none px-3 sm:px-4 py-2 bg-[#008080] text-white rounded-md hover:bg-[#006666] transition-colors text-sm sm:text-base"
+					disabled={runningQuery}
+					className="flex-1 sm:flex-none px-3 sm:px-4 py-2 bg-[#008080] text-white rounded-md hover:bg-[#006666] transition-colors text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed"
 				>
 					Run Query
 				</button>
 				<button
 					onClick={handleCheckAnswer}
-					className="flex-1 sm:flex-none px-3 sm:px-4 py-2 bg-[#008080] text-white rounded-md hover:bg-[#006666] transition-colors text-sm sm:text-base"
+					disabled={checkingAnswer}
+					className="flex-1 sm:flex-none px-3 sm:px-4 py-2 bg-[#008080] text-white rounded-md hover:bg-[#006666] transition-colors text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed"
 				>
 					Check Answer
 				</button>
@@ -253,7 +403,7 @@ export function QuestionView({
 						showingSolution && hasFreeAccess
 							? "bg-gray-400 hover:bg-gray-500"
 							: "bg-[#40D693] hover:bg-[#35b47c]"
-					} text-white rounded-md transition-colors text-sm sm:text-base`}
+					} text-white rounded-md transition-colors text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed`}
 					disabled={showingSolution && hasFreeAccess}
 				>
 					{showingSolution && hasFreeAccess
@@ -295,7 +445,9 @@ export function QuestionView({
 						</button>
 					</div>
 					<div className="bg-white p-3 rounded border border-green-200 font-mono text-sm overflow-x-auto mb-3">
-						{question.solution}
+						{dbType === "mysql"
+							? solutionMySQL || "Loading solution..."
+							: solutionPostgreSQL || "Loading solution..."}
 					</div>
 					{/* Explanation section */}
 					<div className="mt-4">
@@ -312,6 +464,18 @@ export function QuestionView({
 				</div>
 			)}
 			{/* Results view */}
+			{runningQuery && (
+				<div className="text-gray-500 animate-pulse">
+					Running query...
+				</div>
+			)}
+
+			{checkingAnswer && (
+				<div className="text-gray-500 animate-pulse">
+					Checking query...
+				</div>
+			)}
+
 			{queryResult && (
 				<div className="mb-4">
 					{isCorrect !== null && (

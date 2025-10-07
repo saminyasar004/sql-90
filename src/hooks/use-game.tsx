@@ -1,5 +1,5 @@
 import React, { useEffect, useState, createContext, useContext } from "react";
-import { questions } from "../data/questions";
+import { useQuestion } from "./use-question";
 type ToastType = {
 	id: string;
 	message: string;
@@ -25,6 +25,8 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
 	const [totalPoints, setTotalPoints] = useState(0);
 	const [completedQuestions, setCompletedQuestions] = useState<number[]>([]);
 	const [toasts, setToasts] = useState<ToastType[]>([]);
+	const { questions } = useQuestion();
+
 	// Calculate initial points based on completed questions
 	useEffect(() => {
 		const initialPoints = questions

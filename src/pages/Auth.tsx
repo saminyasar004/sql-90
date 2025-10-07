@@ -1,15 +1,6 @@
-import type React from "react";
-
-import { useState } from "react";
-import {
-	Database,
-	Code,
-	Trophy,
-	Users,
-	ArrowRight,
-	CheckCircle,
-} from "lucide-react";
+import { Logo } from "@/components/common/logo";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
 	Card,
 	CardContent,
@@ -17,18 +8,24 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Logo } from "@/components/common/logo";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useNavigate } from "react-router-dom";
+import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+	ArrowRight,
+	CheckCircle,
+	Code,
+	Database,
+	Trophy,
+	Users,
+} from "lucide-react";
+import { useForm } from "react-hook-form";
+import { Navigate, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { z } from "zod";
 
 const signInSchema = z.object({
 	username: z.string().min(3, {
@@ -50,16 +47,64 @@ const signInSchema = z.object({
 	isRemember: z.boolean().optional(),
 });
 
+const signUpSchema = z
+	.object({
+		username: z.string().min(3, {
+			message: "Username must be at least 3 characters",
+		}),
+		email: z
+			.string({
+				message: "Email is required",
+			})
+			.email({
+				message: "Email must be a valid email address",
+			}),
+		password: z
+			.string()
+			.min(8, { message: "Password must be at least 8 characters" })
+			.max(20, { message: "Password must be at most 20 characters" })
+			.regex(/[!@#$%^&*(),.?":{}|<>]/, {
+				message: "Password must contain at least one special character",
+			})
+			.regex(/[0-9]/, {
+				message: "Password must contain at least one number",
+			})
+			.regex(/[A-Z]/, {
+				message: "Password must contain at least one uppercase letter",
+			}),
+		confirmPassword: z
+			.string()
+			.min(8, { message: "Password must be at least 8 characters" })
+			.max(20, { message: "Password must be at most 20 characters" })
+			.regex(/[!@#$%^&*(),.?":{}|<>]/, {
+				message: "Password must contain at least one special character",
+			})
+			.regex(/[0-9]/, {
+				message: "Password must contain at least one number",
+			})
+			.regex(/[A-Z]/, {
+				message: "Password must contain at least one uppercase letter",
+			}),
+	})
+	.refine((data) => data.password === data.confirmPassword, {
+		message: "Passwords must match",
+		path: ["confirmPassword"],
+	});
+
 type LoginFormData = z.infer<typeof signInSchema>;
+type SignUpFormData = z.infer<typeof signUpSchema>;
 
 export default function Auth() {
 	const navigate = useNavigate();
-	const { login, error, loading } = useAuth();
+	const { isAuthenticated, login, register, error, loading } = useAuth();
+
+	const queryParams = new URLSearchParams(location.search);
+	const ref = queryParams.get("ref");
 
 	const {
-		register,
-		handleSubmit,
-		formState: { errors },
+		register: registerLogin,
+		handleSubmit: handleSubmitLogin,
+		formState: { errors: loginErrors },
 	} = useForm<LoginFormData>({
 		resolver: zodResolver(signInSchema),
 		defaultValues: {
@@ -69,7 +114,21 @@ export default function Auth() {
 		},
 	});
 
-	const onSubmit = async (data: LoginFormData) => {
+	const {
+		register: registerSignUp,
+		handleSubmit: handleSubmitSignUp,
+		formState: { errors: signUpErrors },
+	} = useForm<SignUpFormData>({
+		resolver: zodResolver(signUpSchema),
+		defaultValues: {
+			username: "",
+			email: "",
+			password: "",
+			confirmPassword: "",
+		},
+	});
+
+	const onLoginFormSubmit = async (data: LoginFormData) => {
 		const success = await login(
 			data.username,
 			data.password,
@@ -78,11 +137,30 @@ export default function Auth() {
 		console.log("Login Response: ", success);
 		if (success) {
 			toast.success("Login successful");
-			navigate("/dashboard"); // Redirect to dashboard or protected route
+			navigate("/");
 		} else {
 			toast.error(error || "Login failed. Please try again.");
 		}
 	};
+
+	const onSignUpFormSubmit = async (data: SignUpFormData) => {
+		const success = await register(
+			data.username,
+			data.email,
+			data.password,
+			data.confirmPassword
+		);
+		console.log("Registration Response: ", success);
+		if (success) {
+			toast.success(
+				"An email has been sent to you with a link to confirm your account."
+			);
+		} else {
+			toast.error(error || "Login failed. Please try again.");
+		}
+	};
+
+	if (isAuthenticated) return <Navigate to="/" replace />;
 
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
@@ -207,7 +285,12 @@ export default function Auth() {
 								</CardDescription>
 							</CardHeader>
 							<CardContent>
-								<Tabs defaultValue="signin" className="w-full">
+								<Tabs
+									defaultValue={
+										ref === "signup" ? "signup" : "signin"
+									}
+									className="w-full"
+								>
 									<TabsList className="grid w-full grid-cols-2 mb-6">
 										<TabsTrigger value="signin">
 											Sign In
@@ -222,30 +305,36 @@ export default function Auth() {
 										className="space-y-4"
 									>
 										<form
-											// onSubmit={handleSubmit}
+											onSubmit={handleSubmitSignUp(
+												onSignUpFormSubmit
+											)}
 											className="space-y-4"
 										>
-											<div className="grid grid-cols-2 gap-4">
-												<div className="space-y-2">
-													<Label htmlFor="firstName">
-														First name
-													</Label>
-													<Input
-														id="firstName"
-														placeholder="John"
-														required
-													/>
-												</div>
-												<div className="space-y-2">
-													<Label htmlFor="lastName">
-														Last name
-													</Label>
-													<Input
-														id="lastName"
-														placeholder="Doe"
-														required
-													/>
-												</div>
+											<div className="space-y-2">
+												<Label htmlFor="username">
+													Username
+												</Label>
+												<Input
+													id="username"
+													placeholder="johndoe"
+													{...registerSignUp(
+														"username"
+													)}
+													className={cn(
+														signUpErrors.username &&
+															"ring-1 ring-warning"
+													)}
+												/>
+
+												{signUpErrors.username && (
+													<p className="text-warning text-left text-sm w-full">
+														{
+															signUpErrors
+																.username
+																.message
+														}
+													</p>
+												)}
 											</div>
 											<div className="space-y-2">
 												<Label htmlFor="email">
@@ -255,8 +344,20 @@ export default function Auth() {
 													id="email"
 													type="email"
 													placeholder="john@example.com"
-													required
+													{...registerSignUp("email")}
+													className={cn(
+														signUpErrors.email &&
+															"ring-1 ring-warning"
+													)}
 												/>
+												{signUpErrors.email && (
+													<p className="text-warning text-left text-sm w-full">
+														{
+															signUpErrors.email
+																.message
+														}
+													</p>
+												)}
 											</div>
 											<div className="space-y-2">
 												<Label htmlFor="password">
@@ -266,8 +367,23 @@ export default function Auth() {
 													id="password"
 													type="password"
 													placeholder="••••••••"
-													required
+													{...registerSignUp(
+														"password"
+													)}
+													className={cn(
+														signUpErrors.password &&
+															"ring-1 ring-warning"
+													)}
 												/>
+												{signUpErrors.password && (
+													<p className="text-warning text-left text-sm w-full">
+														{
+															signUpErrors
+																.password
+																.message
+														}
+													</p>
+												)}
 											</div>
 											<div className="space-y-2">
 												<Label htmlFor="confirmPassword">
@@ -277,8 +393,23 @@ export default function Auth() {
 													id="confirmPassword"
 													type="password"
 													placeholder="••••••••"
-													required
+													{...registerSignUp(
+														"confirmPassword"
+													)}
+													className={cn(
+														signUpErrors.confirmPassword &&
+															"ring-1 ring-warning"
+													)}
 												/>
+												{signUpErrors.confirmPassword && (
+													<p className="text-warning text-left text-sm w-full">
+														{
+															signUpErrors
+																.confirmPassword
+																.message
+														}
+													</p>
+												)}
 											</div>
 											<Button
 												type="submit"
@@ -305,7 +436,9 @@ export default function Auth() {
 										className="space-y-4"
 									>
 										<form
-											onSubmit={handleSubmit(onSubmit)}
+											onSubmit={handleSubmitLogin(
+												onLoginFormSubmit
+											)}
 											className="space-y-4"
 										>
 											<div className="space-y-2">
@@ -316,16 +449,18 @@ export default function Auth() {
 													id="signinUsername"
 													type="text"
 													placeholder="johndoe"
-													{...register("username")}
+													{...registerLogin(
+														"username"
+													)}
 													className={cn(
-														errors.username &&
+														loginErrors.username &&
 															"ring-1 ring-warning"
 													)}
 												/>
-												{errors.username && (
+												{loginErrors.username && (
 													<p className="text-warning text-left text-sm w-full">
 														{
-															errors.username
+															loginErrors.username
 																.message
 														}
 													</p>
@@ -339,16 +474,18 @@ export default function Auth() {
 													id="signinPassword"
 													type="password"
 													placeholder="••••••••"
-													{...register("password")}
+													{...registerLogin(
+														"password"
+													)}
 													className={cn(
-														errors.password &&
+														loginErrors.password &&
 															"ring-1 ring-warning"
 													)}
 												/>
-												{errors.password && (
+												{loginErrors.password && (
 													<p className="text-warning text-left text-sm w-full">
 														{
-															errors.password
+															loginErrors.password
 																.message
 														}
 													</p>
@@ -359,7 +496,7 @@ export default function Auth() {
 													<input
 														type="checkbox"
 														className="rounded border-border"
-														{...register(
+														{...registerLogin(
 															"isRemember"
 														)}
 													/>

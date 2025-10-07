@@ -1,9 +1,11 @@
-import { questions } from "../../data/questions";
+import { useQuestion } from "@/hooks/use-question";
 import { useGame } from "../../hooks/use-game";
 export function ProgressBar({ onSelectQuestion }) {
 	const { totalPoints } = useGame();
+	const { questions, isLoading, error } = useQuestion();
 	// Calculate progress
-	const completedCount = questions.filter((q) => q.completed).length;
+	// const completedCount = questions.filter((q) => q.completed).length;
+	const completedCount = 1;
 	const progressPercentage = (completedCount / questions.length) * 100;
 	// Calculate streak (simplified for demo - in a real app this would be stored)
 	const streak = 3; // Example streak count
@@ -83,7 +85,7 @@ export function ProgressBar({ onSelectQuestion }) {
 										outline: "none",
 									}}
 								>
-									{question.completed ? (
+									{question?.status === "completed" ? (
 										<div
 											className={`w-[10px] h-[10px] rounded-full cursor-pointer ${
 												question.id <= 40

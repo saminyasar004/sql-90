@@ -1,6 +1,6 @@
+import { useQuestion } from "@/hooks/use-question";
 import { CircleIcon, FilterIcon } from "lucide-react";
 import { useState } from "react";
-import { questions } from "../../data/questions";
 export function Navigation({
 	selectedQuestionId,
 	onSelectQuestion,
@@ -8,6 +8,8 @@ export function Navigation({
 	selectedQuestionId: number;
 	onSelectQuestion: (questionId: number) => void;
 }) {
+	const { questions } = useQuestion();
+
 	const [filter, setFilter] = useState("all"); // 'all', 'easy', 'intermediate', 'hard'
 	const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
 	// Filter questions based on new ID ranges rather than difficulty property
