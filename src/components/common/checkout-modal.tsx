@@ -1,6 +1,43 @@
+
+
 import { XIcon, CheckIcon } from "lucide-react";
 
 export function CheckoutModal({ onClose }: { onClose: () => void }) {
+	const token = localStorage.getItem("accessToken");
+	// Function to handle payment
+	const handlePayment = async () => {
+		try {
+			const response = await fetch("https://admin.sql90.com/api/payments/create-checkout-session/", {
+				method: "POST",
+				headers: {
+		"Content-Type": "application/json",
+		Authorization: `Bearer ${token}`, // Add this!
+	},
+				body: JSON.stringify({
+					// You can pass extra info here if needed
+					price: 8.99,
+					currency: "usd",
+				}),
+			});
+
+			if (!response.ok) {
+				throw new Error("Failed to create checkout session");
+			}
+
+			const data = await response.json();
+
+			// Assuming the backend returns { url: "https://checkout.stripe.com/..." }
+			if (data.url) {
+				window.location.href = data.url; // Redirect to Stripe checkout
+			} else {
+				console.error("Checkout URL not returned from backend");
+			}
+		} catch (error) {
+			console.error("Payment error:", error);
+			alert("Failed to initiate payment. Please try again.");
+		}
+	};
+
 	return (
 		<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
 			<div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
@@ -24,42 +61,20 @@ export function CheckoutModal({ onClose }: { onClose: () => void }) {
 							What you'll get:
 						</h3>
 						<ul className="space-y-3">
-							<li className="flex items-start">
-								<CheckIcon
-									size={20}
-									className="text-blue-600 mr-2 mt-0.5 flex-shrink-0"
-								/>
-								<span className="text-blue-700">
-									Access to all 90 detailed solutions
-								</span>
-							</li>
-							<li className="flex items-start">
-								<CheckIcon
-									size={20}
-									className="text-blue-600 mr-2 mt-0.5 flex-shrink-0"
-								/>
-								<span className="text-blue-700">
-									Detailed explanations
-								</span>
-							</li>
-							<li className="flex items-start">
-								<CheckIcon
-									size={20}
-									className="text-blue-600 mr-2 mt-0.5 flex-shrink-0"
-								/>
-								<span className="text-blue-700">
-									Alternative approaches
-								</span>
-							</li>
-							<li className="flex items-start">
-								<CheckIcon
-									size={20}
-									className="text-blue-600 mr-2 mt-0.5 flex-shrink-0"
-								/>
-								<span className="text-blue-700">
-									Performance optimization tips
-								</span>
-							</li>
+							{[
+								"Access to all 90 detailed solutions",
+								"Detailed explanations",
+								"Alternative approaches",
+								"Performance optimization tips",
+							].map((item) => (
+								<li key={item} className="flex items-start">
+									<CheckIcon
+										size={20}
+										className="text-blue-600 mr-2 mt-0.5 flex-shrink-0"
+									/>
+									<span className="text-blue-700">{item}</span>
+								</li>
+							))}
 						</ul>
 					</div>
 					{/* Payment details */}
@@ -70,67 +85,10 @@ export function CheckoutModal({ onClose }: { onClose: () => void }) {
 						<span className="text-3xl font-bold">$8.99</span>
 					</div>
 					{/* Payment form */}
-					<form className="space-y-4">
-						<div>
-							<label
-								htmlFor="card-number"
-								className="block text-sm font-medium text-gray-700 mb-1"
-							>
-								Card Number
-							</label>
-							<input
-								type="text"
-								id="card-number"
-								placeholder="1234 5678 9012 3456"
-								className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#008080]"
-							/>
-						</div>
-						<div className="grid grid-cols-2 gap-4">
-							<div>
-								<label
-									htmlFor="expiry"
-									className="block text-sm font-medium text-gray-700 mb-1"
-								>
-									Expiry Date
-								</label>
-								<input
-									type="text"
-									id="expiry"
-									placeholder="MM/YY"
-									className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#008080]"
-								/>
-							</div>
-							<div>
-								<label
-									htmlFor="cvc"
-									className="block text-sm font-medium text-gray-700 mb-1"
-								>
-									CVC
-								</label>
-								<input
-									type="text"
-									id="cvc"
-									placeholder="123"
-									className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#008080]"
-								/>
-							</div>
-						</div>
-						<div>
-							<label
-								htmlFor="name"
-								className="block text-sm font-medium text-gray-700 mb-1"
-							>
-								Name on Card
-							</label>
-							<input
-								type="text"
-								id="name"
-								placeholder="John Doe"
-								className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#008080]"
-							/>
-						</div>
+					<form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
 						<button
 							type="button"
+							onClick={handlePayment}
 							className="w-full py-3 px-4 bg-[#008080] hover:bg-[#006666] text-white font-medium rounded-md transition-colors"
 						>
 							Pay $8.99 and Unlock All Solutions

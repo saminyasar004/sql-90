@@ -36,19 +36,19 @@ export function QuestionProvider({ children }: { children: ReactNode }) {
 	const [error, setError] = useState<string | null>(null);
 
 	useEffect(() => {
-		if (!accessToken) {
-			setIsLoading(false); // No token, so no fetching
-			return;
-		}
+		// if (!accessToken) {
+		// 	setIsLoading(false);
+		// 	return;
+		// }
 
 		const fetchQuestions = async () => {
 			setIsLoading(true);
 			setError(null);
 			try {
 				const response = await fetch(`${baseURL}/api/problems/`, {
-					headers: {
-						Authorization: `Bearer ${accessToken}`,
-					},
+					// headers: {
+					// 	Authorization: `Bearer ${accessToken}`,
+					// },
 				});
 				if (!response.ok) {
 					throw new Error("Failed to fetch questions");

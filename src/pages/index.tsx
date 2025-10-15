@@ -19,7 +19,7 @@ export default function Index() {
 	const { toasts, removeToast } = useGame();
 	const { isAuthenticated, logout } = useAuth();
 
-	if (!isAuthenticated) return <Navigate to="/auth" replace />;
+	// if (!isAuthenticated) return <Navigate to="/auth" replace />;
 
 	return (
 		<div className="flex flex-col h-screen bg-gray-50">
@@ -59,7 +59,8 @@ export default function Index() {
 						>
 							Practice
 						</button>
-						<button
+					{isAuthenticated &&(
+							<button
 							onClick={() => setActiveView("leaderboard")}
 							className={`px-4 py-2 rounded-md transition-colors ${
 								activeView === "leaderboard"
@@ -69,6 +70,7 @@ export default function Index() {
 						>
 							Leaderboard
 						</button>
+					)}
 						{isAuthenticated && (
 							<button
 								onClick={() => setShowCheckoutModal(true)}
