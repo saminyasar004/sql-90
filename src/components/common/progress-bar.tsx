@@ -47,11 +47,11 @@ export function ProgressBar({ onSelectQuestion }) {
 				{/* Question circles - with fixed overflow handling */}
 				<div className="w-full overflow-x-auto sm:overflow-x-hidden pb-2">
 					<div className="w-full flex justify-center">
-						<div className="flex flex-wrap gap-[1px] w-full">
+						<div className="flex flex-wrap items-center justify-around gap-[1px] w-full">
 							{questions.map((question) => (
 								<div
 									key={question.id}
-									className="relative group flex flex-col items-center mx-[2px]"
+									className="relative group flex flex-col items-center"
 									title={`${question.id}. ${
 										question.title
 									} (${

@@ -297,7 +297,7 @@ export function QuestionView({
 
 	if (isLoading || !question) {
 		return (
-			<div className="p-4 sm:p-6 max-w-5xl mx-auto h-full overflow-y-auto md:max-h-[calc(100vh-13rem)]">
+			<div className="p-4 sm:p-6 container mx-auto h-full overflow-y-auto">
 				<div className="flex justify-center items-center h-full">
 					<p className="text-gray-500">Loading question...</p>
 				</div>
@@ -306,7 +306,7 @@ export function QuestionView({
 	}
 
 	return (
-		<div className="p-4 sm:p-6 max-w-5xl mx-auto h-full overflow-y-auto md:max-h-[calc(100vh-13rem)]">
+		<div className="p-4 sm:p-6 container mx-auto h-full overflow-y-auto">
 			{/* Question header - more compact on mobile */}
 			<div className="mb-3 sm:mb-6">
 				<div className="flex flex-wrap items-center gap-2 mb-2">

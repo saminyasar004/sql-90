@@ -220,13 +220,8 @@ export default function Auth() {
 				<div className="container mx-auto px-4 py-4">
 					<div className="flex items-center justify-between">
 						<div className="flex items-center gap-2">
-							<div className="flex items-center justify-center w-8 h-8 bg-primary-foreground rounded-lg">
-								<Database className="w-5 h-5 text-primary" />
-							</div>
 							<div>
-								<h1 className="text-xl font-bold text-primary-foreground">
-									<Logo />
-								</h1>
+								<Logo />
 							</div>
 						</div>
 						<Badge
@@ -240,7 +235,7 @@ export default function Auth() {
 			</header>
 
 			<div className="container mx-auto px-4 py-8">
-				<div className="grid lg:grid-cols-2 gap-8 items-center max-w-6xl mx-auto">
+				<div className="grid lg:grid-cols-2 gap-8 items-center mx-auto">
 					{/* Left side - Features */}
 					<div className="space-y-8">
 						<div className="space-y-4">
@@ -324,7 +319,7 @@ export default function Auth() {
 					</div>
 
 					{/* Right side - Auth Form */}
-					<div className="w-full max-w-md mx-auto">
+					<div className="w-full flex justify-end">
 						<Card className="shadow-xl border-0 bg-card/50 backdrop-blur-sm">
 							<CardHeader className="text-center pb-4">
 								<CardTitle className="text-2xl">
@@ -614,9 +609,9 @@ export default function Auth() {
 			</div>
 
 			{/* Footer */}
-			<footer className="border-t bg-muted/30 mt-16">
+			<footer className="border-t bg-primary absolute bottom-0 w-full">
 				<div className="container mx-auto px-4 py-8">
-					<div className="text-center text-sm text-muted-foreground">
+					<div className="text-center text-sm text-white">
 						<p>
 							© {new Date().getFullYear()} SQL90. All rights
 							reserved. Built for developers who love SQL.

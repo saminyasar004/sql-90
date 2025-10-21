@@ -1,5 +1,3 @@
-
-
 import { XIcon, CheckIcon } from "lucide-react";
 
 export function CheckoutModal({ onClose }: { onClose: () => void }) {
@@ -7,18 +5,21 @@ export function CheckoutModal({ onClose }: { onClose: () => void }) {
 	// Function to handle payment
 	const handlePayment = async () => {
 		try {
-			const response = await fetch("https://admin.sql90.com/api/payments/create-checkout-session/", {
-				method: "POST",
-				headers: {
-		"Content-Type": "application/json",
-		Authorization: `Bearer ${token}`, // Add this!
-	},
-				body: JSON.stringify({
-					// You can pass extra info here if needed
-					price: 8.99,
-					currency: "usd",
-				}),
-			});
+			const response = await fetch(
+				"https://admin.sql90.com/api/payments/create-checkout-session/",
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: `Bearer ${token}`, // Add this!
+					},
+					body: JSON.stringify({
+						// You can pass extra info here if needed
+						price: 8.99,
+						currency: "usd",
+					}),
+				}
+			);
 
 			if (!response.ok) {
 				throw new Error("Failed to create checkout session");
@@ -72,7 +73,9 @@ export function CheckoutModal({ onClose }: { onClose: () => void }) {
 										size={20}
 										className="text-blue-600 mr-2 mt-0.5 flex-shrink-0"
 									/>
-									<span className="text-blue-700">{item}</span>
+									<span className="text-blue-700">
+										{item}
+									</span>
 								</li>
 							))}
 						</ul>
@@ -85,7 +88,10 @@ export function CheckoutModal({ onClose }: { onClose: () => void }) {
 						<span className="text-3xl font-bold">$8.99</span>
 					</div>
 					{/* Payment form */}
-					<form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+					<form
+						className="space-y-4"
+						onSubmit={(e) => e.preventDefault()}
+					>
 						<button
 							type="button"
 							onClick={handlePayment}

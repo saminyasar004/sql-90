@@ -10,11 +10,14 @@ import { ToastContainer } from "@/components/common/toast";
 import { Link, Navigate } from "react-router-dom";
 import { useAuth } from "@/hooks/use-auth";
 import { LeaderboardProvider } from "@/hooks/use-leaderboard";
+import { DesktopViewSuggestionModal } from "@/components/common/desktopViewSuggestion";
 
 export default function Index() {
 	const [activeView, setActiveView] = useState("questions"); // 'questions' or 'leaderboard'
 	const [selectedQuestionId, setSelectedQuestionId] = useState(1);
 	const [showCheckoutModal, setShowCheckoutModal] = useState(false);
+	const [showDesktopViewSuggestionModal, setShowDesktopViewSuggestionModal] =
+		useState(true);
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 	const { toasts, removeToast } = useGame();
 	const { isAuthenticated, logout } = useAuth();
@@ -146,9 +149,9 @@ export default function Index() {
 				<ProgressBar onSelectQuestion={setSelectedQuestionId} />
 			)}
 			{/* Main content with container */}
-			<div className="flex flex-1 overflow-hidden">
+			<div className="flex flex-1 overflow-x-hidden">
 				{activeView === "questions" ? (
-					<div className="max-w-[90rem] w-full mx-auto px-4 sm:px-6 lg:px-8 flex flex-1 flex-col md:flex-row h-full">
+					<div className="container w-full mx-auto px-4 sm:px-6 lg:px-8 flex flex-1 flex-col md:flex-row h-full">
 						{/* On mobile, we show QuestionView first, then Navigation */}
 						<div className="flex-1 md:order-2 overflow-auto h-full">
 							<QuestionView
@@ -177,6 +180,11 @@ export default function Index() {
 			{/* Checkout Modal */}
 			{showCheckoutModal && (
 				<CheckoutModal onClose={() => setShowCheckoutModal(false)} />
+			)}
+			{showDesktopViewSuggestionModal && (
+				<DesktopViewSuggestionModal
+					onClose={() => setShowDesktopViewSuggestionModal(false)}
+				/>
 			)}
 			{/* Toast notifications */}
 			<ToastContainer toasts={toasts} removeToast={removeToast} />
