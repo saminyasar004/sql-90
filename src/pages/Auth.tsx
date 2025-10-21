@@ -35,7 +35,6 @@ const signInSchema = z.object({
 	password: z
 		.string()
 		.min(8, { message: "Password must be at least 8 characters" })
-		.max(20, { message: "Password must be at most 20 characters" })
 		.regex(/[!@#$%^&*(),.?":{}|<>]/, {
 			message: "Password must contain at least one special character",
 		})
@@ -63,7 +62,6 @@ const signUpSchema = z
 		password: z
 			.string()
 			.min(8, { message: "Password must be at least 8 characters" })
-			.max(20, { message: "Password must be at most 20 characters" })
 			.regex(/[!@#$%^&*(),.?":{}|<>]/, {
 				message: "Password must contain at least one special character",
 			})
@@ -76,7 +74,6 @@ const signUpSchema = z
 		confirmPassword: z
 			.string()
 			.min(8, { message: "Password must be at least 8 characters" })
-			.max(20, { message: "Password must be at most 20 characters" })
 			.regex(/[!@#$%^&*(),.?":{}|<>]/, {
 				message: "Password must contain at least one special character",
 			})
