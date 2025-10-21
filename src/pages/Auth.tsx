@@ -236,7 +236,7 @@ export default function Auth() {
 							variant="secondary"
 							className="hidden sm:flex text-primary"
 						>
-							Join 50,000+ developers
+							Join 10,000+ data professionals
 						</Badge>
 					</div>
 				</div>
@@ -621,8 +621,8 @@ export default function Auth() {
 				<div className="container mx-auto px-4 py-8">
 					<div className="text-center text-sm text-muted-foreground">
 						<p>
-							© 2024 SQL90. All rights reserved. Built for
-							developers who love SQL.
+							© {new Date().getFullYear()} SQL90. All rights
+							reserved. Built for developers who love SQL.
 						</p>
 					</div>
 				</div>

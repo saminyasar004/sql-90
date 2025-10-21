@@ -25,7 +25,7 @@ export default function Index() {
 		<div className="flex flex-col h-screen bg-gray-50">
 			{/* Header with container */}
 			<header className="bg-[#008080] text-white shadow-md">
-				<div className="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-wrap items-center justify-between">
+				<div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-wrap items-center justify-between">
 					<Logo />
 					{/* Mobile menu button */}
 					<button
@@ -59,18 +59,18 @@ export default function Index() {
 						>
 							Practice
 						</button>
-					{isAuthenticated &&(
+						{isAuthenticated && (
 							<button
-							onClick={() => setActiveView("leaderboard")}
-							className={`px-4 py-2 rounded-md transition-colors ${
-								activeView === "leaderboard"
-									? "bg-white text-[#008080] font-medium"
-									: "text-white hover:bg-[#006666]"
-							}`}
-						>
-							Leaderboard
-						</button>
-					)}
+								onClick={() => setActiveView("leaderboard")}
+								className={`px-4 py-2 rounded-md transition-colors ${
+									activeView === "leaderboard"
+										? "bg-white text-[#008080] font-medium"
+										: "text-white hover:bg-[#006666]"
+								}`}
+							>
+								Leaderboard
+							</button>
+						)}
 						{isAuthenticated && (
 							<button
 								onClick={() => setShowCheckoutModal(true)}

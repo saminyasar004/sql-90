@@ -41,10 +41,10 @@ export function QuestionView({
 	const [sqlQuery, setSqlQuery] = useState("");
 	const [queryResult, setQueryResult] = useState<
 		| [
-			{
-				[key: string]: string | number | null;
-			}
-		]
+				{
+					[key: string]: string | number | null;
+				}
+		  ]
 		| null
 	>(null);
 	const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
@@ -54,26 +54,15 @@ export function QuestionView({
 	const [solutionMySQL, setSolutionMySQL] = useState("");
 	const [solutionPostgreSQL, setSolutionPostgreSQL] = useState("");
 	const [dbType, setDbType] = useState("mysql");
-	const { markQuestionComplete, addToast } = useGame();
+	const { addToast } = useGame();
 	const [showLoginModal, setShowLoginModal] = useState(false);
 	const handleRequireLogin = () => {
 		setShowLoginModal(true);
 	};
-	// Find the current question
-
-	// const question =
-	// 	questions.find((q) => q.id === Number(questionId)) || questions[0];
-	// Check if this question has a free solution (first 5 questions)
 
 	const fetchQuestionById = async (id: number) => {
-		// if (!accessToken) return;
 		try {
-			const response = await fetch(`${baseURL}/api/problems/${id}/`, {
-				// headers: {
-				// 	Authorization: `Bearer ${accessToken}`,
-				// 	"Content-Type": "application/json",
-				// },
-			});
+			const response = await fetch(`${baseURL}/api/problems/${id}/`, {});
 			const data = await response.json();
 			if (!response.ok) {
 				throw new Error("Failed to fetch question");
@@ -158,7 +147,7 @@ export function QuestionView({
 					question &&
 					question.status === "unseen"
 				) {
-					markQuestionComplete(question.id);
+					// markQuestionComplete(question.id);
 					addToast(
 						`✅ You solved Question ${question.id}!`,
 						"success"
@@ -230,7 +219,7 @@ export function QuestionView({
 					question &&
 					question.status === "unseen"
 				) {
-					markQuestionComplete(question.id);
+					// markQuestionComplete(question.id);
 					addToast(
 						`✅ You solved Question ${question.id}!`,
 						"success"
@@ -322,12 +311,13 @@ export function QuestionView({
 			<div className="mb-3 sm:mb-6">
 				<div className="flex flex-wrap items-center gap-2 mb-2">
 					<span
-						className={`px-2 py-0.5 sm:py-1 text-xs font-medium rounded-md ${question.id <= 40
+						className={`px-2 py-0.5 sm:py-1 text-xs font-medium rounded-md ${
+							question.id <= 40
 								? "bg-green-100 text-green-700"
 								: question.id <= 70
-									? "bg-yellow-100 text-yellow-700"
-									: "bg-blue-100 text-blue-700"
-							}`}
+								? "bg-yellow-100 text-yellow-700"
+								: "bg-blue-100 text-blue-700"
+						}`}
 					>
 						{question?.difficulty}
 					</span>
@@ -397,7 +387,9 @@ export function QuestionView({
 				</button>
 
 				<button
-					onClick={accessToken ? handleCheckAnswer : handleRequireLogin}
+					onClick={
+						accessToken ? handleCheckAnswer : handleRequireLogin
+					}
 					disabled={checkingAnswer}
 					className="flex-1 sm:flex-none px-3 sm:px-4 py-2 bg-[#008080] text-white rounded-md hover:bg-[#006666] transition-colors text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed"
 				>
@@ -405,18 +397,21 @@ export function QuestionView({
 				</button>
 
 				<button
-					onClick={accessToken ? handleShowSolution : handleRequireLogin}
-					className={`flex-1 sm:flex-none px-3 sm:px-4 py-2 ${showingSolution && hasFreeAccess
+					onClick={
+						accessToken ? handleShowSolution : handleRequireLogin
+					}
+					className={`flex-1 sm:flex-none px-3 sm:px-4 py-2 ${
+						showingSolution && hasFreeAccess
 							? "bg-gray-400 hover:bg-gray-500"
 							: "bg-[#40D693] hover:bg-[#35b47c]"
-						} text-white rounded-md transition-colors text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed`}
+					} text-white rounded-md transition-colors text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed`}
 					disabled={showingSolution && hasFreeAccess}
 				>
 					{showingSolution && hasFreeAccess
 						? "Solution Shown"
 						: hasFreeAccess
-							? "Show Solution"
-							: "Show Solution 🔒"}
+						? "Show Solution"
+						: "Show Solution 🔒"}
 				</button>
 				<div className="flex w-full sm:w-auto mt-2 sm:mt-0 sm:ml-auto">
 					<button
@@ -445,13 +440,16 @@ export function QuestionView({
 						>
 							<X />
 						</button>
-						<h2 className="text-lg font-bold mb-2 mt-6">Login Required</h2>
+						<h2 className="text-lg font-bold mb-2 mt-6">
+							Login Required
+						</h2>
 						<p className="mb-4">
-							You need to be logged in to run queries or view solutions.
+							You need to be logged in to run queries or view
+							solutions.
 						</p>
-						
+
 						<Link
-						to='/auth'
+							to="/auth"
 							onClick={() => setShowLoginModal(false)}
 							className="px-4 py-2 bg-[#008080] text-white rounded-md hover:bg-[#006666]"
 						>
@@ -512,10 +510,11 @@ export function QuestionView({
 				<div className="mb-4">
 					{isCorrect !== null && (
 						<div
-							className={`p-3 mb-4 rounded-md ${isCorrect
+							className={`p-3 mb-4 rounded-md ${
+								isCorrect
 									? "bg-green-100 text-green-700"
 									: "bg-red-100 text-red-700"
-								}`}
+							}`}
 						>
 							{isCorrect
 								? "Correct! Your query matches the expected output."

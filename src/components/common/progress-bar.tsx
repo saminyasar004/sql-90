@@ -1,17 +1,12 @@
 import { useQuestion } from "@/hooks/use-question";
 import { useGame } from "../../hooks/use-game";
 export function ProgressBar({ onSelectQuestion }) {
-	const { totalPoints } = useGame();
+	const { totalPoints, streak, completedPercentage, completedQuestions } =
+		useGame();
 	const { questions, isLoading, error } = useQuestion();
-	// Calculate progress
-	// const completedCount = questions.filter((q) => q.completed).length;
-	const completedCount = 1;
-	const progressPercentage = (completedCount / questions.length) * 100;
-	// Calculate streak (simplified for demo - in a real app this would be stored)
-	const streak = 3; // Example streak count
 	return (
 		<div className="w-full bg-white border-b border-gray-200">
-			<div className="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 py-4">
+			<div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
 				<div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3 gap-2 sm:gap-0">
 					<div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 w-full sm:w-auto">
 						<span className="text-sm font-medium text-gray-500">
@@ -30,17 +25,16 @@ export function ProgressBar({ onSelectQuestion }) {
 							<div
 								className="h-full bg-[#008080] rounded-full"
 								style={{
-									width: `${progressPercentage}%`,
+									width: `${completedPercentage}%`,
 								}}
 							></div>
 						</div>
 						{/* Text moved to be after the progress bar */}
 						<span className="text-sm font-medium">
 							<span className="text-[#008080]">
-								{Math.round(progressPercentage)}%
+								{Math.round(completedPercentage)}%
 							</span>{" "}
-							Complete ({completedCount}/{questions.length}{" "}
-							Questions)
+							Complete ({completedQuestions}/90 Questions)
 						</span>
 						{/* Points display - moved to rightmost position */}
 						<div className="flex items-center px-2 py-1 bg-[#00808010] border border-[#00808030] rounded-md ml-0 sm:ml-4 mt-2 sm:mt-0">
@@ -53,7 +47,7 @@ export function ProgressBar({ onSelectQuestion }) {
 				{/* Question circles - with fixed overflow handling */}
 				<div className="w-full overflow-x-auto sm:overflow-x-hidden pb-2">
 					<div className="w-full flex justify-center">
-						<div className="flex flex-wrap gap-[3px] w-full">
+						<div className="flex flex-wrap gap-[1px] w-full">
 							{questions.map((question) => (
 								<div
 									key={question.id}
@@ -87,7 +81,7 @@ export function ProgressBar({ onSelectQuestion }) {
 								>
 									{question?.status === "completed" ? (
 										<div
-											className={`w-[10px] h-[10px] rounded-full cursor-pointer ${
+											className={`w-[9px] h-[9px] rounded-full cursor-pointer ${
 												question.id <= 40
 													? "bg-green-500"
 													: question.id <= 70
@@ -97,7 +91,7 @@ export function ProgressBar({ onSelectQuestion }) {
 										></div>
 									) : (
 										<div
-											className="w-[10px] h-[10px] rounded-full cursor-pointer"
+											className="w-[9px] h-[9px] rounded-full cursor-pointer"
 											style={{
 												backgroundColor:
 													question.id <= 40
@@ -109,7 +103,7 @@ export function ProgressBar({ onSelectQuestion }) {
 										></div>
 									)}
 									{/* Small number below the circle */}
-									<span className="text-[9px] text-gray-400 mt-[2px]">
+									<span className="text-[9px] text-gray-400 mt-[4px]">
 										{question.id}
 									</span>
 									{/* Tooltip on hover */}
