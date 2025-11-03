@@ -1,9 +1,20 @@
 import { useQuestion } from "@/hooks/use-question";
 import { useGame } from "../../hooks/use-game";
+import { useEffect } from "react";
 export function ProgressBar({ onSelectQuestion }) {
-	const { totalPoints, streak, completedPercentage, completedQuestions } =
-		useGame();
+	const {
+		totalPoints,
+		streak,
+		completedPercentage,
+		completedQuestions,
+		fetchUserProgress,
+	} = useGame();
 	const { questions, isLoading, error } = useQuestion();
+
+	useEffect(() => {
+		fetchUserProgress();
+	}, [isLoading]);
+
 	return (
 		<div className="w-full bg-white border-b border-gray-200">
 			<div className="container mx-auto px-4 py-4">
@@ -126,13 +137,6 @@ export function ProgressBar({ onSelectQuestion }) {
 					</div>
 				</div>
 			</div>
-			{/* Add global style to remove outline for all elements in this component */}
-			{/* <style>{`
-				.w-full.flex > div:focus {
-					outline: none;
-					box-shadow: none;
-				}
-			`}</style> */}
 		</div>
 	);
 }

@@ -153,7 +153,7 @@ export function Navigation({
 							</div>
 						</div>
 						<div className="ml-2">
-							{question.completed ? (
+							{question?.status === "completed" ? (
 								<div className="w-[18px] h-[18px] rounded-full bg-[#3ECF8E] flex items-center justify-center">
 									<svg
 										width="10"
