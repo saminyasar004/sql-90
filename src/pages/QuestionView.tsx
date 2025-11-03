@@ -508,19 +508,6 @@ export function QuestionView({
 
 			{queryResult && (
 				<div className="mb-4">
-					{isCorrect !== null && (
-						<div
-							className={`p-3 mb-4 rounded-md ${
-								isCorrect
-									? "bg-green-100 text-green-700"
-									: "bg-red-100 text-red-700"
-							}`}
-						>
-							{isCorrect
-								? "Correct! Your query matches the expected output."
-								: "Incorrect. Try again!"}
-						</div>
-					)}
 					<ResultsView result={queryResult} />
 				</div>
 			)}
