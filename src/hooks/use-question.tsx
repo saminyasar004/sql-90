@@ -21,6 +21,7 @@ export interface QuestionProps {
 
 interface QuestionContextType {
 	questions: QuestionProps[];
+	fetchQuestions: () => Promise<void>;
 	isLoading: boolean;
 	error: string | null;
 }
@@ -35,39 +36,46 @@ export function QuestionProvider({ children }: { children: ReactNode }) {
 	const [isLoading, setIsLoading] = useState<boolean>(true);
 	const [error, setError] = useState<string | null>(null);
 
-	useEffect(() => {
-		// if (!accessToken) {
-		// 	setIsLoading(false);
-		// 	return;
-		// }
+	const fetchQuestions = async () => {
+		setIsLoading(true);
+		setError(null);
+		try {
+			// ✅ Build headers conditionally
+			const headers: HeadersInit = {
+				"Content-Type": "application/json",
+			};
 
-		const fetchQuestions = async () => {
-			setIsLoading(true);
-			setError(null);
-			try {
-				const response = await fetch(`${baseURL}/api/problems/`, {
-					// headers: {
-					// 	Authorization: `Bearer ${accessToken}`,
-					// },
-				});
-				if (!response.ok) {
-					throw new Error("Failed to fetch questions");
-				}
-				const data = await response.json();
-				setQuestions(data);
-			} catch (err: any) {
-				console.log("Error fetching questions: ", err);
-				setError(err.message || "Unknown error");
-			} finally {
-				setIsLoading(false);
+			if (accessToken) {
+				headers["Authorization"] = `Bearer ${accessToken}`;
 			}
-		};
 
+			const response = await fetch(`${baseURL}/api/problems/`, {
+				method: "GET",
+				headers,
+			});
+
+			if (!response.ok) {
+				throw new Error("Failed to fetch questions");
+			}
+
+			const data = await response.json();
+			setQuestions(data);
+		} catch (err: any) {
+			console.error("Error fetching questions:", err);
+			setError(err.message || "Unknown error");
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
+	useEffect(() => {
 		fetchQuestions();
 	}, [accessToken]);
 
 	return (
-		<QuestionContext.Provider value={{ questions, isLoading, error }}>
+		<QuestionContext.Provider
+			value={{ questions, fetchQuestions, isLoading, error }}
+		>
 			{children}
 		</QuestionContext.Provider>
 	);
