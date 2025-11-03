@@ -30,13 +30,13 @@ export function QuestionView({
 	onShowCheckout: () => void;
 	onSelectQuestion: React.Dispatch<React.SetStateAction<number>>;
 }) {
-	const { questions, isLoading } = useQuestion();
+	const { questions, fetchQuestions, isLoading } = useQuestion();
 	const { accessToken } = useAuth();
+	const { fetchUserProgress } = useGame();
 
 	const [question, setQuestion] = useState<IndividualQuestionProps | null>(
 		null
 	);
-
 	const [showSchema, setShowSchema] = useState(false);
 	const [sqlQuery, setSqlQuery] = useState("");
 	const [queryResult, setQueryResult] = useState<
@@ -52,17 +52,31 @@ export function QuestionView({
 	const [checkingAnswer, setCheckingAnswer] = useState(false);
 	const [runningQuery, setRunningQuery] = useState(false);
 	const [solutionMySQL, setSolutionMySQL] = useState("");
+	const [isCheckedAnswer, setIsCheckedAnswer] = useState(false);
 	const [solutionPostgreSQL, setSolutionPostgreSQL] = useState("");
 	const [dbType, setDbType] = useState("mysql");
 	const { addToast } = useGame();
 	const [showLoginModal, setShowLoginModal] = useState(false);
+
 	const handleRequireLogin = () => {
 		setShowLoginModal(true);
 	};
 
 	const fetchQuestionById = async (id: number) => {
 		try {
-			const response = await fetch(`${baseURL}/api/problems/${id}/`, {});
+			const headers: HeadersInit = {
+				"Content-Type": "application/json",
+			};
+
+			if (accessToken) {
+				headers["Authorization"] = `Bearer ${accessToken}`;
+			}
+
+			const response = await fetch(`${baseURL}/api/problems/${id}/`, {
+				method: "GET",
+				headers,
+			});
+
 			const data = await response.json();
 			if (!response.ok) {
 				throw new Error("Failed to fetch question");
@@ -78,36 +92,41 @@ export function QuestionView({
 	}, [questionId]);
 
 	const hasFreeAccess = question?.is_premium === false;
-	// Navigation logic
+
 	const handleNavigate = (direction: "prev" | "next") => {
 		const currentIndex = questions.findIndex(
 			(q) => q.id === Number(questionId)
 		);
 		if (direction === "prev" && currentIndex > 0) {
-			// Go to previous question
 			const prevQuestion = questions[currentIndex - 1];
 			onSelectQuestion(prevQuestion.id);
 		} else if (
 			direction === "next" &&
 			currentIndex < questions.length - 1
 		) {
-			// Go to next question
 			const nextQuestion = questions[currentIndex + 1];
 			onSelectQuestion(nextQuestion.id);
 		}
 	};
 
+	// ✅ FIXED: when running query, reset isCheckedAnswer so message won't show
 	const handleRunQuery = async () => {
-		setQueryResult(null); // Show loading state
-		setIsCorrect(null); // Reset correctness state
+		setQueryResult(null);
+		setIsCorrect(null);
+		setIsCheckedAnswer(false); // ✅ ensures no "Correct/Incorrect" on Run Query
 		setRunningQuery(true);
 
 		try {
+			const headers: HeadersInit = {
+				"Content-Type": "application/json",
+			};
+
+			if (accessToken) {
+				headers["Authorization"] = `Bearer ${accessToken}`;
+			}
+
 			const response = await fetch(`${baseURL}/api/submit/`, {
-				headers: {
-					Authorization: `Bearer ${accessToken}`,
-					"Content-Type": "application/json",
-				},
+				headers,
 				method: "POST",
 				body: JSON.stringify({
 					problem_id: questionId,
@@ -119,7 +138,6 @@ export function QuestionView({
 			const data = await response.json();
 
 			if (!response.ok) {
-				// If the API returns an error, show it in ResultsView
 				setQueryResult({
 					error: data?.message || "Failed to submit solution",
 				} as any);
@@ -127,10 +145,10 @@ export function QuestionView({
 			}
 
 			setQueryResult(data?.data || null);
+
 			if (data?.status === "Success") {
 				setIsCorrect(true);
 			} else if (data?.status === "Error") {
-				// If the API returns an error, show it in ResultsView
 				setQueryResult({
 					error: data?.message || "Failed to submit solution",
 				} as any);
@@ -139,7 +157,6 @@ export function QuestionView({
 				setIsCorrect(false);
 			}
 
-			// If your API returns a correctness flag, set it here:
 			if (typeof data?.is_correct === "boolean") {
 				setIsCorrect(data.is_correct);
 				if (
@@ -147,7 +164,6 @@ export function QuestionView({
 					question &&
 					question.status === "unseen"
 				) {
-					// markQuestionComplete(question.id);
 					addToast(
 						`✅ You solved Question ${question.id}!`,
 						"success"
@@ -169,16 +185,18 @@ export function QuestionView({
 		}
 	};
 
+	// ✅ FIXED: "Check Answer" explicitly sets isCheckedAnswer = true
 	const handleCheckAnswer = async () => {
-		setQueryResult(null); // Show loading state
-		setIsCorrect(null); // Reset correctness state
+		setQueryResult(null);
+		setIsCheckedAnswer(false);
+		setIsCorrect(null);
 		setCheckingAnswer(true);
 
 		try {
 			const response = await fetch(`${baseURL}/api/submit/`, {
 				headers: {
-					Authorization: `Bearer ${accessToken}`,
 					"Content-Type": "application/json",
+					Authorization: `Bearer ${accessToken}`,
 				},
 				method: "POST",
 				body: JSON.stringify({
@@ -191,18 +209,19 @@ export function QuestionView({
 			const data = await response.json();
 
 			if (!response.ok) {
-				// If the API returns an error, show it in ResultsView
 				setQueryResult({
 					error: data?.message || "Failed to submit solution",
 				} as any);
+				setIsCheckedAnswer(true);
 				return;
 			}
 
 			setQueryResult(data?.data || null);
+			setIsCheckedAnswer(true); // ✅ now correctness message will appear only here
+
 			if (data?.status === "Success") {
 				setIsCorrect(true);
 			} else if (data?.status === "Error") {
-				// If the API returns an error, show it in ResultsView
 				setQueryResult({
 					error: data?.message || "Failed to submit solution",
 				} as any);
@@ -211,7 +230,6 @@ export function QuestionView({
 				setIsCorrect(false);
 			}
 
-			// If your API returns a correctness flag, set it here:
 			if (typeof data?.is_correct === "boolean") {
 				setIsCorrect(data.is_correct);
 				if (
@@ -219,7 +237,6 @@ export function QuestionView({
 					question &&
 					question.status === "unseen"
 				) {
-					// markQuestionComplete(question.id);
 					addToast(
 						`✅ You solved Question ${question.id}!`,
 						"success"
@@ -236,22 +253,33 @@ export function QuestionView({
 			setQueryResult({
 				error: "Network error. Please try again.",
 			} as any);
+			setIsCheckedAnswer(true);
 		} finally {
 			setCheckingAnswer(false);
+			fetchQuestions();
+			const data = await fetchUserProgress();
+			console.log(
+				"🚀 ~ QuestionView.tsx:263 ~ handleCheckAnswer ~ const:",
+				data
+			);
 		}
 	};
 
 	const handleShowSolution = async () => {
-		// If it's one of the first 5 questions, show the solution directly
 		if (hasFreeAccess) {
-			// Fetch solutions if not already fetched
 			if (!solutionMySQL || !solutionPostgreSQL) {
+				const headers: HeadersInit = {
+					"Content-Type": "application/json",
+				};
+
+				if (accessToken) {
+					headers["Authorization"] = `Bearer ${accessToken}`;
+				}
+
 				const response = await fetch(
 					`${baseURL}/api/problems/${questionId}/`,
 					{
-						headers: {
-							Authorization: `Bearer ${accessToken}`,
-						},
+						headers,
 					}
 				);
 
@@ -262,17 +290,16 @@ export function QuestionView({
 				setSolutionMySQL(data.solution_mysql);
 				setSolutionPostgreSQL(data.solution_postgresql);
 			}
-
 			setShowingSolution(true);
 		} else {
-			// Otherwise, show checkout modal
 			onShowCheckout();
 		}
 	};
+
 	const handleHideSolution = () => {
 		setShowingSolution(false);
 	};
-	// Generate explanation based on question ID
+
 	const getExplanation = (id: number) => {
 		if (id === 1) {
 			return "This query shows 5 rows from orders for a quick peek at the data. Without an ORDER BY, the rows are arbitrary, so results may differ each run. SELECT * is fine for exploration, but in real queries it's better to pick only the columns you need.";
@@ -307,7 +334,7 @@ export function QuestionView({
 
 	return (
 		<div className="p-4 sm:p-6 container mx-auto h-full overflow-y-auto">
-			{/* Question header - more compact on mobile */}
+			{/* Question header */}
 			<div className="mb-3 sm:mb-6">
 				<div className="flex flex-wrap items-center gap-2 mb-2">
 					<span
@@ -324,7 +351,7 @@ export function QuestionView({
 					<span className="text-xs sm:text-sm text-gray-500 px-2 py-0.5 sm:py-1 bg-gray-100 rounded-md">
 						{question?.points + " Points"}
 					</span>
-					{question.status === "completed" && (
+					{question?.status === "completed" && (
 						<span className="text-xs sm:text-sm text-green-600 px-2 py-0.5 sm:py-1 bg-green-50 rounded-md flex items-center">
 							<svg
 								className="w-3 h-3 mr-1"
@@ -351,7 +378,8 @@ export function QuestionView({
 					{question.description}
 				</p>
 			</div>
-			{/* Schema viewer toggle - more compact */}
+
+			{/* Schema viewer toggle */}
 			<div className="mb-3 sm:mb-4">
 				<button
 					onClick={() => setShowSchema(!showSchema)}
@@ -367,7 +395,8 @@ export function QuestionView({
 				</button>
 				{showSchema && <SchemaViewer />}
 			</div>
-			{/* SQL Editor - reduced height on mobile */}
+
+			{/* SQL Editor */}
 			<div className="mb-3 sm:mb-4">
 				<SQLEditor
 					dbType={dbType}
@@ -376,7 +405,8 @@ export function QuestionView({
 					onChange={setSqlQuery}
 				/>
 			</div>
-			{/* Action buttons - improved mobile layout */}
+
+			{/* Action buttons */}
 			<div className="flex flex-wrap gap-2 mb-6">
 				<button
 					onClick={accessToken ? handleRunQuery : handleRequireLogin}
@@ -413,6 +443,7 @@ export function QuestionView({
 						? "Show Solution"
 						: "Show Solution 🔒"}
 				</button>
+
 				<div className="flex w-full sm:w-auto mt-2 sm:mt-0 sm:ml-auto">
 					<button
 						onClick={() => handleNavigate("prev")}
@@ -431,12 +462,13 @@ export function QuestionView({
 				</div>
 			</div>
 
+			{/* Login modal */}
 			{showLoginModal && (
 				<div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
 					<div className="bg-white rounded-lg p-6 max-w-sm w-full text-center relative">
 						<button
 							onClick={() => setShowLoginModal(false)}
-							className="px-4 py-2  text-gray-600 top-1 right-1 rounded-md  absolute "
+							className="px-4 py-2 text-gray-600 top-1 right-1 rounded-md absolute"
 						>
 							<X />
 						</button>
@@ -459,7 +491,40 @@ export function QuestionView({
 				</div>
 			)}
 
-			{/* Solution section (if showing and has free access) */}
+			{/* Query status */}
+			{runningQuery && (
+				<div className="text-gray-500 animate-pulse">
+					Running query...
+				</div>
+			)}
+
+			{checkingAnswer && (
+				<div className="text-gray-500 animate-pulse">
+					Checking query...
+				</div>
+			)}
+
+			{/* ✅ Result section */}
+			{queryResult && (
+				<div className="mb-4">
+					{isCheckedAnswer && isCorrect !== null && (
+						<div
+							className={`p-3 mb-4 rounded-md ${
+								isCorrect
+									? "bg-green-100 text-green-700"
+									: "bg-red-100 text-red-700"
+							}`}
+						>
+							{isCorrect
+								? "Correct! Your query matches the expected output."
+								: "Incorrect. Try again!"}
+						</div>
+					)}
+					<ResultsView result={queryResult} />
+				</div>
+			)}
+
+			{/* Solution section */}
 			{showingSolution && hasFreeAccess && (
 				<div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-md">
 					<div className="flex justify-between items-center mb-2">
@@ -479,7 +544,7 @@ export function QuestionView({
 							? solutionMySQL || "Loading solution..."
 							: solutionPostgreSQL || "Loading solution..."}
 					</div>
-					{/* Explanation section */}
+
 					<div className="mt-4">
 						<h4 className="text-md font-medium text-green-800 mb-2">
 							Explanation:
@@ -491,24 +556,6 @@ export function QuestionView({
 					<p className="mt-4 text-sm text-green-700">
 						Try running this query to see the results!
 					</p>
-				</div>
-			)}
-			{/* Results view */}
-			{runningQuery && (
-				<div className="text-gray-500 animate-pulse">
-					Running query...
-				</div>
-			)}
-
-			{checkingAnswer && (
-				<div className="text-gray-500 animate-pulse">
-					Checking query...
-				</div>
-			)}
-
-			{queryResult && (
-				<div className="mb-4">
-					<ResultsView result={queryResult} />
 				</div>
 			)}
 		</div>
