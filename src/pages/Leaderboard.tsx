@@ -1,10 +1,16 @@
+import { useAuth } from "@/hooks/use-auth";
+import { useGame } from "@/hooks/use-game";
 import { useLeaderboard } from "@/hooks/use-leaderboard";
 import { SearchIcon, TrophyIcon } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+
 export function Leaderboard({ setActiveView }) {
 	const [searchQuery, setSearchQuery] = useState("");
 	const { leaderboard, loading, error } = useLeaderboard();
+
+	const { completedPercentage, completedQuestions, totalPoints, accuracy } =
+		useGame();
 
 	const filteredData = leaderboard.filter((user) =>
 		user.username.toLowerCase().includes(searchQuery.toLowerCase())
@@ -70,7 +76,7 @@ export function Leaderboard({ setActiveView }) {
 						<div className="flex justify-between items-center">
 							<div className="flex items-center gap-2">
 								<div className="text-center text-xl font-bold text-gray-700">
-									24
+									{totalPoints}
 								</div>
 								<span className="font-medium text-gray-900">
 									You
@@ -78,22 +84,24 @@ export function Leaderboard({ setActiveView }) {
 							</div>
 							<div className="flex items-center gap-2">
 								<span className="font-medium text-gray-900">
-									890 pts
+									{totalPoints} pts
 								</span>
 								<div className="font-medium text-green-600">
-									89%
+									{accuracy}%
 								</div>
 							</div>
 						</div>
 						<div className="flex flex-col w-full mt-1">
 							<div className="text-sm text-gray-700 mb-1">
-								Completed: 42 / 90
+								Completed: {completedQuestions} / 90
 							</div>
 							<div className="w-full bg-gray-100 rounded-full h-2.5">
 								<div
 									className="bg-[#008080] h-2.5 rounded-full"
 									style={{
-										width: `${(42 / 90) * 100}%`,
+										width: `${
+											(completedPercentage / 90) * 100
+										}%`,
 									}}
 								></div>
 							</div>
@@ -103,7 +111,7 @@ export function Leaderboard({ setActiveView }) {
 					<div className="hidden sm:grid sm:grid-cols-6">
 						<div className="px-2 py-2 w-12 flex items-center justify-center">
 							<div className="text-center text-xl font-bold text-gray-700">
-								24
+								{totalPoints}
 							</div>
 						</div>
 						<div className="px-2 py-2 flex items-center">
@@ -114,13 +122,15 @@ export function Leaderboard({ setActiveView }) {
 						<div className="px-3 py-2 flex items-center col-span-2">
 							<div className="flex flex-col w-full">
 								<div className="text-sm text-gray-700 mb-1">
-									42 / 90
+									{completedQuestions} / 90
 								</div>
 								<div className="w-full bg-gray-100 rounded-full h-2.5">
 									<div
 										className="bg-[#008080] h-2.5 rounded-full"
 										style={{
-											width: `${(42 / 90) * 100}%`,
+											width: `${
+												(completedPercentage / 90) * 100
+											}%`,
 										}}
 									></div>
 								</div>
@@ -128,12 +138,12 @@ export function Leaderboard({ setActiveView }) {
 						</div>
 						<div className="px-3 py-2 text-right">
 							<span className="font-medium text-gray-900">
-								890
+								{totalPoints} pts
 							</span>
 						</div>
 						<div className="px-3 py-2 text-right">
 							<div className="font-medium text-green-600">
-								89%
+								{accuracy}%
 							</div>
 						</div>
 					</div>
