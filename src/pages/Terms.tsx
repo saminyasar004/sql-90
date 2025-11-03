@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 
 export default function TermsPage() {
 	return (
-		<div className="min-h-screen bg-background relative pb-5">
+		<div className="min-h-screen h-auto bg-background relative pb-5">
 			{/* Header */}
 			<header className="border-b bg-primary text-primary-foreground backdrop-blur-sm">
 				<div className="container mx-auto px-4 py-4">
@@ -26,7 +26,7 @@ export default function TermsPage() {
 			</header>
 
 			{/* Main Content */}
-			<main className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+			<main className="container mx-auto px-4 py-8 h-auto min-h-[90vh]">
 				<div className="prose prose-sm max-w-none">
 					<h1 className="text-4xl font-bold text-foreground mb-2">
 						Terms and Conditions
@@ -177,7 +177,7 @@ export default function TermsPage() {
 			</main>
 
 			{/* Footer */}
-			<footer className="border-t bg-primary absolute bottom-0 w-full">
+			<footer className="border-t bg-primary w-full">
 				<div className="container mx-auto px-4 py-6">
 					<div className="text-center text-sm text-white">
 						<p>

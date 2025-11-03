@@ -202,7 +202,7 @@ export default function Auth() {
 	if (isAuthenticated) return <Navigate to="/" replace />;
 
 	return (
-		<div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
+		<div className="min-h-screen h-auto bg-gradient-to-br from-background via-background to-primary/5">
 			{/* Header */}
 			<header className="border-b bg-primary text-primary-foreground backdrop-blur-sm">
 				<div className="container mx-auto px-4 py-4">
@@ -222,8 +222,8 @@ export default function Auth() {
 				</div>
 			</header>
 
-			<div className="container mx-auto px-4 py-8">
-				<div className="grid lg:grid-cols-2 gap-8 items-center mx-auto">
+			<div className="container mx-auto px-4 py-8 h-auto min-h-[90vh]">
+				<div className="grid lg:grid-cols-2 gap-8 items-start mx-auto">
 					{/* Left side - Features */}
 					<div className="space-y-8">
 						<div className="space-y-4">
@@ -308,7 +308,7 @@ export default function Auth() {
 
 					{/* Right side - Auth Form */}
 					<div className="w-full flex justify-end">
-						<Card className="shadow-xl w-[85%] border-0 bg-card/50 backdrop-blur-sm">
+						<Card className="shadow-xl w-full lg:w-[85%] border-0 bg-card/50 backdrop-blur-sm">
 							<CardHeader className="text-center pb-4">
 								<CardTitle className="text-2xl">
 									Get Started
@@ -608,7 +608,7 @@ export default function Auth() {
 			</div>
 
 			{/* Footer */}
-			<footer className="border-t bg-primary absolute bottom-0 w-full">
+			<footer className="border-t bg-primary w-full">
 				<div className="container mx-auto px-4 py-6">
 					<div className="text-center text-sm text-white">
 						<p>

@@ -33,7 +33,7 @@ export function Leaderboard({ setActiveView }) {
 		}
 	};
 	return (
-		<div className="container w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-20">
+		<div className="container w-full mx-auto px-4 py-6 pb-20">
 			<div className="flex flex-col sm:flex-row sm:items-start mb-6 gap-4">
 				<div className="mr-auto">
 					<div className="flex items-center gap-3">
