@@ -9,8 +9,13 @@ export function Leaderboard({ setActiveView }) {
 	const [searchQuery, setSearchQuery] = useState("");
 	const { leaderboard, loading, error } = useLeaderboard();
 
-	const { completedPercentage, completedQuestions, totalPoints, accuracy } =
-		useGame();
+	const {
+		completedPercentage,
+		completedQuestions,
+		totalPoints,
+		accuracy,
+		your_position,
+	} = useGame();
 
 	const filteredData = leaderboard.filter((user) =>
 		user.username.toLowerCase().includes(searchQuery.toLowerCase())
@@ -18,20 +23,23 @@ export function Leaderboard({ setActiveView }) {
 	const renderRank = (rank: number) => {
 		if (rank === 1) {
 			return (
-				<div className="flex items-center justify-center">
+				<div className="flex items-center justify-center gap-2">
 					<TrophyIcon size={20} className="text-yellow-500" />
+					<span className="text-base text-foreground">#{rank}</span>
 				</div>
 			);
 		} else if (rank === 2) {
 			return (
-				<div className="flex items-center justify-center">
+				<div className="flex items-center justify-center gap-2">
 					<TrophyIcon size={20} className="text-gray-400" />
+					<span className="text-base text-foreground">#{rank}</span>
 				</div>
 			);
 		} else if (rank === 3) {
 			return (
-				<div className="flex items-center justify-center">
+				<div className="flex items-center justify-center gap-2">
 					<TrophyIcon size={20} className="text-amber-700" />
+					<span className="text-base text-foreground">#{rank}</span>
 				</div>
 			);
 		} else {
@@ -76,7 +84,7 @@ export function Leaderboard({ setActiveView }) {
 						<div className="flex justify-between items-center">
 							<div className="flex items-center gap-2">
 								<div className="text-center text-xl font-bold text-gray-700">
-									{totalPoints}
+									{renderRank(your_position)}
 								</div>
 								<span className="font-medium text-gray-900">
 									You
@@ -111,7 +119,7 @@ export function Leaderboard({ setActiveView }) {
 					<div className="hidden sm:grid sm:grid-cols-6">
 						<div className="px-2 py-2 w-12 flex items-center justify-center">
 							<div className="text-center text-xl font-bold text-gray-700">
-								{totalPoints}
+								{renderRank(your_position)}
 							</div>
 						</div>
 						<div className="px-2 py-2 flex items-center">
@@ -172,7 +180,7 @@ export function Leaderboard({ setActiveView }) {
 								<div className="flex justify-between items-center">
 									<div className="flex items-center gap-2">
 										<div className="w-8 h-8 flex items-center justify-center">
-											{renderRank(++index)}
+											#{renderRank(index)}
 										</div>
 										<span className="font-medium text-gray-900">
 											{user.username}

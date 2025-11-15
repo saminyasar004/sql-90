@@ -1,10 +1,4 @@
-import React, {
-	useEffect,
-	useState,
-	createContext,
-	useContext,
-	ReactNode,
-} from "react";
+import { useState, createContext, useContext, ReactNode } from "react";
 import { baseURL } from "@/config/dotenv";
 import { useAuth } from "./use-auth";
 
@@ -18,6 +12,7 @@ interface GameContextType {
 	totalPoints: number;
 	streak: number;
 	accuracy: number;
+	your_position: number;
 	completedQuestions: number;
 	completedPercentage: number;
 	addPoints: (points: number) => void;
@@ -45,6 +40,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
 	const [completedQuestions, setCompletedQuestions] = useState(0);
 	const [completedPercentage, setCompletedPercentage] = useState(0);
 	const [accuracy, setAccuracy] = useState(0);
+	const [your_position, setYourPosition] = useState(0);
 	const [toasts, setToasts] = useState<ToastType[]>([]);
 
 	// ✅ consistent header handling
@@ -71,6 +67,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
 			setCompletedQuestions(data?.completed_questions || 0);
 			setCompletedPercentage(data?.completion_percentage || 0);
 			setAccuracy(data?.accuracy || 0);
+			setYourPosition(data?.your_position || 0);
 		} catch (err: any) {
 			console.error("Error fetching user progress:", err.message);
 		}
@@ -105,6 +102,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
 				completedQuestions,
 				completedPercentage,
 				accuracy,
+				your_position,
 				addPoints,
 				fetchUserProgress,
 				toasts,
