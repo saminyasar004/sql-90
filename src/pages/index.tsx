@@ -42,10 +42,10 @@ export default function Index() {
 	// if (!isAuthenticated) return <Navigate to="/auth" replace />;
 
 	return (
-		<div className="flex flex-col h-screen bg-gray-50">
+		<div className="min-h-screen bg-white">
 			{/* Header */}
-			<header className="bg-[#008080] text-white shadow-md">
-				<div className="container mx-auto px-4 py-4 flex flex-wrap items-center justify-between">
+			<header className="bg-[#007C7C] text-white py-3 shadow-sm">
+				<div className="container mx-auto flex items-center justify-between">
 					<Logo />
 
 					{/* Mobile menu button */}
@@ -185,7 +185,7 @@ export default function Index() {
 			{/* Main content */}
 			<div className="flex flex-1 overflow-x-hidden">
 				{activeView === "questions" ? (
-					<div className="container w-full mx-auto px-4 flex flex-1 flex-col md:flex-row h-full">
+					<div className="container w-full mx-auto flex flex-1 flex-col md:flex-row h-full">
 						<div className="flex-1 md:order-2 overflow-auto h-full">
 							<QuestionView
 								questionId={selectedQuestionId}

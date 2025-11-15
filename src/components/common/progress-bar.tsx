@@ -17,7 +17,7 @@ export function ProgressBar({ onSelectQuestion }) {
 
 	return (
 		<div className="w-full bg-white border-b border-gray-200">
-			<div className="container mx-auto px-4 py-4">
+			<div className="container mx-auto py-4">
 				<div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3 gap-2 sm:gap-0">
 					<div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 w-full sm:w-auto">
 						{/* Streak counter */}
