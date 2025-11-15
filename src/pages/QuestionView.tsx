@@ -540,9 +540,11 @@ export function QuestionView({
 						</button>
 					</div>
 					<div className="bg-white p-3 rounded border border-green-200 font-mono text-sm overflow-x-auto mb-3">
-						{dbType === "mysql"
-							? solutionMySQL || "Loading solution..."
-							: solutionPostgreSQL || "Loading solution..."}
+						<pre className="whitespace-pre-wrap font-mono text-sm text-gray-800">
+							{dbType === "mysql"
+								? solutionMySQL || "Loading solution..."
+								: solutionPostgreSQL || "Loading solution..."}
+						</pre>
 					</div>
 
 					<div className="mt-4">
