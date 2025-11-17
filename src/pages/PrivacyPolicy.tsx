@@ -199,7 +199,7 @@ export default function PrivacyPage() {
 					<div className="text-center text-sm text-white">
 						<p>
 							© {new Date().getFullYear()} SQL90. All rights
-							reserved. Built for developers who love SQL.
+							reserved. Built for data professionals who love SQL.
 						</p>
 					</div>
 				</div>
