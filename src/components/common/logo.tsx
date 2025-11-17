@@ -8,7 +8,7 @@ export function Logo() {
 					SQL<span className="text-[#62E647]">90</span>
 				</div>
 				<div className="text-xs text-white/70 -mt-1">
-					The smarter way to practice SQL
+					Master SQL with 90 Practice Questions
 				</div>
 			</div>
 		</Link>
