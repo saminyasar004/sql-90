@@ -15,12 +15,20 @@ export default function TermsPage() {
 								<Logo />
 							</div>
 						</div>
-						<Badge
-							variant="secondary"
-							className="hidden sm:flex text-primary"
-						>
-							Join 10,000+ data professionals
-						</Badge>
+						<div className="flex flex-row gap-5 items-center">
+							<a
+								target="_blank"
+								href="https://www.amazon.com/dp/B0FBM6WGZX/"
+							>
+								<button className="px-4 py-2 text-white rounded-md font-medium hover:bg-[#006666] transition-colors">
+									Get the Book
+								</button>
+							</a>
+
+							<Badge className="bg-white text-[#007C7C] hover:border-white hover:text-white font-medium rounded-md">
+								Join 10,000+ data professionals
+							</Badge>
+						</div>
 					</div>
 				</div>
 			</header>

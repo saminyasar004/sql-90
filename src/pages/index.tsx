@@ -82,6 +82,15 @@ export default function Index() {
 							Practice
 						</button>
 
+						<a
+							target="_blank"
+							href="https://www.amazon.com/dp/B0FBM6WGZX/"
+						>
+							<button className="px-4 py-2 text-white rounded-md font-medium hover:bg-[#006666] transition-colors">
+								Get the Book
+							</button>
+						</a>
+
 						{isAuthenticated && (
 							<button
 								onClick={() => setActiveView("leaderboard")}
@@ -136,6 +145,15 @@ export default function Index() {
 							>
 								Practice
 							</button>
+
+							<a
+								target="_blank"
+								href="https://www.amazon.com/dp/B0FBM6WGZX/"
+							>
+								<button className="px-4 py-2 text-white rounded-md font-medium hover:bg-[#006666] transition-colors">
+									Get the Book
+								</button>
+							</a>
 
 							{isAuthenticated && (
 								<button
