@@ -15,7 +15,7 @@ export function CheckoutModal({ onClose }: { onClose: () => void }) {
 					},
 					body: JSON.stringify({
 						// You can pass extra info here if needed
-						price: 8.99,
+						price: 9.49,
 						currency: "usd",
 					}),
 				}
@@ -85,7 +85,7 @@ export function CheckoutModal({ onClose }: { onClose: () => void }) {
 						<h3 className="text-xl font-medium text-gray-700">
 							One-time payment
 						</h3>
-						<span className="text-3xl font-bold">$8.99</span>
+						<span className="text-3xl font-bold">$9.49</span>
 					</div>
 					{/* Payment form */}
 					<form
@@ -97,7 +97,7 @@ export function CheckoutModal({ onClose }: { onClose: () => void }) {
 							onClick={handlePayment}
 							className="w-full py-3 px-4 bg-[#008080] hover:bg-[#006666] text-white font-medium rounded-md transition-colors"
 						>
-							Pay $8.99 and Unlock All Solutions
+							Pay $9.49 and Unlock All Solutions
 						</button>
 						<p className="text-center text-gray-500 text-sm">
 							Your payment is secure and processed via Stripe.
