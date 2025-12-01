@@ -320,6 +320,7 @@ export function QuestionView({
 		setSolutionMySQL("");
 		setSolutionPostgreSQL("");
 		setShowingSolution(false);
+		setSqlQuery("");
 	}, [questionId]);
 
 	if (isLoading || !question) {
