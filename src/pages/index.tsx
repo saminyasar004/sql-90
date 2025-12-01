@@ -73,7 +73,7 @@ export default function Index() {
 					<div className="hidden md:flex items-center space-x-4">
 						<button
 							onClick={() => setActiveView("questions")}
-							className={`px-4 py-2 rounded-md transition-colors ${
+							className={`px-4 py-2 rounded-md font-medium transition-colors ${
 								activeView === "questions"
 									? "bg-white text-[#008080] font-medium"
 									: "text-white hover:bg-[#006666]"
@@ -94,7 +94,7 @@ export default function Index() {
 						{isAuthenticated && (
 							<button
 								onClick={() => setActiveView("leaderboard")}
-								className={`px-4 py-2 rounded-md transition-colors ${
+								className={`px-4 py-2 rounded-md font-medium transition-colors ${
 									activeView === "leaderboard"
 										? "bg-white text-[#008080] font-medium"
 										: "text-white hover:bg-[#006666]"
