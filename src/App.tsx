@@ -10,10 +10,31 @@ import { GameProvider } from "./hooks/use-game";
 import { QuestionProvider } from "./hooks/use-question";
 import PrivacyPage from "./pages/PrivacyPolicy";
 import TermsPage from "./pages/Terms";
+import { DesktopViewSuggestionModal } from "@/components/common/desktopViewSuggestion";
+import { useEffect, useState } from "react";
 
 const queryClient = new QueryClient();
 
 const App = () => {
+	const [showDesktopViewSuggestionModal, setShowDesktopViewSuggestionModal] =
+		useState(false);
+
+	// 🔥 Only show the DesktopViewSuggestionModal on small/mobile screens
+	useEffect(() => {
+		const checkScreenSize = () => {
+			if (window.innerWidth < 768) {
+				setShowDesktopViewSuggestionModal(true);
+			} else {
+				setShowDesktopViewSuggestionModal(false);
+			}
+		};
+
+		checkScreenSize(); // run on mount
+		window.addEventListener("resize", checkScreenSize);
+
+		return () => window.removeEventListener("resize", checkScreenSize);
+	}, []);
+
 	return (
 		<QueryClientProvider client={queryClient}>
 			<TooltipProvider>
@@ -46,6 +67,10 @@ const App = () => {
 						<Route path="*" element={<NotFound />} />
 					</Routes>
 				</BrowserRouter>
+				{/* 👇 Show only on mobile screens */}
+				{showDesktopViewSuggestionModal && (
+					<DesktopViewSuggestionModal />
+				)}
 			</TooltipProvider>
 		</QueryClientProvider>
 	);

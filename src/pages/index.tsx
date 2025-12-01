@@ -10,34 +10,15 @@ import { ToastContainer } from "@/components/common/toast";
 import { Link, Navigate } from "react-router-dom";
 import { useAuth } from "@/hooks/use-auth";
 import { LeaderboardProvider } from "@/hooks/use-leaderboard";
-import { DesktopViewSuggestionModal } from "@/components/common/desktopViewSuggestion";
 
 export default function Index() {
 	const [activeView, setActiveView] = useState("questions");
 	const [selectedQuestionId, setSelectedQuestionId] = useState(1);
 	const [showCheckoutModal, setShowCheckoutModal] = useState(false);
-	const [showDesktopViewSuggestionModal, setShowDesktopViewSuggestionModal] =
-		useState(false);
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
 	const { toasts, removeToast } = useGame();
 	const { isAuthenticated, logout } = useAuth();
-
-	// 🔥 Only show the DesktopViewSuggestionModal on small/mobile screens
-	useEffect(() => {
-		const checkScreenSize = () => {
-			if (window.innerWidth < 768) {
-				setShowDesktopViewSuggestionModal(true);
-			} else {
-				setShowDesktopViewSuggestionModal(false);
-			}
-		};
-
-		checkScreenSize(); // run on mount
-		window.addEventListener("resize", checkScreenSize);
-
-		return () => window.removeEventListener("resize", checkScreenSize);
-	}, []);
 
 	// if (!isAuthenticated) return <Navigate to="/auth" replace />;
 
@@ -232,13 +213,6 @@ export default function Index() {
 			{/* Modals */}
 			{showCheckoutModal && (
 				<CheckoutModal onClose={() => setShowCheckoutModal(false)} />
-			)}
-
-			{/* 👇 Show only on mobile screens */}
-			{showDesktopViewSuggestionModal && (
-				<DesktopViewSuggestionModal
-					onClose={() => setShowDesktopViewSuggestionModal(false)}
-				/>
 			)}
 
 			{/* Toasts */}

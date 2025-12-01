@@ -1,10 +1,6 @@
-import { XIcon, MonitorSmartphone } from "lucide-react";
+import { MonitorSmartphone } from "lucide-react";
 
-export function DesktopViewSuggestionModal({
-	onClose,
-}: {
-	onClose: () => void;
-}) {
+export function DesktopViewSuggestionModal() {
 	return (
 		<div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
 			<div className="bg-white rounded-xl shadow-2xl max-w-lg w-full overflow-hidden animate-fadeIn">

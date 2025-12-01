@@ -207,7 +207,7 @@ export default function Auth() {
 				<div className="container mx-auto flex items-center justify-between">
 					<Logo />
 
-					<div className="flex flex-row gap-5 items-center">
+					<div className="hidden md:flex flex-row gap-5 items-center">
 						<a
 							target="_blank"
 							href="https://www.amazon.com/dp/B0FBM6WGZX/"
@@ -224,12 +224,12 @@ export default function Auth() {
 				</div>
 			</header>
 
-			<div className="container mx-auto py-10 min-h-[90vh]">
-				<div className="grid lg:grid-cols-2 gap-12 items-start pt-10">
+			<div className="container mx-auto py-6 lg:py-10 min-h-[90vh]">
+				<div className="flex flex-col-reverse lg:grid lg:grid-cols-2 gap-8 lg:gap-12 items-start pt-4 lg:pt-10">
 					{/* Left Section */}
-					<div className="space-y-14">
+					<div className="space-y-8 lg:space-y-14">
 						<div className="space-y-4">
-							<h2 className="text-4xl font-bold text-gray-900 leading-snug">
+							<h2 className="text-3xl lg:text-4xl font-bold text-gray-900 leading-snug">
 								Master SQL with interactive challenges
 							</h2>
 							<p className="text-lg text-gray-600">
