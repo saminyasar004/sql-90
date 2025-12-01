@@ -57,8 +57,8 @@ export function CheckoutModal({ onClose }: { onClose: () => void }) {
 				{/* Modal content */}
 				<div className="p-6">
 					{/* What you'll get section */}
-					<div className="bg-blue-50 p-6 rounded-md mb-6">
-						<h3 className="text-xl font-bold text-blue-700 mb-4">
+					<div className="bg-[#007C7C]/10 p-6 rounded-md mb-6">
+						<h3 className="text-xl font-bold text-[#007C7C] mb-4">
 							What you'll get:
 						</h3>
 						<ul className="space-y-3">
@@ -71,9 +71,9 @@ export function CheckoutModal({ onClose }: { onClose: () => void }) {
 								<li key={item} className="flex items-start">
 									<CheckIcon
 										size={20}
-										className="text-blue-600 mr-2 mt-0.5 flex-shrink-0"
+										className="text-[#007C7C] mr-2 mt-0.5 flex-shrink-0"
 									/>
-									<span className="text-blue-700">
+									<span className="text-[#007C7C]">
 										{item}
 									</span>
 								</li>
@@ -95,7 +95,7 @@ export function CheckoutModal({ onClose }: { onClose: () => void }) {
 						<button
 							type="button"
 							onClick={handlePayment}
-							className="w-full py-3 px-4 bg-[#008080] hover:bg-[#006666] text-white font-medium rounded-md transition-colors"
+							className="w-full py-3 px-4 bg-[#007C7C] hover:bg-[#006666] text-white font-medium rounded-md transition-colors"
 						>
 							Pay $9.49 and Unlock All Solutions
 						</button>
