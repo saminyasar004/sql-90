@@ -14,6 +14,7 @@ type AuthContextType = {
 	loading: boolean;
 	isAuthenticated: boolean;
 	accessToken: string;
+	hasUnlockedSolutions: boolean;
 	login: (
 		username: string,
 		password: string,
@@ -56,6 +57,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 	const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
 		!!localStorage.getItem("accessToken")
 	);
+	const [hasUnlockedSolutions, setHasUnlockedSolutions] = useState<boolean>(
+		!!localStorage.getItem("hasUnlockedSolutions")
+	);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	const navigate = useNavigate();
@@ -66,6 +70,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 			// If accessToken exists in localStorage, assume user is authenticated
 			if (localStorage.getItem("accessToken")) {
 				setIsAuthenticated(true);
+			}
+			if (localStorage.getItem("hasUnlockedSolutions")) {
+				setHasUnlockedSolutions(true);
 			}
 			setLoading(false);
 		};
@@ -92,6 +99,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 				);
 			}
 			setIsAuthenticated(true);
+			setHasUnlockedSolutions(data.profile_data.has_unlocked_solutions);
 			setAccessToken(data.access);
 			// Store access token in localStorage if isRemember is true
 			if (isRemember) {
@@ -105,6 +113,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 		} catch (err) {
 			setError((err as Error).message);
 			setIsAuthenticated(false);
+			setHasUnlockedSolutions(false);
 			return false;
 		} finally {
 			setLoading(false);
@@ -172,6 +181,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 			const backendData = await signupResponse.json();
 
 			setIsAuthenticated(true);
+			setHasUnlockedSolutions(
+				backendData?.profile_data?.has_unlocked_solutions
+			);
 			setAccessToken(backendData?.access_token);
 
 			localStorage.setItem("accessToken", backendData?.access_token);
@@ -196,6 +208,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 	const logout = () => {
 		setAccessToken("");
 		setIsAuthenticated(false);
+		setHasUnlockedSolutions(false);
 		localStorage.removeItem("accessToken");
 		localStorage.removeItem("refreshToken");
 		navigate("/auth");
@@ -212,6 +225,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 				loading,
 				accessToken,
 				isAuthenticated,
+				hasUnlockedSolutions,
 			}}
 		>
 			{children}

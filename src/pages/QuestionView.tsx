@@ -31,7 +31,7 @@ export function QuestionView({
 	onSelectQuestion: React.Dispatch<React.SetStateAction<number>>;
 }) {
 	const { questions, fetchQuestions, isLoading } = useQuestion();
-	const { accessToken } = useAuth();
+	const { accessToken, hasUnlockedSolutions } = useAuth();
 	const { fetchUserProgress } = useGame();
 
 	const [question, setQuestion] = useState<IndividualQuestionProps | null>(
@@ -91,7 +91,8 @@ export function QuestionView({
 		fetchQuestionById(questionId);
 	}, [questionId]);
 
-	const hasFreeAccess = question?.is_premium === false;
+	const hasFreeAccess =
+		question?.is_premium === false || hasUnlockedSolutions;
 
 	const handleNavigate = (direction: "prev" | "next") => {
 		const currentIndex = questions.findIndex(
