@@ -18,7 +18,7 @@ export default function Index() {
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
 	const { toasts, removeToast } = useGame();
-	const { isAuthenticated, logout } = useAuth();
+	const { isAuthenticated, hasUnlockedSolutions, logout } = useAuth();
 
 	// if (!isAuthenticated) return <Navigate to="/auth" replace />;
 
@@ -85,7 +85,7 @@ export default function Index() {
 							</button>
 						)}
 
-						{isAuthenticated && (
+						{isAuthenticated && !hasUnlockedSolutions && (
 							<button
 								onClick={() => setShowCheckoutModal(true)}
 								className="ml-4 px-4 py-2 bg-[#40D693] text-white rounded-md font-medium hover:bg-[#35b47c] transition-colors"
@@ -160,7 +160,7 @@ export default function Index() {
 								</Link>
 							)}
 
-							{isAuthenticated && (
+							{isAuthenticated && !hasUnlockedSolutions && (
 								<button
 									onClick={() => {
 										setShowCheckoutModal(true);
