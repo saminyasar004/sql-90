@@ -86,9 +86,17 @@ export function Leaderboard({ setActiveView }) {
 								<div className="text-center text-xl font-bold text-gray-700">
 									{renderRank(your_position)}
 								</div>
-								<span className="font-medium text-gray-900">
-									You
-								</span>
+								<div className="flex flex-col">
+									<span className="font-medium text-gray-900">
+										You (
+										{localStorage.getItem("username") ||
+											"User"}
+										)
+									</span>
+									<span className="text-xs text-gray-500">
+										{localStorage.getItem("email")}
+									</span>
+								</div>
 							</div>
 							<div className="flex items-center gap-2">
 								<span className="font-medium text-gray-900">
@@ -123,9 +131,16 @@ export function Leaderboard({ setActiveView }) {
 							</div>
 						</div>
 						<div className="px-2 py-2 flex items-center">
-							<span className="font-medium text-gray-900">
-								You
-							</span>
+							<div className="flex flex-col">
+								<span className="font-medium text-gray-900">
+									You (
+									{localStorage.getItem("username") || "User"}
+									)
+								</span>
+								<span className="text-xs text-gray-500">
+									{localStorage.getItem("email")}
+								</span>
+							</div>
 						</div>
 						<div className="px-3 py-2 flex items-center col-span-2">
 							<div className="flex flex-col w-full">

@@ -108,6 +108,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 				if (data.refresh) {
 					localStorage.setItem("refreshToken", data.refresh);
 				}
+				// Save username and email
+				if (data.profile_data) {
+					localStorage.setItem(
+						"username",
+						data.profile_data.username || ""
+					);
+					localStorage.setItem(
+						"email",
+						data.profile_data.email || ""
+					);
+				}
 			}
 			return true;
 		} catch (err) {
@@ -194,6 +205,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 					backendData?.refresh_token
 				);
 			}
+			// Save username and email
+			if (backendData?.profile_data) {
+				localStorage.setItem(
+					"username",
+					backendData.profile_data.username || ""
+				);
+				localStorage.setItem(
+					"email",
+					backendData.profile_data.email || ""
+				);
+			}
 
 			// On success, treat as login: toast and navigate
 			toast.success("Signed in with Google!");
@@ -211,6 +233,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 		setHasUnlockedSolutions(false);
 		localStorage.removeItem("accessToken");
 		localStorage.removeItem("refreshToken");
+		localStorage.removeItem("username");
+		localStorage.removeItem("email");
 		navigate("/auth");
 	};
 
