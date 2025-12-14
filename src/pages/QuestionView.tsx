@@ -54,6 +54,7 @@ export function QuestionView({
 	const [solutionMySQL, setSolutionMySQL] = useState("");
 	const [isCheckedAnswer, setIsCheckedAnswer] = useState(false);
 	const [solutionPostgreSQL, setSolutionPostgreSQL] = useState("");
+	const [solutionExplanation, setSolutionExplanation] = useState("");
 	const [dbType, setDbType] = useState("mysql");
 	const { addToast } = useGame();
 	const [showLoginModal, setShowLoginModal] = useState(false);
@@ -306,6 +307,7 @@ export function QuestionView({
 				const data = await response.json();
 				setSolutionMySQL(data.solution_mysql);
 				setSolutionPostgreSQL(data.solution_postgresql);
+				setSolutionExplanation(data.explanation || "");
 			}
 			setShowingSolution(true);
 		} else {
@@ -317,25 +319,10 @@ export function QuestionView({
 		setShowingSolution(false);
 	};
 
-	const getExplanation = (id: number) => {
-		if (id === 1) {
-			return "This query shows 5 rows from orders for a quick peek at the data. Without an ORDER BY, the rows are arbitrary, so results may differ each run. SELECT * is fine for exploration, but in real queries it's better to pick only the columns you need.";
-		} else if (id === 2) {
-			return "This query filters the orders table to only show order_id values where the ship_mode is exactly 'Second Class'. The WHERE clause acts as a filter, and we're only selecting the order_id column rather than all columns.";
-		} else if (id === 3) {
-			return "This query finds orders with discounts greater than 20% (0.2). The discount column stores values as decimals between 0 and 1, so 0.2 represents 20%.";
-		} else if (id === 4) {
-			return "This query filters orders to only include those with sales values exceeding $500. The WHERE clause creates a simple numeric comparison.";
-		} else if (id === 5) {
-			return "This query selects all product names from the products table where the category is 'Office Supplies'. It demonstrates a basic text comparison in the WHERE clause.";
-		} else {
-			return "This solution demonstrates the key SQL concepts needed to solve the problem efficiently. Note the structure of the query, the choice of clauses, and how the data is filtered and presented to match the requirements.";
-		}
-	};
-
 	useEffect(() => {
 		setSolutionMySQL("");
 		setSolutionPostgreSQL("");
+		setSolutionExplanation("");
 		setShowingSolution(false);
 		// Reset results and status when switching questions
 		setQueryResult(null);
@@ -574,7 +561,7 @@ export function QuestionView({
 							Explanation:
 						</h4>
 						<p className="text-sm text-green-700 bg-white p-3 rounded border border-green-200">
-							{getExplanation(question.id)}
+							{solutionExplanation || "No explanation available."}
 						</p>
 					</div>
 					<p className="mt-4 text-sm text-green-700">
