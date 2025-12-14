@@ -22,10 +22,13 @@ export function ResultsView({ result }) {
 		return <div className="text-gray-500">No results to display</div>;
 	}
 
+	const rowCount = result.length;
+	const colCount = result.length > 0 ? Object.keys(result[0]).length : 0;
+
 	return (
 		<div className="border border-gray-300 rounded-md overflow-hidden">
 			<div className="bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 border-b border-gray-300">
-				Query Results
+				Query Results ({rowCount} rows, {colCount} columns)
 			</div>
 			<div className="overflow-x-auto">
 				<table className="min-w-full divide-y divide-gray-200">
