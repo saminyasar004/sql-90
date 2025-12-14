@@ -148,7 +148,7 @@ export function Navigation({
 										? "10 pts"
 										: question.id <= 70
 										? "20 pts"
-										: "40 pts"}
+										: "30 pts"}
 								</span>
 							</div>
 						</div>
