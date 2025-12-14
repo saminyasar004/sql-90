@@ -337,6 +337,10 @@ export function QuestionView({
 		setSolutionMySQL("");
 		setSolutionPostgreSQL("");
 		setShowingSolution(false);
+		// Reset results and status when switching questions
+		setQueryResult(null);
+		setIsCorrect(null);
+		setIsCheckedAnswer(false);
 		// SQL query is now loaded from localStorage, not reset here
 	}, [questionId]);
 
