@@ -58,6 +58,22 @@ export function QuestionView({
 	const { addToast } = useGame();
 	const [showLoginModal, setShowLoginModal] = useState(false);
 
+	// Load SQL query from localStorage when component mounts or questionId changes
+	useEffect(() => {
+		const savedQuery = localStorage.getItem(`sql-draft-${questionId}`);
+		if (savedQuery) {
+			setSqlQuery(savedQuery);
+		} else {
+			setSqlQuery("");
+		}
+	}, [questionId]);
+
+	// Save SQL query to localStorage whenever it changes
+	const handleSqlQueryChange = (newQuery: string) => {
+		setSqlQuery(newQuery);
+		localStorage.setItem(`sql-draft-${questionId}`, newQuery);
+	};
+
 	const handleRequireLogin = () => {
 		setShowLoginModal(true);
 	};
@@ -321,7 +337,7 @@ export function QuestionView({
 		setSolutionMySQL("");
 		setSolutionPostgreSQL("");
 		setShowingSolution(false);
-		setSqlQuery("");
+		// SQL query is now loaded from localStorage, not reset here
 	}, [questionId]);
 
 	if (isLoading || !question) {
@@ -404,7 +420,7 @@ export function QuestionView({
 					dbType={dbType}
 					setDbType={setDbType}
 					value={sqlQuery}
-					onChange={setSqlQuery}
+					onChange={handleSqlQueryChange}
 				/>
 			</div>
 
