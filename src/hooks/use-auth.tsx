@@ -58,7 +58,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 		!!localStorage.getItem("accessToken")
 	);
 	const [hasUnlockedSolutions, setHasUnlockedSolutions] = useState<boolean>(
-		!!localStorage.getItem("hasUnlockedSolutions")
+		localStorage.getItem("hasUnlockedSolutions") === "true"
 	);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
@@ -71,7 +71,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 			if (localStorage.getItem("accessToken")) {
 				setIsAuthenticated(true);
 			}
-			if (localStorage.getItem("hasUnlockedSolutions")) {
+			if (localStorage.getItem("hasUnlockedSolutions") === "true") {
 				setHasUnlockedSolutions(true);
 			}
 			setLoading(false);
@@ -108,6 +108,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 				if (data.refresh) {
 					localStorage.setItem("refreshToken", data.refresh);
 				}
+				localStorage.setItem(
+					"hasUnlockedSolutions",
+					String(data.profile_data.has_unlocked_solutions)
+				);
 				// Save username and email
 				if (data.profile_data) {
 					localStorage.setItem(
@@ -198,6 +202,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 			setAccessToken(backendData?.access_token);
 
 			localStorage.setItem("accessToken", backendData?.access_token);
+			localStorage.setItem(
+				"hasUnlockedSolutions",
+				String(backendData?.profile_data?.has_unlocked_solutions)
+			);
+
 			// Optionally store refresh token if provided
 			if (backendData?.refresh_token) {
 				localStorage.setItem(
@@ -235,6 +244,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 		localStorage.removeItem("refreshToken");
 		localStorage.removeItem("username");
 		localStorage.removeItem("email");
+		localStorage.removeItem("hasUnlockedSolutions");
 		navigate("/auth");
 	};
 
