@@ -1,8 +1,5 @@
 import React from "react";
-import Editor from "react-simple-code-editor";
-import { highlight, languages } from "prismjs";
-import "prismjs/components/prism-sql";
-import "prismjs/themes/prism.css";
+import Editor from "@monaco-editor/react";
 import {
 	Select,
 	SelectContent,
@@ -12,20 +9,31 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
+import { Loader2 } from "lucide-react";
 
-export function SQLEditor({ value, onChange, dbType, setDbType }) {
-	// Calculate line numbers for the current code
-	const getLineNumbers = (code) => {
-		const lines = code.split("\n");
-		return lines.map((_, i) => i + 1).join("\n");
-	};
+interface SQLEditorProps {
+	value: string;
+	onChange: (value: string) => void;
+	dbType: string;
+	setDbType: (value: string) => void;
+}
 
+export function SQLEditor({
+	value,
+	onChange,
+	dbType,
+	setDbType,
+}: SQLEditorProps) {
 	return (
-		<div className="border border-gray-300 rounded-md overflow-hidden">
-			<div className="bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 border-b border-gray-300 w-full flex items-center justify-between">
-				<div className="">SQL Editor</div>
+		<div className="border border-gray-300 rounded-md overflow-hidden bg-white shadow-sm">
+			<div className="bg-gray-50 px-4 py-2 text-sm font-medium text-gray-700 border-b border-gray-200 w-full flex items-center justify-between">
+				<div className="flex items-center gap-2">
+					<span className="font-semibold text-gray-800">
+						SQL Editor
+					</span>
+				</div>
 				<Select defaultValue={dbType} onValueChange={setDbType}>
-					<SelectTrigger className="w-[180px]">
+					<SelectTrigger className="w-[180px] h-8 bg-white border-gray-300 focus:ring-0 focus:ring-offset-0">
 						<SelectValue placeholder="Select SQL Dialect" />
 					</SelectTrigger>
 					<SelectContent>
@@ -39,88 +47,35 @@ export function SQLEditor({ value, onChange, dbType, setDbType }) {
 					</SelectContent>
 				</Select>
 			</div>
-			<div className="bg-white flex">
-				{/* Line numbers */}
-				<div className="text-right pr-3 pt-4 pb-4 pl-3 bg-gray-50 border-r border-gray-200 select-none">
-					{getLineNumbers(value || "\n")}
-				</div>
-				{/* Editor */}
-				<div className="flex-1">
-					<Editor
-						value={value}
-						onValueChange={onChange}
-						highlight={(code) =>
-							highlight(code, languages.sql, "sql")
-						}
-						padding={16}
-						style={{
-							fontFamily:
-								'"JetBrains Mono", "Fira Code", "Consolas", "Monaco", "Andale Mono", monospace',
-							fontSize: 14,
-							minHeight: "200px",
-						}}
-						className="w-full font-mono"
-						placeholder="Write your SQL query here..."
-					/>
-				</div>
+			<div className="h-[350px] w-full">
+				<Editor
+					height="100%"
+					language={dbType === "postgresql" ? "pgsql" : "mysql"}
+					value={value}
+					onChange={(value) => onChange(value || "")}
+					theme="light"
+					options={{
+						minimap: { enabled: false },
+						fontSize: 14,
+						lineNumbers: "on",
+						roundedSelection: true,
+						scrollBeyondLastLine: false,
+						readOnly: false,
+						automaticLayout: true,
+						fontFamily:
+							'"JetBrains Mono", "Fira Code", "Consolas", "Monaco", "Andale Mono", monospace',
+						cursorBlinking: "smooth",
+						cursorSmoothCaretAnimation: "on",
+						padding: { top: 16, bottom: 16 },
+					}}
+					loading={
+						<div className="flex items-center justify-center h-full text-gray-500 bg-gray-50/50">
+							<Loader2 className="w-5 h-5 animate-spin mr-2" />
+							<span>Loading Editor...</span>
+						</div>
+					}
+				/>
 			</div>
-			<style>
-				{`
-        .token.keyword {
-          color: #0076c6;
-          font-weight: bold;
-          font-family: "Giest Mono", monospace;
-        }
-        .token.function {
-          color: #dd4a68;
-          font-family: "Giest Mono", monospace;
-        }
-        .token.string {
-          color: #690;
-          font-family: "Giest Mono", monospace;
-        }
-        .token.number {
-          color: #905;
-          font-family: "Giest Mono", monospace;
-        }
-        .token.operator {
-          color: #9a6e3a;
-          font-family: "Giest Mono", monospace;
-        }
-        .token.comment {
-          color: slategray;
-          font-style: italic;
-          font-family: "Giest Mono", monospace;
-        }
-        /* Remove the focus outline on the editor */
-        textarea:focus,
-        textarea:active {
-          outline: none !important;
-        }
-        /* Line number styling */
-        .text-right {
-          color: #888;
-          font-family:
-            'JetBrains Mono', 'Fira Code', 'Consolas', 'Monaco', 'Andale Mono',
-            monospace;
-          font-size: 14px;
-          line-height: 1.5;
-          white-space: pre;
-        }
-        /* Make sure textarea and highlighting have the same line height */
-        .prism-editor__textarea,
-        .prism-editor__editor {
-          line-height: 1.5 !important;
-        }
-        /* Make editor height responsive */
-        @media (min-width: 640px) {
-          .prism-editor__textarea,
-          .prism-editor__editor {
-            min-height: 320px !important;
-          }
-        }
-      `}
-			</style>
 		</div>
 	);
 }
