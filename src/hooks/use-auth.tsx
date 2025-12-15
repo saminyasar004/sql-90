@@ -28,6 +28,7 @@ type AuthContextType = {
 	) => Promise<string | boolean>;
 	socialSignup: (response: GoogleCredentialResponse) => Promise<boolean>;
 	logout: () => void;
+	fetchProfile: (token: string) => Promise<void>;
 };
 
 export interface GoogleCredentialResponse {
@@ -67,9 +68,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 	// Check authentication status on mount
 	useEffect(() => {
 		const initAuth = async () => {
+			const token = localStorage.getItem("accessToken");
 			// If accessToken exists in localStorage, assume user is authenticated
-			if (localStorage.getItem("accessToken")) {
+			if (token) {
 				setIsAuthenticated(true);
+				setAccessToken(token);
+				await fetchProfile(token);
 			}
 			if (localStorage.getItem("hasUnlockedSolutions") === "true") {
 				setHasUnlockedSolutions(true);
@@ -78,6 +82,43 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 		};
 		initAuth();
 	}, []);
+
+	const fetchProfile = async (token: string) => {
+		try {
+			const response = await fetch(`${baseURL}/auth/user/`, {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			});
+
+			if (response.ok) {
+				const data = await response.json();
+				setHasUnlockedSolutions(
+					data.profile_data.has_unlocked_solutions
+				);
+				localStorage.setItem(
+					"hasUnlockedSolutions",
+					String(data.profile_data.has_unlocked_solutions)
+				);
+				// Update other profile data if needed
+				if (data.profile_data) {
+					localStorage.setItem(
+						"username",
+						data.profile_data.username || ""
+					);
+					localStorage.setItem(
+						"email",
+						data.profile_data.email || ""
+					);
+				}
+			} else {
+				// optional: if 401, maybe logout? generic for now just log
+				console.error("Failed to fetch fresh profile");
+			}
+		} catch (error) {
+			console.error("Error fetching profile:", error);
+		}
+	};
 
 	const login = async (
 		username: string,
@@ -260,6 +301,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 				accessToken,
 				isAuthenticated,
 				hasUnlockedSolutions,
+				fetchProfile,
 			}}
 		>
 			{children}

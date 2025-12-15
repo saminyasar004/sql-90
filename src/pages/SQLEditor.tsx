@@ -62,11 +62,30 @@ export function SQLEditor({
 						scrollBeyondLastLine: false,
 						readOnly: false,
 						automaticLayout: true,
-						fontFamily:
-							'"JetBrains Mono", "Fira Code", "Consolas", "Monaco", "Andale Mono", monospace',
+						fontFamily: 'Consolas, "Courier New", monospace',
 						cursorBlinking: "smooth",
 						cursorSmoothCaretAnimation: "on",
 						padding: { top: 16, bottom: 16 },
+						renderLineHighlight: "none",
+						guides: {
+							indentation: false,
+						},
+						scrollbar: {
+							alwaysConsumeMouseWheel: false,
+						},
+						quickSuggestions: {
+							other: true,
+							comments: true,
+							strings: true,
+						},
+						suggestOnTriggerCharacters: true,
+						wordBasedSuggestions: "allDocuments",
+						parameterHints: { enabled: true },
+						suggest: {
+							showKeywords: true,
+							showSnippets: true,
+						},
+						tabCompletion: "on",
 					}}
 					loading={
 						<div className="flex items-center justify-center h-full text-gray-500 bg-gray-50/50">
