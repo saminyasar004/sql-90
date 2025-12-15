@@ -6,7 +6,7 @@ export default {
 		extend: {
 			fontFamily: {
 				sans: "'Geist', sans-serif",
-				mono: "'Geist Mono', monospace",
+				mono: "'Fira Code', 'Geist Mono', monospace",
 			},
 			colors: {
 				warning: "#FF523b",

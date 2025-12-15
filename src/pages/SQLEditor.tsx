@@ -62,7 +62,7 @@ export function SQLEditor({
 						scrollBeyondLastLine: false,
 						readOnly: false,
 						automaticLayout: true,
-						fontFamily: 'Consolas, "Courier New", monospace',
+						fontFamily: "'Fira Code', monospace",
 						cursorBlinking: "smooth",
 						cursorSmoothCaretAnimation: "on",
 						padding: { top: 16, bottom: 16 },
