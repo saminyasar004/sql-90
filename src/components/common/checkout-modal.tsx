@@ -1,6 +1,8 @@
 import { XIcon, CheckIcon } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
 
 export function CheckoutModal({ onClose }: { onClose: () => void }) {
+	const { logout } = useAuth();
 	const token = localStorage.getItem("accessToken");
 	// Function to handle payment
 	const handlePayment = async () => {
@@ -29,6 +31,7 @@ export function CheckoutModal({ onClose }: { onClose: () => void }) {
 
 			// Assuming the backend returns { url: "https://checkout.stripe.com/..." }
 			if (data.url) {
+				logout();
 				window.location.href = data.url; // Redirect to Stripe checkout
 			} else {
 				console.error("Checkout URL not returned from backend");
