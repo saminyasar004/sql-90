@@ -1,5 +1,6 @@
 import React from "react";
-import Editor from "@monaco-editor/react";
+import CodeMirror from "@uiw/react-codemirror";
+import { sql } from "@codemirror/lang-sql";
 import {
 	Select,
 	SelectContent,
@@ -9,7 +10,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import { Loader2 } from "lucide-react";
+import { EditorView } from "@codemirror/view";
 
 interface SQLEditorProps {
 	value: string;
@@ -28,7 +29,7 @@ export function SQLEditor({
 		<div className="border border-gray-300 rounded-md overflow-hidden bg-white shadow-sm">
 			<div className="bg-gray-50 px-4 py-2 text-sm font-medium text-gray-700 border-b border-gray-200 w-full flex items-center justify-between">
 				<div className="flex items-center gap-2">
-					<span className="font-semibold text-gray-800">
+					<span className="font-semibold text-gray-800 font-mono">
 						SQL Editor
 					</span>
 				</div>
@@ -47,52 +48,58 @@ export function SQLEditor({
 					</SelectContent>
 				</Select>
 			</div>
-			<div className="h-[350px] w-full">
-				<Editor
-					height="100%"
-					language={dbType === "postgresql" ? "pgsql" : "mysql"}
+			<div className="h-[350px] w-full font-mono text-sm bg-white">
+				<CodeMirror
 					value={value}
-					onChange={(value) => onChange(value || "")}
+					height="350px"
 					theme="light"
-					options={{
-						minimap: { enabled: false },
-						fontSize: 14,
-						lineNumbers: "on",
-						roundedSelection: true,
-						scrollBeyondLastLine: false,
-						readOnly: false,
-						automaticLayout: true,
-						fontFamily: "'Fira Code', monospace",
-						cursorBlinking: "smooth",
-						cursorSmoothCaretAnimation: "on",
-						padding: { top: 16, bottom: 16 },
-						renderLineHighlight: "none",
-						guides: {
-							indentation: false,
-						},
-						scrollbar: {
-							alwaysConsumeMouseWheel: false,
-						},
-						quickSuggestions: {
-							other: true,
-							comments: true,
-							strings: true,
-						},
-						suggestOnTriggerCharacters: true,
-						wordBasedSuggestions: "allDocuments",
-						parameterHints: { enabled: true },
-						suggest: {
-							showKeywords: true,
-							showSnippets: true,
-						},
-						tabCompletion: "on",
+					extensions={[
+						sql({
+							dialect:
+								dbType === "postgresql"
+									? undefined // Use default or specific PG dialect if available in future
+									: undefined, // Defaults to standard SQL, good enough for now or configure specifically
+						}),
+						EditorView.theme({
+							"&": {
+								fontFamily: "'Fira Code', monospace !important",
+								fontSize: "14px",
+							},
+							".cm-content": {
+								fontFamily: "'Fira Code', monospace !important",
+							},
+							".cm-scroller": {
+								fontFamily: "'Fira Code', monospace !important",
+							},
+						}),
+					]}
+					onChange={(val) => onChange(val)}
+					basicSetup={{
+						lineNumbers: true,
+						highlightActiveLineGutter: true,
+						highlightSpecialChars: true,
+						history: true,
+						foldGutter: true,
+						drawSelection: true,
+						dropCursor: true,
+						allowMultipleSelections: true,
+						indentOnInput: true,
+						syntaxHighlighting: true,
+						bracketMatching: true,
+						closeBrackets: true,
+						autocompletion: true,
+						rectangularSelection: true,
+						crosshairCursor: true,
+						highlightActiveLine: true,
+						highlightSelectionMatches: true,
+						closeBracketsKeymap: true,
+						defaultKeymap: true,
+						searchKeymap: true,
+						historyKeymap: true,
+						foldKeymap: true,
+						completionKeymap: true,
+						lintKeymap: true,
 					}}
-					loading={
-						<div className="flex items-center justify-center h-full text-gray-500 bg-gray-50/50">
-							<Loader2 className="w-5 h-5 animate-spin mr-2" />
-							<span>Loading Editor...</span>
-						</div>
-					}
 				/>
 			</div>
 		</div>

@@ -1,5 +1,46 @@
 @import url("https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&family=Geist:wght@100..900&display=swap");
 
+/* Fira Code Font Family */
+@font-face {
+	font-family: "Fira Code";
+	src: url("/fonts/fira-code/FiraCode-Light.ttf") format("truetype");
+	font-weight: 300;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "Fira Code";
+	src: url("/fonts/fira-code/FiraCode-Regular.ttf") format("truetype");
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "Fira Code";
+	src: url("/fonts/fira-code/FiraCode-Medium.ttf") format("truetype");
+	font-weight: 500;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "Fira Code";
+	src: url("/fonts/fira-code/FiraCode-SemiBold.ttf") format("truetype");
+	font-weight: 600;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "Fira Code";
+	src: url("/fonts/fira-code/FiraCode-Bold.ttf") format("truetype");
+	font-weight: 700;
+	font-style: normal;
+	font-display: swap;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
