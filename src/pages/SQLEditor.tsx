@@ -74,6 +74,7 @@ export function SQLEditor({
 				
 				/* Force Monaco to use the font */
 				.monaco-editor .view-lines, 
+				.monaco-editor .view-lines span,
 				.monaco-editor .mtk1,
 				.monaco-editor .margin-view-overlays .line-numbers {
 					font-family: 'Fira Code', monospace !important;
@@ -115,6 +116,7 @@ export function SQLEditor({
 						scrollBeyondLastLine: false,
 						automaticLayout: true,
 						contextmenu: false,
+						renderLineHighlight: "none",
 					}}
 				/>
 			</div>
