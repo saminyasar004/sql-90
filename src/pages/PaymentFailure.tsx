@@ -1,8 +1,15 @@
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { XCircle, ChevronLeft, RefreshCcw } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
 
 export default function PaymentFailure() {
 	const navigate = useNavigate();
+	const { refreshUserInfo } = useAuth();
+
+	useEffect(() => {
+		refreshUserInfo();
+	}, [refreshUserInfo]);
 
 	return (
 		<div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-4">

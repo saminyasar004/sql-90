@@ -29,6 +29,7 @@ type AuthContextType = {
 	socialSignup: (response: GoogleCredentialResponse) => Promise<boolean>;
 	logout: () => void;
 	fetchProfile: (token: string) => Promise<void>;
+	refreshUserInfo: () => Promise<void>;
 };
 
 export interface GoogleCredentialResponse {
@@ -82,6 +83,42 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 		};
 		initAuth();
 	}, []);
+
+	const refreshUserInfo = async () => {
+		const token = localStorage.getItem("accessToken");
+		if (!token) return;
+
+		try {
+			const response = await fetch(`${baseURL}/auth/user/info/`, {
+				headers: {
+					Authorization: `Bearer ${token}`,
+					Accept: "application/json",
+				},
+			});
+
+			if (response.ok) {
+				const data = await response.json();
+				setHasUnlockedSolutions(data.has_unlocked_solutions);
+
+				// Update all relevant localStorage fields
+				localStorage.setItem(
+					"hasUnlockedSolutions",
+					String(data.has_unlocked_solutions)
+				);
+				if (data.username)
+					localStorage.setItem("username", data.username);
+				if (data.email) localStorage.setItem("email", data.email);
+				if (data.points !== undefined)
+					localStorage.setItem("points", String(data.points));
+				if (data.streak !== undefined)
+					localStorage.setItem("streak", String(data.streak));
+			} else {
+				console.error("Failed to refresh user info");
+			}
+		} catch (error) {
+			console.error("Error refreshing user info:", error);
+		}
+	};
 
 	const fetchProfile = async (token: string) => {
 		try {
@@ -302,6 +339,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 				isAuthenticated,
 				hasUnlockedSolutions,
 				fetchProfile,
+				refreshUserInfo,
 			}}
 		>
 			{children}

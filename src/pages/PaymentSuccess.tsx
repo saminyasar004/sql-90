@@ -7,48 +7,14 @@ import { toast } from "sonner";
 
 export default function PaymentSuccess() {
 	const navigate = useNavigate();
-	const { fetchProfile } = useAuth();
+	const { refreshUserInfo } = useAuth();
 	const [loading, setLoading] = useState(true);
-	const token = localStorage.getItem("accessToken");
 
 	useEffect(() => {
 		const syncUserInfo = async () => {
-			if (!token) {
-				setLoading(false);
-				return;
-			}
-
 			try {
-				const response = await fetch(`${baseURL}/auth/user/info/`, {
-					headers: {
-						Authorization: `Bearer ${token}`,
-					},
-				});
-
-				if (response.ok) {
-					const data = await response.json();
-
-					// Update local storage with new data
-					localStorage.setItem(
-						"hasUnlockedSolutions",
-						String(data.has_unlocked_solutions)
-					);
-					localStorage.setItem("points", String(data.points));
-					localStorage.setItem("streak", String(data.streak));
-					if (data.username)
-						localStorage.setItem("username", data.username);
-					if (data.email) localStorage.setItem("email", data.email);
-
-					// Refresh profile in context
-					await fetchProfile(token);
-
-					toast.success("Subscription updated successfully!");
-				} else {
-					console.error("Failed to fetch user info after payment");
-					toast.error(
-						"Failed to sync account data. Please refresh the page."
-					);
-				}
+				await refreshUserInfo();
+				toast.success("Subscription updated successfully!");
 			} catch (error) {
 				console.error("Error syncing user info:", error);
 				toast.error("An error occurred while syncing your account.");
@@ -58,7 +24,7 @@ export default function PaymentSuccess() {
 		};
 
 		syncUserInfo();
-	}, [token, fetchProfile]);
+	}, [refreshUserInfo]);
 
 	if (loading) {
 		return (
