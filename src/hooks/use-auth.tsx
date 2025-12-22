@@ -70,12 +70,36 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 	useEffect(() => {
 		const initAuth = async () => {
 			const token = localStorage.getItem("accessToken");
-			// If accessToken exists in localStorage, assume user is authenticated
+			const refreshToken = localStorage.getItem("refreshToken");
+
 			if (token) {
-				setIsAuthenticated(true);
-				setAccessToken(token);
-				await fetchProfile(token);
+				const success = await fetchProfile(token);
+				if (success) {
+					setIsAuthenticated(true);
+					setAccessToken(token);
+				} else if (refreshToken) {
+					// Token might be expired, try refresh
+					const newToken = await refreshAccessToken(refreshToken);
+					if (newToken) {
+						setIsAuthenticated(true);
+						setAccessToken(newToken);
+						await fetchProfile(newToken);
+					} else {
+						logout();
+					}
+				} else {
+					logout();
+				}
+			} else if (refreshToken) {
+				// No access token but have refresh token
+				const newToken = await refreshAccessToken(refreshToken);
+				if (newToken) {
+					setIsAuthenticated(true);
+					setAccessToken(newToken);
+					await fetchProfile(newToken);
+				}
 			}
+
 			if (localStorage.getItem("hasUnlockedSolutions") === "true") {
 				setHasUnlockedSolutions(true);
 			}
@@ -83,6 +107,25 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 		};
 		initAuth();
 	}, []);
+
+	const refreshAccessToken = async (refreshToken: string) => {
+		try {
+			const response = await fetch(`${baseURL}/auth/token/refresh/`, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ refresh: refreshToken }),
+			});
+
+			if (response.ok) {
+				const data = await response.json();
+				localStorage.setItem("accessToken", data.access);
+				return data.access;
+			}
+		} catch (error) {
+			console.error("Error refreshing token:", error);
+		}
+		return null;
+	};
 
 	const refreshUserInfo = async () => {
 		const token = localStorage.getItem("accessToken");
@@ -148,12 +191,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 						data.profile_data.email || ""
 					);
 				}
+				return true;
 			} else {
 				// optional: if 401, maybe logout? generic for now just log
 				console.error("Failed to fetch fresh profile");
+				return false;
 			}
 		} catch (error) {
 			console.error("Error fetching profile:", error);
+			return false;
 		}
 	};
 
@@ -338,7 +384,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 				accessToken,
 				isAuthenticated,
 				hasUnlockedSolutions,
-				fetchProfile,
+				fetchProfile: async (token) => {
+					await fetchProfile(token);
+				},
 				refreshUserInfo,
 			}}
 		>
