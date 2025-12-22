@@ -10,6 +10,8 @@ import { GameProvider } from "./hooks/use-game";
 import { QuestionProvider } from "./hooks/use-question";
 import PrivacyPage from "./pages/PrivacyPolicy";
 import TermsPage from "./pages/Terms";
+import PaymentSuccess from "./pages/PaymentSuccess";
+import PaymentFailure from "./pages/PaymentFailure";
 import { DesktopViewSuggestionModal } from "@/components/common/desktopViewSuggestion";
 import { useEffect, useState } from "react";
 
@@ -63,6 +65,22 @@ const App = () => {
 						/>
 						<Route path="/privacy" element={<PrivacyPage />} />
 						<Route path="/terms" element={<TermsPage />} />
+						<Route
+							path="/payment-success"
+							element={
+								<AuthProvider>
+									<PaymentSuccess />
+								</AuthProvider>
+							}
+						/>
+						<Route
+							path="/payment-failure"
+							element={
+								<AuthProvider>
+									<PaymentFailure />
+								</AuthProvider>
+							}
+						/>
 						{/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
 						<Route path="*" element={<NotFound />} />
 					</Routes>

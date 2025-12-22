@@ -1,24 +1,31 @@
 import { XIcon, CheckIcon } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
+import { baseURL } from "@/config/dotenv";
 
 export function CheckoutModal({ onClose }: { onClose: () => void }) {
-	const { logout } = useAuth();
-	const token = localStorage.getItem("accessToken");
+	const { accessToken } = useAuth();
 	// Function to handle payment
 	const handlePayment = async () => {
+		if (!accessToken) {
+			alert("Please log in to continue.");
+			return;
+		}
+
 		try {
 			const response = await fetch(
-				"https://admin.sql90.com/api/payments/create-checkout-session/",
+				`${baseURL}/api/payments/create-checkout-session/`,
 				{
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json",
-						Authorization: `Bearer ${token}`, // Add this!
+						Authorization: `Bearer ${accessToken}`,
 					},
 					body: JSON.stringify({
-						// You can pass extra info here if needed
 						price: 9.49,
 						currency: "usd",
+						success_url:
+							window.location.origin + "/payment-success",
+						cancel_url: window.location.origin + "/payment-failure",
 					}),
 				}
 			);
@@ -31,7 +38,6 @@ export function CheckoutModal({ onClose }: { onClose: () => void }) {
 
 			// Assuming the backend returns { url: "https://checkout.stripe.com/..." }
 			if (data.url) {
-				logout();
 				window.location.href = data.url; // Redirect to Stripe checkout
 			} else {
 				console.error("Checkout URL not returned from backend");
