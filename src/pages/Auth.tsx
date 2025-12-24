@@ -183,15 +183,16 @@ export default function Auth() {
 	};
 
 	const onSignUpFormSubmit = async (data: SignUpFormData) => {
-		const success = await register(
+		const response = await register(
 			data.username,
 			data.email,
 			data.password,
 			data.confirmPassword
 		);
-		if (success) {
+		if (response) {
 			toast.success(
-				"An email has been sent to you with a link to confirm your account."
+				response.detail ||
+					"An email has been sent to you with a link to confirm your account."
 			);
 		} else {
 			toast.error(error || "Signup failed. Please try again.");

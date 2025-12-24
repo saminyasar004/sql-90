@@ -49,7 +49,7 @@ export default function PaymentFailure() {
 			</div>
 
 			<div className="mt-8 text-gray-400 text-sm">
-				SQL-90 &copy; 2025. All rights reserved.
+				SQL90 &copy; 2025. All rights reserved.
 			</div>
 		</div>
 	);

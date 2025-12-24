@@ -25,7 +25,7 @@ type AuthContextType = {
 		email: string,
 		password: string,
 		confirmPassword: string
-	) => Promise<string | boolean>;
+	) => Promise<any>;
 	socialSignup: (response: GoogleCredentialResponse) => Promise<boolean>;
 	logout: () => void;
 	fetchProfile: (token: string) => Promise<void>;
@@ -223,7 +223,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 				);
 			}
 			setIsAuthenticated(true);
-			setHasUnlockedSolutions(data.profile_data.has_unlocked_solutions);
+			if (data.profile_data) {
+				setHasUnlockedSolutions(
+					data.profile_data.has_unlocked_solutions
+				);
+			}
 			setAccessToken(data.access);
 			// Store access token in localStorage if isRemember is true
 			if (isRemember) {
@@ -232,12 +236,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 				if (data.refresh) {
 					localStorage.setItem("refreshToken", data.refresh);
 				}
-				localStorage.setItem(
-					"hasUnlockedSolutions",
-					String(data.profile_data.has_unlocked_solutions)
-				);
-				// Save username and email
 				if (data.profile_data) {
+					localStorage.setItem(
+						"hasUnlockedSolutions",
+						String(data.profile_data.has_unlocked_solutions)
+					);
+					// Save username and email
 					localStorage.setItem(
 						"username",
 						data.profile_data.username || ""
@@ -279,24 +283,26 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 				}),
 			});
 			const data = await response.json();
-			if (!response.ok || !data.access || response.status !== 200) {
-				setError(data.error || data.detail || "Internal Server Error");
-				throw new Error(
-					data.error || data.detail || "Internal Server Error"
-				);
+
+			if (!response.ok) {
+				const errorMessage =
+					data.error || data.detail || "Registration failed";
+				setError(errorMessage);
+				throw new Error(errorMessage);
 			}
 
-			return true;
+			// Return the data object directly on success
+			return data;
 		} catch (err) {
 			console.log(err);
-			setError((err as Error).message);
+			// Only set error if not already set (though we set it above)
+			if (!error) setError((err as Error).message);
 			setIsAuthenticated(false);
 			return false;
 		} finally {
 			setLoading(false);
 		}
 	};
-
 	const socialSignup = async (response: GoogleCredentialResponse) => {
 		// Decode JWT to get email
 		const payload = JSON.parse(atob(response.credential.split(".")[1]));

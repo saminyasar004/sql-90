@@ -53,8 +53,9 @@ export default function PaymentSuccess() {
 					Payment Successful!
 				</h1>
 				<p className="text-gray-600 mb-8 leading-relaxed">
-					Thank you for subscribing! All solutions have been unlocked
-					for your account. You now have full access to all features.
+					Payment successful! All solutions have been unlocked for
+					your account. You now have full access to all features.
+					Thank you!
 				</p>
 
 				<div className="space-y-4">
@@ -73,7 +74,7 @@ export default function PaymentSuccess() {
 			</div>
 
 			<div className="mt-8 text-gray-400 text-sm">
-				SQL-90 &copy; 2025. All rights reserved.
+				SQL90 &copy; 2025. All rights reserved.
 			</div>
 		</div>
 	);
