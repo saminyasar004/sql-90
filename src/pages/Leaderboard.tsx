@@ -2,7 +2,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useGame } from "@/hooks/use-game";
 import { useLeaderboard } from "@/hooks/use-leaderboard";
 import { SearchIcon, TrophyIcon } from "lucide-react";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 
 export function Leaderboard({ setActiveView }) {
@@ -17,9 +17,30 @@ export function Leaderboard({ setActiveView }) {
 		your_position,
 	} = useGame();
 
-	const filteredData = leaderboard.filter((user) =>
+	const rankedLeaderboard = useMemo(() => {
+		const sorted = [...leaderboard].sort((a, b) => b.points - a.points);
+		let currentRank = 1;
+		return sorted.map((user, index) => {
+			if (index > 0 && user.points < sorted[index - 1].points) {
+				currentRank = index + 1;
+			}
+			return { ...user, rank: currentRank };
+		});
+	}, [leaderboard]);
+
+	const filteredData = rankedLeaderboard.filter((user) =>
 		user.username.toLowerCase().includes(searchQuery.toLowerCase())
 	);
+
+	const currentUsername = localStorage.getItem("username");
+	const currentUserRank = useMemo(() => {
+		if (!currentUsername) return null;
+		const user = rankedLeaderboard.find(
+			(u) => u.username === currentUsername
+		);
+		return user ? user.rank : null;
+	}, [rankedLeaderboard, currentUsername]);
+
 	const renderRank = (rank: number) => {
 		if (rank === 1) {
 			return (
@@ -84,7 +105,9 @@ export function Leaderboard({ setActiveView }) {
 						<div className="flex justify-between items-center">
 							<div className="flex items-center gap-2">
 								<div className="text-center text-xl font-bold text-gray-700">
-									{renderRank(your_position)}
+									{renderRank(
+										currentUserRank || your_position
+									)}
 								</div>
 								<div className="flex flex-col">
 									<span className="font-medium text-gray-900">
@@ -127,7 +150,7 @@ export function Leaderboard({ setActiveView }) {
 					<div className="hidden sm:grid sm:grid-cols-6">
 						<div className="px-2 py-2 w-12 flex items-center justify-center">
 							<div className="text-center text-xl font-bold text-gray-700">
-								{renderRank(your_position)}
+								{renderRank(currentUserRank || your_position)}
 							</div>
 						</div>
 						<div className="px-2 py-2 flex items-center">
@@ -195,7 +218,7 @@ export function Leaderboard({ setActiveView }) {
 								<div className="flex justify-between items-center">
 									<div className="flex items-center gap-2">
 										<div className="w-8 h-8 flex items-center justify-center">
-											#{renderRank(index)}
+											#{renderRank(user.rank)}
 										</div>
 										<span className="font-medium text-gray-900">
 											{user.username}
@@ -238,7 +261,7 @@ export function Leaderboard({ setActiveView }) {
 							</div>
 							{/* Desktop view */}
 							<div className="hidden sm:flex px-2 py-4 w-12 items-center justify-center">
-								{renderRank(++index)}
+								{renderRank(user.rank)}
 							</div>
 							<div className="hidden sm:flex px-2 py-4 items-center">
 								<span className="font-medium text-gray-900">
