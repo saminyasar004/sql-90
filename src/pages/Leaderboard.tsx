@@ -1,6 +1,8 @@
 import { useAuth } from "@/hooks/use-auth";
 import { useGame } from "@/hooks/use-game";
 import { useLeaderboard } from "@/hooks/use-leaderboard";
+import { formatUsername } from "@/lib/utils";
+
 import { SearchIcon, TrophyIcon } from "lucide-react";
 import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
@@ -29,14 +31,16 @@ export function Leaderboard({ setActiveView }) {
 	}, [leaderboard]);
 
 	const filteredData = rankedLeaderboard.filter((user) =>
-		user.username.toLowerCase().includes(searchQuery.toLowerCase())
+		formatUsername(user.username)
+			.toLowerCase()
+			.includes(searchQuery.toLowerCase()),
 	);
 
 	const currentUsername = localStorage.getItem("username");
 	const currentUserRank = useMemo(() => {
 		if (!currentUsername) return null;
 		const user = rankedLeaderboard.find(
-			(u) => u.username === currentUsername
+			(u) => u.username === currentUsername,
 		);
 		return user ? user.rank : null;
 	}, [rankedLeaderboard, currentUsername]);
@@ -106,16 +110,18 @@ export function Leaderboard({ setActiveView }) {
 							<div className="flex items-center gap-2">
 								<div className="text-center text-xl font-bold text-gray-700">
 									{renderRank(
-										currentUserRank || your_position
+										currentUserRank || your_position,
 									)}
 								</div>
 								<div className="flex flex-col">
 									<span className="font-medium text-gray-900">
 										You (
-										{localStorage.getItem("username") ||
-											"User"}
+										{formatUsername(
+											localStorage.getItem("username"),
+										)}
 										)
 									</span>
+
 									<span className="text-xs text-gray-500">
 										{localStorage.getItem("email")}
 									</span>
@@ -157,9 +163,12 @@ export function Leaderboard({ setActiveView }) {
 							<div className="flex flex-col">
 								<span className="font-medium text-gray-900">
 									You (
-									{localStorage.getItem("username") || "User"}
+									{formatUsername(
+										localStorage.getItem("username"),
+									)}
 									)
 								</span>
+
 								<span className="text-xs text-gray-500">
 									{localStorage.getItem("email")}
 								</span>
@@ -221,7 +230,7 @@ export function Leaderboard({ setActiveView }) {
 											#{renderRank(user.rank)}
 										</div>
 										<span className="font-medium text-gray-900">
-											{user.username}
+											{formatUsername(user.username)}
 										</span>
 									</div>
 									<div className="flex items-center gap-2">
@@ -233,8 +242,8 @@ export function Leaderboard({ setActiveView }) {
 												user.accuracy >= 90
 													? "text-green-600"
 													: user.accuracy >= 80
-													? "text-gray-900"
-													: "text-orange-600"
+														? "text-gray-900"
+														: "text-orange-600"
 											}`}
 										>
 											{user.accuracy}%
@@ -265,7 +274,7 @@ export function Leaderboard({ setActiveView }) {
 							</div>
 							<div className="hidden sm:flex px-2 py-4 items-center">
 								<span className="font-medium text-gray-900">
-									{user.username}
+									{formatUsername(user.username)}
 								</span>
 							</div>
 							<div className="hidden sm:flex px-3 py-4 items-center col-span-2">
@@ -298,8 +307,8 @@ export function Leaderboard({ setActiveView }) {
 										user.accuracy >= 90
 											? "text-green-600"
 											: user.accuracy >= 80
-											? "text-gray-900"
-											: "text-orange-600"
+												? "text-gray-900"
+												: "text-orange-600"
 									}`}
 								>
 									{user.accuracy}%
