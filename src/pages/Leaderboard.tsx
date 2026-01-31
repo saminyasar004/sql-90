@@ -4,12 +4,23 @@ import { useLeaderboard } from "@/hooks/use-leaderboard";
 import { formatUsername } from "@/lib/utils";
 
 import { SearchIcon, TrophyIcon } from "lucide-react";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { cn } from "@/lib/utils";
 
 export function Leaderboard({ setActiveView }) {
 	const [searchQuery, setSearchQuery] = useState("");
 	const { leaderboard, loading, error } = useLeaderboard();
+
+	const [showProfile, setShowProfile] = useState(() => {
+		const saved = localStorage.getItem("showProfileOnLeaderboard");
+		return saved === null ? true : saved === "true";
+	});
+
+	const handleToggleProfile = (checked: boolean) => {
+		setShowProfile(checked);
+		localStorage.setItem("showProfileOnLeaderboard", String(checked));
+	};
 
 	const {
 		completedPercentage,
@@ -99,105 +110,119 @@ export function Leaderboard({ setActiveView }) {
 				</div>
 			</div>
 			{/* Your Position - moved above the leaderboard table */}
-			<div className="mb-8">
-				<h2 className="text-lg font-semibold text-gray-700 mb-3">
-					Your Position
-				</h2>
-				<div className="bg-green-50 rounded-lg border border-green-100 p-4">
+			<div className="mb-8 font-sans">
+				<div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-3">
+					<h2 className="text-xl font-bold text-[#1E293B]">
+						Your Position
+					</h2>
+					<div className="flex items-center gap-3">
+						<span className="text-sm text-[#64748B] font-medium whitespace-nowrap">
+							Show my profile on leaderboard
+						</span>
+						<button
+							onClick={() => handleToggleProfile(!showProfile)}
+							className={cn(
+								"relative inline-flex h-6 w-11 items-center rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#008080] focus:ring-offset-2",
+								showProfile ? "bg-[#007C7C]" : "bg-[#E2E8F0]",
+							)}
+						>
+							<span
+								className={cn(
+									"inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform duration-300 ease-in-out",
+									showProfile
+										? "translate-x-6"
+										: "translate-x-1",
+								)}
+							/>
+						</button>
+					</div>
+				</div>
+
+				<div className="bg-[#F0FDF4] rounded-xl border border-[#DCFCE7] p-6 shadow-sm">
 					{/* Mobile view for "Your Position" */}
-					<div className="flex sm:hidden flex-col gap-2">
+					<div className="flex sm:hidden flex-col gap-5">
 						<div className="flex justify-between items-center">
-							<div className="flex items-center gap-2">
-								<div className="text-center text-xl font-bold text-gray-700">
-									{renderRank(
-										currentUserRank || your_position,
-									)}
+							<div className="flex items-center gap-4">
+								<div className="text-2xl font-bold text-[#334155]">
+									{currentUserRank || your_position}
 								</div>
 								<div className="flex flex-col">
-									<span className="font-medium text-gray-900">
+									<span className="font-semibold text-[#1E293B]">
 										You (
-										{formatUsername(
-											localStorage.getItem("username"),
-										)}
+										{showProfile
+											? formatUsername(
+													localStorage.getItem(
+														"username",
+													),
+												)
+											: "Anonymous"}
 										)
-									</span>
-
-									<span className="text-xs text-gray-500">
-										{localStorage.getItem("email")}
 									</span>
 								</div>
 							</div>
-							<div className="flex items-center gap-2">
-								<span className="font-medium text-gray-900">
-									{totalPoints} pts
+							<div className="flex flex-col items-end">
+								<span className="font-bold text-[#1E293B]">
+									{totalPoints}
 								</span>
-								<div className="font-medium text-green-600">
+								<div className="font-bold text-[#22C55E]">
 									{accuracy}%
 								</div>
 							</div>
 						</div>
-						<div className="flex flex-col w-full mt-1">
-							<div className="text-sm text-gray-700 mb-1">
-								Completed: {completedQuestions} / 90
+						<div className="flex flex-col w-full">
+							<div className="text-xs font-semibold text-[#64748B] mb-2 flex justify-between">
+								<span>{completedQuestions} / 90</span>
 							</div>
-							<div className="w-full bg-gray-100 rounded-full h-2.5">
+							<div className="w-full bg-[#E2E8F0] rounded-full h-2">
 								<div
-									className="bg-[#008080] h-2.5 rounded-full"
+									className="bg-[#007C7C] h-2 rounded-full transition-all duration-700 ease-out shadow-sm"
 									style={{
-										width: `${
-											(completedPercentage / 90) * 100
-										}%`,
+										width: `${completedPercentage}%`,
 									}}
 								></div>
 							</div>
 						</div>
 					</div>
 					{/* Desktop view for "Your Position" */}
-					<div className="hidden sm:grid sm:grid-cols-6">
-						<div className="px-2 py-2 w-12 flex items-center justify-center">
-							<div className="text-center text-xl font-bold text-gray-700">
-								{renderRank(currentUserRank || your_position)}
+					<div className="hidden sm:grid sm:grid-cols-6 items-center">
+						<div className="px-2 flex items-center justify-center">
+							<div className="text-2xl font-bold text-[#334155]">
+								{currentUserRank || your_position}
 							</div>
 						</div>
-						<div className="px-2 py-2 flex items-center">
-							<div className="flex flex-col">
-								<span className="font-medium text-gray-900">
-									You (
-									{formatUsername(
-										localStorage.getItem("username"),
-									)}
-									)
-								</span>
-
-								<span className="text-xs text-gray-500">
-									{localStorage.getItem("email")}
-								</span>
-							</div>
+						<div className="px-4 flex items-center">
+							<span className="font-semibold text-[#1E293B]">
+								You (
+								{showProfile
+									? formatUsername(
+											localStorage.getItem("username"),
+										)
+									: "Anonymous"}
+								)
+							</span>
 						</div>
-						<div className="px-3 py-2 flex items-center col-span-2">
-							<div className="flex flex-col w-full">
-								<div className="text-sm text-gray-700 mb-1">
+						<div className="px-4 flex items-center col-span-2">
+							<div className="flex flex-col w-full px-4">
+								<div className="text-xs font-semibold text-[#64748B] mb-1.5">
 									{completedQuestions} / 90
 								</div>
-								<div className="w-full bg-gray-100 rounded-full h-2.5">
+								<div className="w-full bg-[#E2E8F0] rounded-full h-2.5 overflow-hidden">
 									<div
-										className="bg-[#008080] h-2.5 rounded-full"
+										className="bg-[#007C7C] h-2.5 rounded-full transition-all duration-700 ease-out"
 										style={{
-											width: `${
-												(completedPercentage / 90) * 100
-											}%`,
+											width: `${completedPercentage}%`,
 										}}
 									></div>
 								</div>
 							</div>
 						</div>
-						<div className="px-3 py-2 text-right">
-							<span className="font-medium text-gray-900">
-								{totalPoints} pts
+						<div className="px-4 text-right">
+							<span className="text-xl font-bold text-[#1E293B]">
+								{totalPoints}
 							</span>
 						</div>
-						<div className="px-3 py-2 text-right">
-							<div className="font-medium text-green-600">
+						<div className="px-4 text-right">
+							<div className="text-xl font-bold text-[#22C55E]">
 								{accuracy}%
 							</div>
 						</div>
