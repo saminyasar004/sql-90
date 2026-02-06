@@ -40,212 +40,226 @@ export function CertificateCard() {
 	const currentDate = "February 5, 2026";
 
 	return (
-		<div className="bg-[#F0FDF4] border border-[#DCFCE7] rounded-3xl p-6 md:p-8 shadow-sm">
-			<div className="flex items-start gap-5 mb-10">
-				<div className="bg-[#DCFCE7] p-3 rounded-2xl flex items-center justify-center">
+		<div className="bg-gradient-to-br from-teal-50 to-emerald-50 rounded-lg border-2 border-teal-200 p-6 mb-8">
+			{/* Celebration Header */}
+			<div className="flex items-start gap-4 mb-4">
+				<div className="flex-shrink-0 w-12 h-12 rounded-full bg-teal-100 flex items-center justify-center">
 					<span
-						className="text-3xl"
+						className="text-2xl"
 						role="img"
 						aria-label="party popper"
 					>
 						🎉
 					</span>
 				</div>
-				<div>
-					<h3 className="text-xl font-bold text-[#1E293B] leading-tight mb-1">
+				<div className="flex-1">
+					<h2 className="text-xl font-bold text-gray-800 mb-1">
 						Congratulations! You've completed all 90 questions!
-					</h3>
-					<p className="text-base text-[#64748B] font-normal opacity-80">
+					</h2>
+					<p className="text-gray-600 text-sm">
 						Download or share your certificate of completion
 					</p>
 				</div>
 			</div>
 
-			{/* Certificate Preview */}
-			<div className="bg-white border border-gray-100 rounded-xl p-8 md:p-16 mb-10 relative overflow-hidden shadow-sm flex flex-col items-center">
-				{/* Corner accents - Exact Teal/Green proportions */}
-				{/* Top Left */}
-				<div className="absolute top-10 left-10">
-					<div className="border-l-[3.5px] border-t-[3.5px] border-[#008080] w-[70px] h-[70px]"></div>
-					<div className="absolute top-1.5 left-1.5 border-l-[3.5px] border-t-[3.5px] border-[#22C55E] w-[50px] h-[50px]"></div>
-					<Database
-						size={28}
-						className="absolute top-3 left-16 text-[#008080] opacity-5 select-none"
-					/>
-				</div>
-				{/* Top Right */}
-				<div className="absolute top-10 right-10">
-					<div className="border-r-[3.5px] border-t-[3.5px] border-[#008080] w-[70px] h-[70px]"></div>
-					<div className="absolute top-1.5 right-1.5 border-r-[3.5px] border-t-[3.5px] border-[#22C55E] w-[50px] h-[50px]"></div>
-					<Database
-						size={28}
-						className="absolute top-3 right-16 text-[#008080] opacity-5 select-none"
-					/>
-				</div>
-				{/* Bottom Left */}
-				<div className="absolute bottom-10 left-10">
-					<div className="border-l-[3.5px] border-b-[3.5px] border-[#008080] w-[70px] h-[70px]"></div>
-					<div className="absolute bottom-1.5 left-1.5 border-l-[3.5px] border-b-[3.5px] border-[#22C55E] w-[50px] h-[50px]"></div>
-					<Database
-						size={28}
-						className="absolute bottom-3 left-16 text-[#008080] opacity-5 select-none"
-					/>
-				</div>
-				{/* Bottom Right */}
-				<div className="absolute bottom-10 right-10">
-					<div className="border-r-[3.5px] border-b-[3.5px] border-[#008080] w-[70px] h-[70px]"></div>
-					<div className="absolute bottom-1.5 right-1.5 border-r-[3.5px] border-b-[3.5px] border-[#22C55E] w-[50px] h-[50px]"></div>
-					<Database
-						size={28}
-						className="absolute bottom-3 right-16 text-[#008080] opacity-5 select-none"
-					/>
-				</div>
-
-				{/* SQL Query Text Watermarks */}
-				<div className="absolute top-[20%] left-[10%] rotate-[-15deg] opacity-[0.03] text-lg font-mono font-bold select-none pointer-events-none">
-					SELECT * FROM achievements
-				</div>
-				<div className="absolute top-[35%] right-[15%] rotate-[10deg] opacity-[0.03] text-lg font-mono font-bold select-none pointer-events-none">
-					WHERE completed = true
-				</div>
-				<div className="absolute bottom-[25%] left-[12%] rotate-[15deg] opacity-[0.03] text-lg font-mono font-bold select-none pointer-events-none">
-					ORDER BY excellence DESC
-				</div>
-				<div className="absolute bottom-[20%] right-[10%] rotate-[-10deg] opacity-[0.03] text-lg font-mono font-bold select-none pointer-events-none">
-					JOIN skills ON mastery = 100
-				</div>
-
-				{/* Huge background center watermark */}
-				<div className="absolute inset-0 flex items-center justify-center opacity-[0.02] pointer-events-none select-none">
-					<span className="text-[18rem] font-medium tracking-tighter text-[#008080]">
-						SQL90
-					</span>
-				</div>
-
-				{/* Content */}
-				<div className="relative z-10 text-center flex flex-col items-center w-full max-w-2xl px-4">
-					<div className="mb-3 scale-110">
-						<span className="text-2xl font-bold tracking-tighter">
-							<span className="text-[#008080]">SQL</span>
-							<span className="text-[#22C55E]">90</span>
-						</span>
-					</div>
-
-					<h1 className="text-[1.5rem] md:text-[2rem] font-semibold text-[#1E293B] mb-2 leading-tight tracking-tight">
-						Certificate of Completion
-					</h1>
-					<div className="w-28 h-[4px] bg-[#008080] mb-12 rounded-full overflow-hidden">
-						<div className="w-1/2 h-full bg-[#008080] float-right"></div>
-					</div>
-
-					<p className="text-[#64748B] text-sm md:text-md font-normal mb-6 opacity-70">
-						This certifies that
-					</p>
-
-					<h2 className="text-3xl md:text-[2rem] font-semibold text-[#1E293B] mb-10 tracking-tight break-words w-full leading-none">
-						{name}
-					</h2>
-
-					<p className="text-[#64748B] text-sm md:text-lg font-normal mb-3 opacity-70">
-						has successfully completed all
-					</p>
-					<p className="text-2xl md:text-[2.2rem] font-semibold tracking-tight mb-4 text-[#008080]">
-						90{" "}
-						<span className="text-[#008080]">
-							SQL Practice Questions
-						</span>
-					</p>
-					<p className="text-base text-[#64748B] font-medium mb-20">
-						on{" "}
-						<span className="text-[#1E293B] font-semibold">
-							SQL90.com
-						</span>
-					</p>
-
-					{/* Custom Footer with Dual Horizontal Lines */}
-					<div className="w-full relative flex flex-col items-center">
-						<div className="w-full h-[0.5px] bg-gray-100 mb-8"></div>
-						<div className="w-full flex flex-col sm:flex-row justify-between text-[12px] md:text-[14px] text-[#94A3B8] font-medium gap-6 px-4 mb-8">
-							<div className="flex items-center gap-2">
-								<span className="opacity-70">Earned on:</span>
-								<span className="text-[#475569] font-semibold">
-									{currentDate}
-								</span>
-							</div>
-							<div className="flex items-center gap-2">
-								<span className="opacity-70">
-									Certification ID:
-								</span>
-								<span className="text-[#475569] font-semibold">
-									{certId}
-								</span>
-							</div>
+			{/* Certificate Preview Container */}
+			<div className="flex justify-center mb-4">
+				<div className="relative bg-white rounded-lg border-2 border-gray-200 p-8 sm:p-10 shadow-sm w-full max-w-5xl overflow-hidden">
+					{/* Background Watermarks */}
+					<div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+						<div className="flex items-center opacity-[0.03] select-none">
+							<span className="text-[10rem] font-bold text-teal-600">
+								SQL
+							</span>
+							<span className="text-[10rem] font-bold text-green-500">
+								90
+							</span>
 						</div>
-						<div className="w-full h-[0.5px] bg-gray-100 italic"></div>
 					</div>
 
-					<div className="mt-14 text-[11px] text-gray-300 font-medium tracking-widest uppercase">
-						Verify at:{" "}
-						<span className="opacity-80">
-							sql90.com/verify/{certId}
-						</span>
+					{/* Database Icons in Corners */}
+					<div className="absolute top-12 left-12 opacity-[0.04] pointer-events-none">
+						<Database size={40} className="text-teal-600" />
+					</div>
+					<div className="absolute top-12 right-12 opacity-[0.04] pointer-events-none">
+						<Database size={40} className="text-teal-600" />
+					</div>
+					<div className="absolute bottom-12 left-12 opacity-[0.04] pointer-events-none">
+						<Database size={40} className="text-teal-600" />
+					</div>
+					<div className="absolute bottom-12 right-12 opacity-[0.04] pointer-events-none">
+						<Database size={40} className="text-teal-600" />
+					</div>
+
+					{/* SQL Query Watermarks */}
+					<div className="absolute top-1/4 left-8 opacity-[0.025] pointer-events-none select-none font-mono text-xs text-teal-800 -rotate-12">
+						SELECT * FROM achievements
+					</div>
+					<div className="absolute bottom-1/4 right-8 opacity-[0.025] pointer-events-none select-none font-mono text-xs text-teal-800 rotate-12">
+						JOIN skills ON mastery = 100
+					</div>
+					<div className="absolute top-1/3 right-1/4 opacity-[0.02] pointer-events-none select-none font-mono text-[10px] text-teal-800 rotate-6">
+						WHERE completed = TRUE
+					</div>
+					<div className="absolute bottom-1/3 left-1/4 opacity-[0.02] pointer-events-none select-none font-mono text-[10px] text-teal-800 -rotate-6">
+						ORDER BY excellence DESC
+					</div>
+
+					{/* Decorative Corners */}
+					{/* Top Left */}
+					<div className="absolute top-0 left-0 pointer-events-none">
+						<div className="absolute top-4 left-4 w-24 h-1 bg-teal-600 rounded-full"></div>
+						<div className="absolute top-4 left-4 w-1 h-24 bg-teal-600 rounded-full"></div>
+						<div className="absolute top-8 left-8 w-16 h-0.5 bg-green-300 rounded-full"></div>
+						<div className="absolute top-8 left-8 w-0.5 h-16 bg-green-300 rounded-full"></div>
+					</div>
+					{/* Top Right */}
+					<div className="absolute top-0 right-0 pointer-events-none">
+						<div className="absolute top-4 right-4 w-24 h-1 bg-teal-600 rounded-full"></div>
+						<div className="absolute top-4 right-4 w-1 h-24 bg-teal-600 rounded-full"></div>
+						<div className="absolute top-8 right-8 w-16 h-0.5 bg-green-300 rounded-full"></div>
+						<div className="absolute top-8 right-8 w-0.5 h-16 bg-green-300 rounded-full"></div>
+					</div>
+					{/* Bottom Left */}
+					<div className="absolute bottom-0 left-0 pointer-events-none">
+						<div className="absolute bottom-4 left-4 w-24 h-1 bg-teal-600 rounded-full"></div>
+						<div className="absolute bottom-4 left-4 w-1 h-24 bg-teal-600 rounded-full"></div>
+						<div className="absolute bottom-8 left-8 w-16 h-0.5 bg-green-300 rounded-full"></div>
+						<div className="absolute bottom-8 left-8 w-0.5 h-16 bg-green-300 rounded-full"></div>
+					</div>
+					{/* Bottom Right */}
+					<div className="absolute bottom-0 right-0 pointer-events-none">
+						<div className="absolute bottom-4 right-4 w-24 h-1 bg-teal-600 rounded-full"></div>
+						<div className="absolute bottom-4 right-4 w-1 h-24 bg-teal-600 rounded-full"></div>
+						<div className="absolute bottom-8 right-8 w-16 h-0.5 bg-green-300 rounded-full"></div>
+						<div className="absolute bottom-8 right-8 w-0.5 h-16 bg-green-300 rounded-full"></div>
+					</div>
+
+					{/* Certificate Body */}
+					<div className="text-center relative z-10">
+						<div className="mb-6">
+							<div className="inline-flex items-center justify-center mb-4">
+								<span className="text-4xl font-bold text-teal-600">
+									SQL
+								</span>
+								<span className="text-4xl font-bold text-green-500">
+									90
+								</span>
+							</div>
+							<h3 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">
+								Certificate of Completion
+							</h3>
+							<div className="w-24 h-1 bg-teal-500 mx-auto rounded-full"></div>
+						</div>
+
+						<div className="mb-8">
+							<p className="text-gray-600 mb-4">
+								This certifies that
+							</p>
+							<p className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 px-4">
+								{name}
+							</p>
+							<p className="text-gray-600 mb-2">
+								has successfully completed all
+							</p>
+							<p className="text-2xl font-semibold text-teal-600 mb-4">
+								90 SQL Practice Questions
+							</p>
+							<p className="text-gray-600">
+								on{" "}
+								<span className="font-semibold">SQL90.com</span>
+							</p>
+						</div>
+
+						{/* Footer Information */}
+						<div className="flex flex-col items-center">
+							<div className="w-[70%] border-t border-gray-200 mb-6"></div>
+							<div className="flex flex-wrap justify-center items-center gap-x-8 gap-y-2 text-sm text-gray-600">
+								<div className="flex items-center gap-2">
+									<span className="font-medium text-gray-700">
+										Earned on:
+									</span>
+									<span>{currentDate}</span>
+								</div>
+								<div className="flex items-center gap-2">
+									<span className="font-medium text-gray-700">
+										Certification ID:
+									</span>
+									<span className="font-mono text-xs">
+										{certId}
+									</span>
+								</div>
+							</div>
+							<div className="w-[70%] border-t border-gray-200 mt-6"></div>
+						</div>
+
+						{/* Verification Link */}
+						<div className="mt-6">
+							<p className="text-xs text-gray-500">
+								Verify at:{" "}
+								<span className="font-mono">
+									sql90.com/verify/{certId}
+								</span>
+							</p>
+						</div>
 					</div>
 				</div>
 			</div>
 
-			{/* Edit Footer */}
-			<div className="flex flex-col items-center gap-8">
-				<div className="flex items-center gap-4">
-					<span className="text-[#475569] font-medium text-lg border-b border-transparent">
+			{/* Edit Name Section */}
+			<div className="flex justify-center mb-4">
+				<div className="flex items-center justify-center gap-2 w-full max-w-5xl">
+					<label className="text-sm font-medium text-gray-700">
 						Name on Certificate:
-					</span>
+					</label>
 					{isEditing ? (
 						<div className="flex items-center gap-2">
 							<input
 								type="text"
 								value={editValue}
 								onChange={(e) => setEditValue(e.target.value)}
-								className="px-5 py-2 border-2 border-[#008080] rounded-xl focus:outline-none text-[#1E293B] font-bold text-xl shadow-sm"
+								className="px-3 py-1 border-2 border-teal-600 rounded-md focus:outline-none text-sm font-medium"
 								autoFocus
 							/>
 							<button
 								onClick={handleSaveName}
-								className="p-2 px-3 text-white bg-[#008080] rounded-lg transition-all hover:bg-[#006666] shadow-md"
+								className="p-1 text-teal-600 hover:text-teal-700 transition-colors"
 							>
-								<CheckIcon size={22} className="stroke-[3]" />
+								<CheckIcon size={16} />
 							</button>
 							<button
 								onClick={handleCancelEdit}
-								className="p-2 px-3 text-white bg-red-400 rounded-lg transition-all hover:bg-red-500 shadow-md"
+								className="p-1 text-red-500 hover:text-red-700 transition-colors"
 							>
-								<XIcon size={22} className="stroke-[3]" />
+								<XIcon size={16} />
 							</button>
 						</div>
 					) : (
-						<div
-							className="flex items-center gap-3 group cursor-pointer"
-							onClick={() => setIsEditing(true)}
-						>
-							<span className="text-[#1E293B] font-bold text-2xl border-b-[3px] border-transparent transition-colors group-hover:border-[#22C55E] pb-1 leading-none">
+						<div className="flex items-center gap-2">
+							<span className="text-sm text-gray-900 font-medium">
 								{name}
 							</span>
-							<div className="bg-[#E6F9F9] p-2 rounded-full transition-all group-hover:scale-110">
-								<PencilIcon
-									size={20}
-									className="text-[#22C55E]"
-								/>
-							</div>
+							<button
+								onClick={() => setIsEditing(true)}
+								className="p-1 text-teal-600 hover:text-teal-700 transition-colors"
+								title="Edit name"
+							>
+								<PencilIcon size={16} />
+							</button>
 						</div>
 					)}
 				</div>
+			</div>
 
-				<div className="flex flex-col sm:flex-row gap-5 w-full">
-					<button className="flex-[5.5] bg-[#008080] hover:bg-[#006666] text-white py-4.5 px-10 rounded-xl font-bold text-lg flex items-center justify-center gap-4 transition-all shadow-md active:scale-[0.98] group">
-						<DownloadIcon size={24} className="stroke-[3]" />
+			{/* Action Buttons */}
+			<div className="flex justify-center">
+				<div className="flex flex-col sm:flex-row gap-3 w-full max-w-5xl">
+					<button className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-teal-600 text-white rounded-md hover:bg-teal-700 transition-colors font-medium">
+						<DownloadIcon size={18} />
 						Download Certificate
 					</button>
-					<button className="flex-[4.5] bg-white border-[3px] border-[#008080] text-[#008080] hover:bg-teal-50 py-4.5 px-10 rounded-xl font-bold text-lg flex items-center justify-center gap-4 transition-all shadow-sm active:scale-[0.98]">
-						<Share2Icon size={24} className="stroke-[3]" />
+					<button className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-white text-teal-600 border-2 border-teal-600 rounded-md hover:bg-teal-50 transition-colors font-medium">
+						<Share2Icon size={18} />
 						Share Certificate
 					</button>
 				</div>
