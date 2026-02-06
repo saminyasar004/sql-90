@@ -1,5 +1,6 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useEffect } from "react";
 import { useQuestion } from "@/hooks/use-question";
+import { useGame } from "@/hooks/use-game";
 import { cn } from "@/lib/utils";
 
 interface BadgeProps {
@@ -63,8 +64,44 @@ function Badge({
 
 export function BadgesSection() {
 	const { questions } = useQuestion();
+	const { certificateData, fetchCertificateAndBadges } = useGame();
+
+	useEffect(() => {
+		if (!certificateData) {
+			fetchCertificateAndBadges();
+		}
+	}, []);
 
 	const badges = useMemo(() => {
+		// If we have API data, use it as primary source
+		if (certificateData?.badges) {
+			const colorMap: Record<string, string> = {
+				"SQL Novice": "#10B981",
+				"SQL Intermediate": "#F59E0B",
+				"SQL Advanced": "#3B82F6",
+				"Join Master": "#F97316",
+				"Window Wizard": "#94A3B8",
+			};
+
+			const descMap: Record<string, string> = {
+				"SQL Novice": "Complete questions 1-40",
+				"SQL Intermediate": "Complete questions 41-70",
+				"SQL Advanced": "Complete questions 71-90",
+				"Join Master": "At least 20 join questions",
+				"Window Wizard": "At least 10 window function questions",
+			};
+
+			return certificateData.badges.map((b: any) => ({
+				title: b.name,
+				description: descMap[b.name] || "",
+				currentProgress: b.progress,
+				totalProgress: b.total,
+				color: colorMap[b.name] || "#94A3B8",
+				isActive: b.progress > 0,
+			}));
+		}
+
+		// Fallback to local calculation if API is unavailable or loading
 		const completedIds = new Set(
 			questions.filter((q) => q.status === "completed").map((q) => q.id),
 		);
@@ -84,27 +121,23 @@ export function BadgesSection() {
 			(q) => q.id >= 71 && q.id <= 90 && completedIds.has(q.id),
 		).length;
 
-		// Join Master: 20 Join questions (Assume questions containing 'Join' in title or similar logic)
-		// For now, let's use a heuristic or list.
-		// I'll filter by title containing 'Join'
-		const joinQuestions = questions.filter((q) =>
-			q.title.toLowerCase().includes("join"),
-		);
-		const joinCompleted = joinQuestions.filter((q) =>
-			completedIds.has(q.id),
+		// Join Master IDs provided by user
+		const joinIds = [
+			7, 8, 10, 15, 18, 29, 30, 36, 37, 40, 41, 43, 44, 46, 47, 49, 50,
+			51, 55, 56, 57, 58, 59, 60, 61, 63, 65, 67, 68, 70, 71, 74, 75, 76,
+			78, 79, 80, 82, 83, 84, 85, 87, 88, 89,
+		];
+		const joinCompleted = joinIds.filter((id) =>
+			completedIds.has(id),
 		).length;
 		const joinTarget = 20;
 
-		// Window Wizard: 10 Window Function questions
-		const windowQuestions = questions.filter(
-			(q) =>
-				q.title.toLowerCase().includes("window") ||
-				q.title.toLowerCase().includes("rank") ||
-				q.title.toLowerCase().includes("dense") ||
-				q.title.toLowerCase().includes("over"),
-		);
-		const windowCompleted = windowQuestions.filter((q) =>
-			completedIds.has(q.id),
+		// Window Wizard IDs provided by user
+		const windowIds = [
+			50, 52, 53, 54, 57, 61, 68, 71, 72, 76, 78, 81, 83, 85, 86, 88, 90,
+		];
+		const windowCompleted = windowIds.filter((id) =>
+			completedIds.has(id),
 		).length;
 		const windowTarget = 10;
 
@@ -143,14 +176,14 @@ export function BadgesSection() {
 			},
 			{
 				title: "Window Wizard",
-				description: "10 Window Function questions",
+				description: "At least 10 window function questions",
 				currentProgress: Math.min(windowCompleted, windowTarget),
 				totalProgress: windowTarget,
 				color: "#94A3B8", // Silver/Grey
 				isActive: windowCompleted > 0,
 			},
 		];
-	}, [questions]);
+	}, [questions, certificateData]);
 
 	return (
 		<div className="w-full font-sans mb-16 mt-8">

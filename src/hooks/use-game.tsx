@@ -20,6 +20,9 @@ interface GameContextType {
 	toasts: ToastType[];
 	addToast: (message: string, type?: "success" | "info") => void;
 	removeToast: (id: string) => void;
+	certificateData: any;
+	fetchCertificateAndBadges: () => Promise<void>;
+	updateCertificateName: (name: string) => Promise<boolean>;
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -42,6 +45,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
 	const [accuracy, setAccuracy] = useState(0);
 	const [your_position, setYourPosition] = useState(0);
 	const [toasts, setToasts] = useState<ToastType[]>([]);
+	const [certificateData, setCertificateData] = useState<any>(null);
 
 	// ✅ consistent header handling
 	const fetchUserProgress = async () => {
@@ -79,7 +83,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
 
 	const addToast = (
 		message: string,
-		type: "success" | "info" = "success"
+		type: "success" | "info" = "success",
 	) => {
 		const id = Date.now().toString();
 		setToasts((prev) => [...prev, { id, message, type }]);
@@ -92,6 +96,60 @@ export function GameProvider({ children }: { children: ReactNode }) {
 
 	const removeToast = (id: string) => {
 		setToasts((prev) => prev.filter((toast) => toast.id !== id));
+	};
+
+	const fetchCertificateAndBadges = async () => {
+		try {
+			const headers: HeadersInit = { "Content-Type": "application/json" };
+			if (accessToken) {
+				headers["Authorization"] = `Bearer ${accessToken}`;
+			}
+
+			const response = await fetch(
+				`${baseURL}/api/certificate-and-badges/`,
+				{
+					method: "GET",
+					headers,
+				},
+			);
+
+			if (!response.ok) {
+				throw new Error("Failed to fetch certificate and badges");
+			}
+
+			const data = await response.json();
+			setCertificateData(data);
+		} catch (err: any) {
+			console.error("Error fetching certificate data:", err.message);
+		}
+	};
+
+	const updateCertificateName = async (name: string) => {
+		try {
+			const headers: HeadersInit = { "Content-Type": "application/json" };
+			if (accessToken) {
+				headers["Authorization"] = `Bearer ${accessToken}`;
+			}
+
+			const response = await fetch(`${baseURL}/api/update_full_name/`, {
+				method: "PATCH",
+				headers,
+				body: JSON.stringify({ full_name: name }),
+			});
+
+			if (response.ok) {
+				setCertificateData((prev: any) => ({
+					...prev,
+					full_name: name,
+					name_on_certificate: name,
+				}));
+				return true;
+			}
+			return false;
+		} catch (err: any) {
+			console.error("Error updating certificate name:", err.message);
+			return false;
+		}
 	};
 
 	return (
@@ -108,6 +166,9 @@ export function GameProvider({ children }: { children: ReactNode }) {
 				toasts,
 				addToast,
 				removeToast,
+				certificateData,
+				fetchCertificateAndBadges,
+				updateCertificateName,
 			}}
 		>
 			{children}

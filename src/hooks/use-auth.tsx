@@ -240,28 +240,22 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 				);
 			}
 			setAccessToken(data.access);
-			// Store access token in localStorage if isRemember is true
-			if (isRemember) {
-				localStorage.setItem("accessToken", data.access);
-				// Optionally store refresh token if provided
-				if (data.refresh) {
-					localStorage.setItem("refreshToken", data.refresh);
-				}
-				if (data.profile_data) {
-					localStorage.setItem(
-						"hasUnlockedSolutions",
-						String(data.profile_data.has_unlocked_solutions),
-					);
-					// Save username and email
-					localStorage.setItem(
-						"username",
-						data.profile_data.username || "",
-					);
-					localStorage.setItem(
-						"email",
-						data.profile_data.email || "",
-					);
-				}
+
+			// Always store tokens and user data in localStorage to persist session across refreshes
+			localStorage.setItem("accessToken", data.access);
+			if (data.refresh) {
+				localStorage.setItem("refreshToken", data.refresh);
+			}
+			if (data.profile_data) {
+				localStorage.setItem(
+					"hasUnlockedSolutions",
+					String(data.profile_data.has_unlocked_solutions),
+				);
+				localStorage.setItem(
+					"username",
+					data.profile_data.username || "",
+				);
+				localStorage.setItem("email", data.profile_data.email || "");
 			}
 			return true;
 		} catch (err) {

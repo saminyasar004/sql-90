@@ -7,37 +7,68 @@ import {
 	XIcon,
 	Database,
 } from "lucide-react";
+import { useGame } from "@/hooks/use-game";
+import { useEffect } from "react";
+import { toast } from "sonner";
 
 export function CertificateCard() {
-	const [name, setName] = useState(() => {
-		return (
-			localStorage.getItem("certificateName") ||
-			localStorage.getItem("username") ||
-			"John Doe"
-		);
-	});
-	const [isEditing, setIsEditing] = useState(false);
-	const [editValue, setEditValue] = useState(name);
-	const [certId] = useState(() => {
-		const savedId = localStorage.getItem("certificateId");
-		if (savedId) return savedId;
-		const newId = `SQL90-2025-JD-8F3A9C`;
-		localStorage.setItem("certificateId", newId);
-		return newId;
-	});
+	const {
+		certificateData,
+		fetchCertificateAndBadges,
+		updateCertificateName,
+	} = useGame();
 
-	const handleSaveName = () => {
-		setName(editValue);
-		localStorage.setItem("certificateName", editValue);
-		setIsEditing(false);
+	const [isEditing, setIsEditing] = useState(false);
+	const [editValue, setEditValue] = useState("");
+
+	useEffect(() => {
+		if (!certificateData) {
+			fetchCertificateAndBadges();
+		}
+	}, []);
+
+	useEffect(() => {
+		if (
+			certificateData?.full_name ||
+			certificateData?.name_on_certificate
+		) {
+			setEditValue(
+				certificateData.full_name ||
+					certificateData.name_on_certificate,
+			);
+		}
+	}, [certificateData]);
+
+	const name =
+		certificateData?.full_name ||
+		certificateData?.name_on_certificate ||
+		"Your Name";
+	const certId = certificateData?.certificate_id || "LOADING...";
+	const earnedOn = certificateData?.certificate_earned_on
+		? new Date(certificateData.certificate_earned_on).toLocaleDateString(
+				"en-US",
+				{
+					year: "numeric",
+					month: "long",
+					day: "numeric",
+				},
+			)
+		: "Not yet earned";
+
+	const handleSaveName = async () => {
+		const success = await updateCertificateName(editValue);
+		if (success) {
+			toast.success("Certificate name updated successfully");
+			setIsEditing(false);
+		} else {
+			toast.error("Failed to update certificate name");
+		}
 	};
 
 	const handleCancelEdit = () => {
 		setEditValue(name);
 		setIsEditing(false);
 	};
-
-	const currentDate = "February 5, 2026";
 
 	return (
 		<div className="bg-gradient-to-br from-teal-50 to-emerald-50 rounded-lg border-2 border-teal-200 p-6 mb-8">
@@ -179,7 +210,7 @@ export function CertificateCard() {
 									<span className="font-medium text-gray-700">
 										Earned on:
 									</span>
-									<span>{currentDate}</span>
+									<span>{earnedOn}</span>
 								</div>
 								<div className="flex items-center gap-2">
 									<span className="font-medium text-gray-700">
@@ -258,7 +289,16 @@ export function CertificateCard() {
 						<DownloadIcon size={18} />
 						Download Certificate
 					</button>
-					<button className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-white text-teal-600 border-2 border-teal-600 rounded-md hover:bg-teal-50 transition-colors font-medium">
+					<button
+						onClick={() => {
+							const url = `${window.location.origin}/certificate/${certId}`;
+							navigator.clipboard.writeText(url);
+							toast.success(
+								"Certificate link copied to clipboard",
+							);
+						}}
+						className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-white text-teal-600 border-2 border-teal-600 rounded-md hover:bg-teal-50 transition-colors font-medium"
+					>
 						<Share2Icon size={18} />
 						Share Certificate
 					</button>

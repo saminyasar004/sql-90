@@ -10,6 +10,7 @@ import { ToastContainer } from "@/components/common/toast";
 import { Link, Navigate } from "react-router-dom";
 import { useAuth } from "@/hooks/use-auth";
 import { LeaderboardProvider } from "@/hooks/use-leaderboard";
+import { CongratulationsModal } from "@/components/common/CongratulationsModal";
 
 export default function Index() {
 	const [activeView, setActiveView] = useState("questions");
@@ -17,8 +18,20 @@ export default function Index() {
 	const [showCheckoutModal, setShowCheckoutModal] = useState(false);
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-	const { toasts, removeToast } = useGame();
+	const { toasts, removeToast, completedQuestions } = useGame();
 	const { isAuthenticated, hasUnlockedSolutions, logout } = useAuth();
+	const [showCongrats, setShowCongrats] = useState(false);
+
+	// Watch for completion of all 90 questions
+	useEffect(() => {
+		if (completedQuestions === 90) {
+			const hasShown = localStorage.getItem("congratsShown");
+			if (!hasShown) {
+				setShowCongrats(true);
+				localStorage.setItem("congratsShown", "true");
+			}
+		}
+	}, [completedQuestions]);
 
 	// if (!isAuthenticated) return <Navigate to="/auth" replace />;
 
@@ -214,6 +227,15 @@ export default function Index() {
 			{showCheckoutModal && (
 				<CheckoutModal onClose={() => setShowCheckoutModal(false)} />
 			)}
+
+			<CongratulationsModal
+				open={showCongrats}
+				onOpenChange={setShowCongrats}
+				onViewCertificate={() => {
+					setShowCongrats(false);
+					setActiveView("leaderboard");
+				}}
+			/>
 
 			{/* Toasts */}
 			<ToastContainer toasts={toasts} removeToast={removeToast} />
