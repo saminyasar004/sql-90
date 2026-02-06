@@ -31,6 +31,12 @@ type AuthContextType = {
 	fetchProfile: (token: string) => Promise<void>;
 	refreshUserInfo: () => Promise<void>;
 	deleteAccount: () => Promise<boolean>;
+	requestPasswordReset: (email: string) => Promise<boolean>;
+	confirmPasswordReset: (
+		uidb64: string,
+		token: string,
+		new_password: string,
+	) => Promise<boolean>;
 };
 
 export interface GoogleCredentialResponse {
@@ -413,6 +419,68 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 		}
 	};
 
+	const requestPasswordReset = async (email: string) => {
+		setLoading(true);
+		try {
+			const response = await fetch(
+				`${baseURL}/auth/password-reset/request/`,
+				{
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({ email }),
+				},
+			);
+
+			if (response.ok) {
+				toast.success(
+					"Password reset email sent. Please check your inbox.",
+				);
+				return true;
+			} else {
+				const data = await response.json();
+				throw new Error(data.error || "Failed to send reset email");
+			}
+		} catch (err) {
+			console.error("Error requesting password reset:", err);
+			toast.error((err as Error).message);
+			return false;
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	const confirmPasswordReset = async (
+		uidb64: string,
+		token: string,
+		new_password: string,
+	) => {
+		setLoading(true);
+		try {
+			const response = await fetch(
+				`${baseURL}/auth/password-reset/confirm/`,
+				{
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({ uidb64, token, new_password }),
+				},
+			);
+
+			if (response.ok) {
+				toast.success("Password reset successful. You can now log in.");
+				return true;
+			} else {
+				const data = await response.json();
+				throw new Error(data.error || "Failed to reset password");
+			}
+		} catch (err) {
+			console.error("Error confirming password reset:", err);
+			toast.error((err as Error).message);
+			return false;
+		} finally {
+			setLoading(false);
+		}
+	};
+
 	return (
 		<AuthContext.Provider
 			value={{
@@ -430,6 +498,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 				},
 				refreshUserInfo,
 				deleteAccount,
+				requestPasswordReset,
+				confirmPasswordReset,
 			}}
 		>
 			{children}

@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { AuthProvider } from "./hooks/use-auth";
 import Auth from "./pages/Auth";
+import PasswordResetConfirm from "./pages/PasswordResetConfirm";
 import NotFound from "./pages/NotFound";
 import Index from "./pages";
 import { GameProvider } from "./hooks/use-game";
@@ -60,6 +61,14 @@ const App = () => {
 							element={
 								<AuthProvider>
 									<Auth />
+								</AuthProvider>
+							}
+						/>
+						<Route
+							path="/auth/password-reset/confirm/:uidb64/:token/"
+							element={
+								<AuthProvider>
+									<PasswordResetConfirm />
 								</AuthProvider>
 							}
 						/>

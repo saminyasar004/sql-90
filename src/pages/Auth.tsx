@@ -95,14 +95,23 @@ declare global {
 export default function Auth() {
 	const navigate = useNavigate();
 	const location = useLocation();
-	const { isAuthenticated, login, register, error, loading, socialSignup } =
-		useAuth();
+	const {
+		isAuthenticated,
+		login,
+		register,
+		error,
+		loading,
+		socialSignup,
+		requestPasswordReset,
+	} = useAuth();
 
 	const queryParams = new URLSearchParams(location.search);
 	const ref = queryParams.get("ref");
 	const [activeTab, setActiveTab] = useState(
-		ref === "signup" ? "signup" : "signin"
+		ref === "signup" ? "signup" : "signin",
 	);
+	const [isForgotPassword, setIsForgotPassword] = useState(false);
+	const [forgotPasswordEmail, setForgotPasswordEmail] = useState("");
 
 	const {
 		register: registerLogin,
@@ -172,7 +181,7 @@ export default function Auth() {
 		const success = await login(
 			data.username,
 			data.password,
-			data.isRemember ?? false
+			data.isRemember ?? false,
 		);
 		if (success) {
 			toast.success("Login successful");
@@ -187,15 +196,28 @@ export default function Auth() {
 			data.username,
 			data.email,
 			data.password,
-			data.confirmPassword
+			data.confirmPassword,
 		);
 		if (response) {
 			toast.success(
 				response.detail ||
-					"An email has been sent to you with a link to confirm your account."
+					"An email has been sent to you with a link to confirm your account.",
 			);
 		} else {
 			toast.error(error || "Signup failed. Please try again.");
+		}
+	};
+
+	const onForgotPasswordSubmit = async (e: React.FormEvent) => {
+		e.preventDefault();
+		if (!forgotPasswordEmail) {
+			toast.error("Please enter your email address");
+			return;
+		}
+		const success = await requestPasswordReset(forgotPasswordEmail);
+		if (success) {
+			setIsForgotPassword(false);
+			setForgotPasswordEmail("");
 		}
 	};
 
@@ -314,11 +336,14 @@ export default function Auth() {
 						<Card className="w-full lg:w-[90%] bg-white shadow-md border border-gray-100">
 							<CardHeader className="text-center pb-4">
 								<CardTitle className="text-2xl">
-									Get Started
+									{isForgotPassword
+										? "Reset Password"
+										: "Get Started"}
 								</CardTitle>
 								<CardDescription>
-									Create your account or sign in to continue
-									your SQL journey
+									{isForgotPassword
+										? "Enter your email address and we'll send you a link to reset your password"
+										: "Create your account or sign in to continue your SQL journey"}
 								</CardDescription>
 							</CardHeader>
 
@@ -353,7 +378,7 @@ export default function Auth() {
 									>
 										<form
 											onSubmit={handleSubmitSignUp(
-												onSignUpFormSubmit
+												onSignUpFormSubmit,
 											)}
 											className="space-y-4"
 										>
@@ -365,11 +390,11 @@ export default function Auth() {
 													id="username"
 													placeholder="johndoe"
 													{...registerSignUp(
-														"username"
+														"username",
 													)}
 													className={cn(
 														signUpErrors.username &&
-															"ring-1 ring-warning"
+															"ring-1 ring-warning",
 													)}
 												/>
 												{signUpErrors.username && (
@@ -394,7 +419,7 @@ export default function Auth() {
 													{...registerSignUp("email")}
 													className={cn(
 														signUpErrors.email &&
-															"ring-1 ring-warning"
+															"ring-1 ring-warning",
 													)}
 												/>
 												{signUpErrors.email && (
@@ -416,11 +441,11 @@ export default function Auth() {
 													type="password"
 													placeholder="••••••••"
 													{...registerSignUp(
-														"password"
+														"password",
 													)}
 													className={cn(
 														signUpErrors.password &&
-															"ring-1 ring-warning"
+															"ring-1 ring-warning",
 													)}
 												/>
 												{signUpErrors.password && (
@@ -443,11 +468,11 @@ export default function Auth() {
 													type="password"
 													placeholder="••••••••"
 													{...registerSignUp(
-														"confirmPassword"
+														"confirmPassword",
 													)}
 													className={cn(
 														signUpErrors.confirmPassword &&
-															"ring-1 ring-warning"
+															"ring-1 ring-warning",
 													)}
 												/>
 												{signUpErrors.confirmPassword && (
@@ -486,7 +511,7 @@ export default function Auth() {
 										</form>
 									</div>
 
-									{/* Sign In Form */}
+									{/* Sign In Form or Forgot Password Form */}
 									<div
 										className={
 											activeTab === "signin"
@@ -494,106 +519,176 @@ export default function Auth() {
 												: "hidden"
 										}
 									>
-										<form
-											onSubmit={handleSubmitLogin(
-												onLoginFormSubmit
-											)}
-											className="space-y-4"
-										>
-											<div className="space-y-2">
-												<Label htmlFor="signinUsername">
-													Username
-												</Label>
-												<Input
-													id="signinUsername"
-													type="text"
-													placeholder="johndoe"
-													{...registerLogin(
-														"username"
-													)}
-													className={cn(
-														loginErrors.username &&
-															"ring-1 ring-warning"
-													)}
-												/>
-												{loginErrors.username && (
-													<p className="text-warning text-left text-sm">
-														{
-															loginErrors.username
-																.message
+										{isForgotPassword ? (
+											<form
+												onSubmit={
+													onForgotPasswordSubmit
+												}
+												className="space-y-4"
+											>
+												<div className="space-y-2">
+													<Label htmlFor="forgotEmail">
+														Email Address
+													</Label>
+													<Input
+														id="forgotEmail"
+														type="email"
+														placeholder="john@example.com"
+														value={
+															forgotPasswordEmail
 														}
-													</p>
-												)}
-											</div>
-
-											<div className="space-y-2">
-												<Label htmlFor="signinPassword">
-													Password
-												</Label>
-												<Input
-													id="signinPassword"
-													type="password"
-													placeholder="••••••••"
-													{...registerLogin(
-														"password"
-													)}
-													className={cn(
-														loginErrors.password &&
-															"ring-1 ring-warning"
-													)}
-												/>
-												{loginErrors.password && (
-													<p className="text-warning text-left text-sm">
-														{
-															loginErrors.password
-																.message
+														onChange={(e) =>
+															setForgotPasswordEmail(
+																e.target.value,
+															)
 														}
-													</p>
-												)}
-											</div>
+														required
+													/>
+												</div>
 
-											<div className="flex items-center justify-between text-sm">
-												<label className="flex items-center gap-2 cursor-pointer">
-													<input
-														type="checkbox"
-														className="rounded border-border"
+												<Button
+													type="submit"
+													className="w-full h-12 bg-[#0B2239] hover:bg-[#0B2239]/90 text-white"
+													disabled={loading}
+												>
+													{loading ? (
+														<div className="flex items-center gap-2">
+															<div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+															Sending...
+														</div>
+													) : (
+														<div className="flex items-center gap-2">
+															Send Reset Link{" "}
+															<ArrowRight className="w-4 h-4" />
+														</div>
+													)}
+												</Button>
+
+												<div className="text-center">
+													<Button
+														variant="link"
+														type="button"
+														onClick={() =>
+															setIsForgotPassword(
+																false,
+															)
+														}
+														className="text-[#007C7C]"
+													>
+														Back to Sign In
+													</Button>
+												</div>
+											</form>
+										) : (
+											<form
+												onSubmit={handleSubmitLogin(
+													onLoginFormSubmit,
+												)}
+												className="space-y-4"
+											>
+												<div className="space-y-2">
+													<Label htmlFor="signinUsername">
+														Username
+													</Label>
+													<Input
+														id="signinUsername"
+														type="text"
+														placeholder="johndoe"
 														{...registerLogin(
-															"isRemember"
+															"username",
+														)}
+														className={cn(
+															loginErrors.username &&
+																"ring-1 ring-warning",
 														)}
 													/>
-													Remember me
-												</label>
+													{loginErrors.username && (
+														<p className="text-warning text-left text-sm">
+															{
+																loginErrors
+																	.username
+																	.message
+															}
+														</p>
+													)}
+												</div>
+
+												<div className="space-y-2">
+													<Label htmlFor="signinPassword">
+														Password
+													</Label>
+													<Input
+														id="signinPassword"
+														type="password"
+														placeholder="••••••••"
+														{...registerLogin(
+															"password",
+														)}
+														className={cn(
+															loginErrors.password &&
+																"ring-1 ring-warning",
+														)}
+													/>
+													{loginErrors.password && (
+														<p className="text-warning text-left text-sm">
+															{
+																loginErrors
+																	.password
+																	.message
+															}
+														</p>
+													)}
+												</div>
+
+												<div className="flex items-center justify-between text-sm">
+													<label className="flex items-center gap-2 cursor-pointer">
+														<input
+															type="checkbox"
+															className="rounded border-border"
+															{...registerLogin(
+																"isRemember",
+															)}
+														/>
+														Remember me
+													</label>
+													<Button
+														variant="link"
+														type="button"
+														onClick={() =>
+															setIsForgotPassword(
+																true,
+															)
+														}
+														className="p-0 h-auto text-[#007C7C]"
+													>
+														Forgot password?
+													</Button>
+												</div>
+
 												<Button
-													variant="link"
-													className="p-0 h-auto text-[#007C7C]"
+													type="submit"
+													className="w-full h-12 bg-[#0B2239] hover:bg-[#0B2239]/90 text-white"
+													disabled={loading}
 												>
-													Forgot password?
+													{loading ? (
+														<div className="flex items-center gap-2">
+															<div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+															Signing in...
+														</div>
+													) : (
+														<div className="flex items-center gap-2">
+															Sign In{" "}
+															<ArrowRight className="w-4 h-4" />
+														</div>
+													)}
 												</Button>
-											</div>
 
-											<Button
-												type="submit"
-												className="w-full h-12 bg-[#0B2239] hover:bg-[#0B2239]/90 text-white"
-												disabled={loading}
-											>
-												{loading ? (
-													<div className="flex items-center gap-2">
-														<div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-														Signing in...
-													</div>
-												) : (
-													<div className="flex items-center gap-2">
-														Sign In{" "}
-														<ArrowRight className="w-4 h-4" />
-													</div>
-												)}
-											</Button>
-
-											<div
-												ref={googleSigninRef}
-												className="w-full flex justify-center [&>div]:w-full"
-											/>
-										</form>
+												<div
+													ref={googleSigninRef}
+													className="w-full flex justify-center [&>div]:w-full"
+												/>
+											</form>
+										)}
 									</div>
 								</Tabs>
 
