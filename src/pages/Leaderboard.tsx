@@ -14,6 +14,7 @@ import { useState, useMemo, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { CertificateCard } from "@/components/leaderboard/certificate-card";
+import { ChangePasswordModal } from "@/components/auth/ChangePasswordModal";
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -30,6 +31,7 @@ export function Leaderboard({ setActiveView }) {
 	const { leaderboard, loading, error } = useLeaderboard();
 	const { deleteAccount } = useAuth();
 	const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+	const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
 
 	const [showProfile, setShowProfile] = useState(() => {
 		const saved = localStorage.getItem("showProfileOnLeaderboard");
@@ -146,6 +148,10 @@ export function Leaderboard({ setActiveView }) {
 					</AlertDialogFooter>
 				</AlertDialogContent>
 			</AlertDialog>
+			<ChangePasswordModal
+				open={isPasswordModalOpen}
+				onOpenChange={setIsPasswordModalOpen}
+			/>
 
 			<div className="container w-full mx-auto px-4 py-6 pb-20">
 				<div className="flex flex-col sm:flex-row sm:items-start mb-6 gap-4">
@@ -162,7 +168,10 @@ export function Leaderboard({ setActiveView }) {
 					</div>
 					<div className="flex flex-col items-end gap-3 w-full sm:w-auto">
 						<div className="flex items-center gap-4 text-sm text-gray-500 font-medium mr-1">
-							<button className="hover:text-gray-800 transition-colors">
+							<button
+								onClick={() => setIsPasswordModalOpen(true)}
+								className="hover:text-gray-800 transition-colors"
+							>
 								Change Password
 							</button>
 							<span className="text-gray-300">|</span>

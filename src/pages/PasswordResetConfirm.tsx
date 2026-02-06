@@ -8,6 +8,7 @@ import {
 	CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
@@ -105,9 +106,8 @@ export default function PasswordResetConfirm() {
 						>
 							<div className="space-y-2">
 								<Label htmlFor="password">New Password</Label>
-								<Input
+								<PasswordInput
 									id="password"
-									type="password"
 									placeholder="••••••••"
 									{...register("password")}
 									className={cn(
@@ -126,9 +126,8 @@ export default function PasswordResetConfirm() {
 								<Label htmlFor="confirmPassword">
 									Confirm New Password
 								</Label>
-								<Input
+								<PasswordInput
 									id="confirmPassword"
-									type="password"
 									placeholder="••••••••"
 									{...register("confirmPassword")}
 									className={cn(

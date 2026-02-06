@@ -37,6 +37,10 @@ type AuthContextType = {
 		token: string,
 		new_password: string,
 	) => Promise<boolean>;
+	changePassword: (
+		old_password: string,
+		new_password: string,
+	) => Promise<boolean>;
 };
 
 export interface GoogleCredentialResponse {
@@ -481,6 +485,42 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 		}
 	};
 
+	const changePassword = async (
+		old_password: string,
+		new_password: string,
+	) => {
+		setLoading(true);
+		try {
+			if (!accessToken) throw new Error("No access token found");
+
+			const response = await fetch(
+				`${baseURL}/auth/user/change_password/`,
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: `Bearer ${accessToken}`,
+					},
+					body: JSON.stringify({ old_password, new_password }),
+				},
+			);
+
+			if (response.ok) {
+				toast.success("Password changed successfully");
+				return true;
+			} else {
+				const data = await response.json();
+				throw new Error(data.error || "Failed to change password");
+			}
+		} catch (err) {
+			console.error("Error changing password:", err);
+			toast.error((err as Error).message);
+			return false;
+		} finally {
+			setLoading(false);
+		}
+	};
+
 	return (
 		<AuthContext.Provider
 			value={{
@@ -500,6 +540,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 				deleteAccount,
 				requestPasswordReset,
 				confirmPasswordReset,
+				changePassword,
 			}}
 		>
 			{children}
