@@ -14,6 +14,7 @@ import { useState, useMemo, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { CertificateCard } from "@/components/leaderboard/certificate-card";
+import { BadgesSection } from "@/components/leaderboard/badges-section";
 import { ChangePasswordModal } from "@/components/auth/ChangePasswordModal";
 import {
 	AlertDialog,
@@ -210,6 +211,8 @@ export function Leaderboard({ setActiveView }) {
 						<CertificateCard />
 					</div>
 				}
+				{/* Your Badges Section */}
+				<BadgesSection />
 				{/* Your Position - moved above the leaderboard table */}
 				<div className="mb-8 font-sans">
 					<div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-3">
