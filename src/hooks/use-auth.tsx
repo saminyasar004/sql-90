@@ -397,12 +397,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 			});
 
 			if (response.ok) {
-				localStorage.clear();
+				// Clear user data but preserve other local settings if any
+				localStorage.removeItem("accessToken");
+				localStorage.removeItem("refreshToken");
+				localStorage.removeItem("username");
+				localStorage.removeItem("email");
+				localStorage.removeItem("hasUnlockedSolutions");
+
 				setAccessToken("");
 				setIsAuthenticated(false);
 				setHasUnlockedSolutions(false);
+
 				toast.success("Account deleted successfully");
-				navigate("/");
+				navigate("/auth");
 				return true;
 			} else {
 				const data = await response.json();
