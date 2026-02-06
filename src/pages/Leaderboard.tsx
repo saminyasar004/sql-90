@@ -3,10 +3,17 @@ import { useGame } from "@/hooks/use-game";
 import { useLeaderboard } from "@/hooks/use-leaderboard";
 import { formatUsername } from "@/lib/utils";
 
-import { SearchIcon, TrophyIcon } from "lucide-react";
+import {
+	SearchIcon,
+	TrophyIcon,
+	PencilIcon,
+	DownloadIcon,
+	Share2Icon,
+} from "lucide-react";
 import { useState, useMemo, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { CertificateCard } from "@/components/leaderboard/certificate-card";
 
 export function Leaderboard({ setActiveView }) {
 	const [searchQuery, setSearchQuery] = useState("");
@@ -96,19 +103,41 @@ export function Leaderboard({ setActiveView }) {
 						See who's mastering SQL the fastest
 					</p>
 				</div>
-				<div className="relative w-full sm:w-auto">
-					<div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-						<SearchIcon size={16} className="text-gray-400" />
+				<div className="flex flex-col items-end gap-3 w-full sm:w-auto">
+					<div className="flex items-center gap-4 text-sm text-gray-500 font-medium mr-1">
+						<button className="hover:text-gray-800 transition-colors">
+							Change Password
+						</button>
+						<span className="text-gray-300">|</span>
+						<button className="hover:text-red-600 transition-colors">
+							Delete Account
+						</button>
 					</div>
-					<input
-						type="text"
-						placeholder="Search users..."
-						className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#008080] focus:border-transparent w-full"
-						value={searchQuery}
-						onChange={(e) => setSearchQuery(e.target.value)}
-					/>
+					<div className="relative w-full">
+						<div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+							<SearchIcon size={16} className="text-gray-400" />
+						</div>
+						<input
+							type="text"
+							placeholder="Search users..."
+							className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#008080] focus:border-transparent w-full"
+							value={searchQuery}
+							onChange={(e) => setSearchQuery(e.target.value)}
+						/>
+					</div>
 				</div>
 			</div>
+
+			{/* Your Certificate Section - Only show if completed all 90 questions */}
+			{/* {completedQuestions === 90 && */}
+			{
+				<div className="mb-8 font-sans">
+					<h2 className="text-xl font-bold text-[#1E293B] mb-4">
+						Your Certificate
+					</h2>
+					<CertificateCard />
+				</div>
+			}
 			{/* Your Position - moved above the leaderboard table */}
 			<div className="mb-8 font-sans">
 				<div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-3">
