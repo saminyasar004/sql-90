@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
+import { toPng } from "html-to-image";
 import {
 	DownloadIcon,
 	Share2Icon,
@@ -20,6 +21,8 @@ export function CertificateCard() {
 
 	const [isEditing, setIsEditing] = useState(false);
 	const [editValue, setEditValue] = useState("");
+	const [isDownloading, setIsDownloading] = useState(false);
+	const certificateRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
 		if (!certificateData) {
@@ -70,6 +73,83 @@ export function CertificateCard() {
 		setIsEditing(false);
 	};
 
+	const handleDownload = async () => {
+		if (!certificateRef.current) return;
+
+		try {
+			setIsDownloading(true);
+			const toastId = toast.loading("Preparing your certificate...");
+
+			// Wait for fonts to be ready
+			if (document.fonts) {
+				await document.fonts.ready;
+			}
+
+			// Small delay to ensure any layout shifts or font renders are stable
+			await new Promise((resolve) => setTimeout(resolve, 200));
+
+			const options = {
+				quality: 1,
+				pixelRatio: 2,
+				backgroundColor: "#ffffff",
+				style: {
+					borderRadius: "0",
+					margin: "0",
+					padding: "0",
+				},
+				// Add defensive options for potential font embedding issues
+				fontEmbedCSS: undefined, // Let it try default first, or set to empty string if it fails
+				skipFonts: false, // Keep fonts by default with the downgraded version
+			};
+
+			const dataUrl = await toPng(certificateRef.current, options);
+
+			const link = document.createElement("a");
+			link.download = `SQL90-Certificate-${name.replace(/\s+/g, "-")}.png`;
+			link.href = dataUrl;
+			link.click();
+
+			toast.success("Certificate downloaded successfully!", {
+				id: toastId,
+			});
+		} catch (err: any) {
+			console.error("Download failed:", err);
+
+			// If it fails with font issue, try once more with skipFonts
+			if (
+				err.message?.includes("trim") ||
+				err.message?.includes("font")
+			) {
+				try {
+					const dataUrl = await toPng(certificateRef.current!, {
+						quality: 1,
+						pixelRatio: 2,
+						backgroundColor: "#ffffff",
+						skipFonts: true,
+					});
+					const link = document.createElement("a");
+					link.download = `SQL90-Certificate-${name.replace(/\s+/g, "-")}.png`;
+					link.href = dataUrl;
+					link.click();
+					toast.success(
+						"Certificate downloaded (system fonts used).",
+					);
+					return;
+				} catch (retryErr) {
+					toast.error(
+						"Failed to download certificate. Please try again.",
+					);
+				}
+			} else {
+				toast.error(
+					"Failed to download certificate. Please try again.",
+				);
+			}
+		} finally {
+			setIsDownloading(false);
+		}
+	};
+
 	return (
 		<div className="bg-gradient-to-br from-teal-50 to-emerald-50 rounded-lg border-2 border-teal-200 p-6 mb-8">
 			{/* Celebration Header */}
@@ -95,7 +175,10 @@ export function CertificateCard() {
 
 			{/* Certificate Preview Container */}
 			<div className="flex justify-center mb-4">
-				<div className="relative bg-white rounded-lg border-2 border-gray-200 p-8 sm:p-10 shadow-sm w-full max-w-5xl overflow-hidden">
+				<div
+					ref={certificateRef}
+					className="relative bg-white rounded-lg border-2 border-gray-200 p-8 sm:p-10 shadow-sm w-full max-w-5xl overflow-hidden"
+				>
 					{/* Background Watermarks */}
 					<div className="absolute inset-0 flex items-center justify-center pointer-events-none">
 						<div className="flex items-center opacity-[0.03] select-none">
@@ -285,9 +368,15 @@ export function CertificateCard() {
 			{/* Action Buttons */}
 			<div className="flex justify-center">
 				<div className="flex flex-col sm:flex-row gap-3 w-full max-w-5xl">
-					<button className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-teal-600 text-white rounded-md hover:bg-teal-700 transition-colors font-medium">
+					<button
+						onClick={handleDownload}
+						disabled={isDownloading}
+						className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-teal-600 text-white rounded-md hover:bg-teal-700 transition-colors font-medium disabled:opacity-70"
+					>
 						<DownloadIcon size={18} />
-						Download Certificate
+						{isDownloading
+							? "Generating Image..."
+							: "Download Certificate"}
 					</button>
 					<button
 						onClick={() => {
