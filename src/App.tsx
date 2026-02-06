@@ -14,6 +14,7 @@ import TermsPage from "./pages/Terms";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import PaymentFailure from "./pages/PaymentFailure";
 import CertificatePublicView from "./pages/CertificatePublicView";
+import CertificateVerificationView from "./pages/CertificateVerificationView";
 import { DesktopViewSuggestionModal } from "@/components/common/desktopViewSuggestion";
 import { useEffect, useState } from "react";
 
@@ -94,6 +95,10 @@ const App = () => {
 						<Route
 							path="/certificate/:certId"
 							element={<CertificatePublicView />}
+						/>
+						<Route
+							path="/verify/:certId"
+							element={<CertificateVerificationView />}
 						/>
 						{/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
 						<Route path="*" element={<NotFound />} />
