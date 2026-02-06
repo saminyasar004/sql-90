@@ -202,15 +202,7 @@ export function Leaderboard({ setActiveView }) {
 				</div>
 
 				{/* Your Certificate Section - Only show if completed all 90 questions */}
-				{/* {completedQuestions === 90 && */}
-				{
-					<div className="mb-8 font-sans">
-						<h2 className="text-xl font-bold text-[#1E293B] mb-4">
-							Your Certificate
-						</h2>
-						<CertificateCard />
-					</div>
-				}
+				<CertificateCard />
 				{/* Your Badges Section */}
 				<BadgesSection />
 				{/* Your Position - moved above the leaderboard table */}
