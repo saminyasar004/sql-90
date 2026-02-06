@@ -18,18 +18,19 @@ type AuthContextType = {
 	login: (
 		username: string,
 		password: string,
-		isRemember: boolean
+		isRemember: boolean,
 	) => Promise<boolean>;
 	register: (
 		username: string,
 		email: string,
 		password: string,
-		confirmPassword: string
+		confirmPassword: string,
 	) => Promise<any>;
 	socialSignup: (response: GoogleCredentialResponse) => Promise<boolean>;
 	logout: () => void;
 	fetchProfile: (token: string) => Promise<void>;
 	refreshUserInfo: () => Promise<void>;
+	deleteAccount: () => Promise<boolean>;
 };
 
 export interface GoogleCredentialResponse {
@@ -54,13 +55,13 @@ type AuthProviderProps = {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 	const [accessToken, setAccessToken] = useState<string>(
-		localStorage.getItem("accessToken") || ""
+		localStorage.getItem("accessToken") || "",
 	);
 	const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
-		!!localStorage.getItem("accessToken")
+		!!localStorage.getItem("accessToken"),
 	);
 	const [hasUnlockedSolutions, setHasUnlockedSolutions] = useState<boolean>(
-		localStorage.getItem("hasUnlockedSolutions") === "true"
+		localStorage.getItem("hasUnlockedSolutions") === "true",
 	);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
@@ -146,7 +147,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 				// Update all relevant localStorage fields
 				localStorage.setItem(
 					"hasUnlockedSolutions",
-					String(data.has_unlocked_solutions)
+					String(data.has_unlocked_solutions),
 				);
 				if (data.username)
 					localStorage.setItem("username", data.username);
@@ -174,21 +175,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 			if (response.ok) {
 				const data = await response.json();
 				setHasUnlockedSolutions(
-					data.profile_data.has_unlocked_solutions
+					data.profile_data.has_unlocked_solutions,
 				);
 				localStorage.setItem(
 					"hasUnlockedSolutions",
-					String(data.profile_data.has_unlocked_solutions)
+					String(data.profile_data.has_unlocked_solutions),
 				);
 				// Update other profile data if needed
 				if (data.profile_data) {
 					localStorage.setItem(
 						"username",
-						data.profile_data.username || ""
+						data.profile_data.username || "",
 					);
 					localStorage.setItem(
 						"email",
-						data.profile_data.email || ""
+						data.profile_data.email || "",
 					);
 				}
 				return true;
@@ -206,7 +207,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 	const login = async (
 		username: string,
 		password: string,
-		isRemember: boolean
+		isRemember: boolean,
 	) => {
 		setLoading(true);
 		setError(null);
@@ -219,13 +220,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 			const data = await response.json();
 			if (!response.ok || !data.access) {
 				throw new Error(
-					data.error || data.detail || "Invalid username or password"
+					data.error || data.detail || "Invalid username or password",
 				);
 			}
 			setIsAuthenticated(true);
 			if (data.profile_data) {
 				setHasUnlockedSolutions(
-					data.profile_data.has_unlocked_solutions
+					data.profile_data.has_unlocked_solutions,
 				);
 			}
 			setAccessToken(data.access);
@@ -239,16 +240,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 				if (data.profile_data) {
 					localStorage.setItem(
 						"hasUnlockedSolutions",
-						String(data.profile_data.has_unlocked_solutions)
+						String(data.profile_data.has_unlocked_solutions),
 					);
 					// Save username and email
 					localStorage.setItem(
 						"username",
-						data.profile_data.username || ""
+						data.profile_data.username || "",
 					);
 					localStorage.setItem(
 						"email",
-						data.profile_data.email || ""
+						data.profile_data.email || "",
 					);
 				}
 			}
@@ -267,7 +268,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 		username: string,
 		email: string,
 		password: string,
-		confirmPassword: string
+		confirmPassword: string,
 	) => {
 		setLoading(true);
 		setError(null);
@@ -316,7 +317,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 					method: "POST",
 					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify({ email }),
-				}
+				},
 			);
 
 			if (!signupResponse.ok) {
@@ -327,32 +328,32 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
 			setIsAuthenticated(true);
 			setHasUnlockedSolutions(
-				backendData?.profile_data?.has_unlocked_solutions
+				backendData?.profile_data?.has_unlocked_solutions,
 			);
 			setAccessToken(backendData?.access_token);
 
 			localStorage.setItem("accessToken", backendData?.access_token);
 			localStorage.setItem(
 				"hasUnlockedSolutions",
-				String(backendData?.profile_data?.has_unlocked_solutions)
+				String(backendData?.profile_data?.has_unlocked_solutions),
 			);
 
 			// Optionally store refresh token if provided
 			if (backendData?.refresh_token) {
 				localStorage.setItem(
 					"refreshToken",
-					backendData?.refresh_token
+					backendData?.refresh_token,
 				);
 			}
 			// Save username and email
 			if (backendData?.profile_data) {
 				localStorage.setItem(
 					"username",
-					backendData.profile_data.username || ""
+					backendData.profile_data.username || "",
 				);
 				localStorage.setItem(
 					"email",
-					backendData.profile_data.email || ""
+					backendData.profile_data.email || "",
 				);
 			}
 
@@ -378,6 +379,40 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 		navigate("/auth");
 	};
 
+	const deleteAccount = async () => {
+		const token = localStorage.getItem("accessToken");
+		if (!token) return false;
+
+		setLoading(true);
+		try {
+			const response = await fetch(`${baseURL}/auth/user/delete/`, {
+				method: "POST",
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			});
+
+			if (response.ok) {
+				localStorage.clear();
+				setAccessToken("");
+				setIsAuthenticated(false);
+				setHasUnlockedSolutions(false);
+				toast.success("Account deleted successfully");
+				navigate("/");
+				return true;
+			} else {
+				const data = await response.json();
+				throw new Error(data.error || "Failed to delete account");
+			}
+		} catch (err) {
+			console.error("Error deleting account:", err);
+			toast.error((err as Error).message);
+			return false;
+		} finally {
+			setLoading(false);
+		}
+	};
+
 	return (
 		<AuthContext.Provider
 			value={{
@@ -394,6 +429,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 					await fetchProfile(token);
 				},
 				refreshUserInfo,
+				deleteAccount,
 			}}
 		>
 			{children}
