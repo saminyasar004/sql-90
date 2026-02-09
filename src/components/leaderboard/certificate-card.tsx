@@ -7,6 +7,7 @@ import {
 	CheckIcon,
 	XIcon,
 	Database,
+	TrophyIcon,
 } from "lucide-react";
 import { useGame } from "@/hooks/use-game";
 import { useEffect } from "react";
@@ -75,7 +76,24 @@ export function CertificateCard() {
 
 	// Hide the entire certificate section if it hasn't been earned yet
 	if (!certificateData?.certificate_earned_on) {
-		return null;
+		return (
+			<div className="mb-8 font-sans">
+				<h2 className="text-xl font-bold text-[#1E293B] mb-4">
+					Your Certificate
+				</h2>
+				<div className="bg-slate-50 rounded-lg border-2 border-slate-100 p-8 text-center">
+					<div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-100 mb-4">
+						<TrophyIcon size={32} className="text-slate-400" />
+					</div>
+					<h3 className="text-lg font-semibold text-slate-700 mb-2">
+						Certificate Locked
+					</h3>
+					<p className="text-slate-500 max-w-md mx-auto">
+						Complete all the 90 questions to earn your certificate.
+					</p>
+				</div>
+			</div>
+		);
 	}
 
 	const handleDownload = async () => {
