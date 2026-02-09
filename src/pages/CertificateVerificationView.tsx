@@ -5,10 +5,10 @@ import {
 	CheckCircle2,
 	AlertCircle,
 	ShieldCheck,
-	Database,
 	ArrowLeft,
 } from "lucide-react";
 import { Logo } from "@/components/common/logo";
+import { CertificateTemplate } from "@/components/leaderboard/CertificateTemplate";
 
 export default function CertificateVerificationView() {
 	const { certId } = useParams<{ certId: string }>();
@@ -91,133 +91,131 @@ export default function CertificateVerificationView() {
 				</div>
 			</header>
 
-			<div className="flex-1 container mx-auto max-w-2xl px-4 pb-12">
-				<div className="bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
-					{/* Status Banner */}
-					<div
-						className={`py-8 px-6 text-center ${isValid ? "bg-teal-500" : "bg-red-500"}`}
-					>
-						<div className="flex justify-center mb-4">
-							{isValid ? (
-								<div className="bg-white/20 p-3 rounded-full backdrop-blur-sm">
-									<ShieldCheck className="w-12 h-12 text-white" />
-								</div>
-							) : (
-								<div className="bg-white/20 p-3 rounded-full backdrop-blur-sm">
-									<AlertCircle className="w-12 h-12 text-white" />
-								</div>
-							)}
-						</div>
-						<h1 className="text-2xl font-extrabold text-white tracking-tight">
-							{isValid
-								? "Authentic Certificate"
-								: "Invalid Certificate"}
-						</h1>
-						<p className="text-white/80 font-medium mt-1">
-							{isValid
-								? "Official SQL90 Certification"
-								: "No record found for this ID"}
-						</p>
-					</div>
-
-					{/* Verification Content */}
-					<div className="p-8 sm:p-10">
+			<div className="flex-1 container mx-auto px-4 pb-12">
+				<div className="grid grid-cols-1 lg:grid-cols-3 gap-5 items-start">
+					{/* Left Column: Certificate Display */}
+					<div className="lg:col-span-2 flex flex-col">
 						{isValid ? (
-							<div className="space-y-8">
-								<div className="flex flex-col gap-1 border-b border-slate-50 pb-6">
-									<span className="text-xs uppercase tracking-widest font-bold text-slate-400">
-										Recipient Name
-									</span>
-									<span className="text-2xl font-bold text-slate-800">
-										{displayName}
-									</span>
-								</div>
-
-								<div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-									<div className="flex flex-col gap-1">
-										<span className="text-xs uppercase tracking-widest font-bold text-slate-400">
-											Achievement
-										</span>
-										<span className="text-lg font-bold text-slate-700">
-											90 SQL Questions Mastered
-										</span>
-									</div>
-									<div className="flex flex-col gap-1">
-										<span className="text-xs uppercase tracking-widest font-bold text-slate-400">
-											Issuance Date
-										</span>
-										<span className="text-lg font-bold text-slate-700">
-											{earnedOn}
-										</span>
-									</div>
-								</div>
-
-								<div className="flex flex-col gap-1 bg-slate-50 p-4 rounded-2xl border border-slate-100">
-									<span className="text-xs uppercase tracking-widest font-bold text-slate-400">
-										Security Identification
-									</span>
-									<span className="font-mono text-sm font-bold text-slate-600 truncate">
-										{certId}
-									</span>
-								</div>
-
-								<div className="flex items-start gap-4 p-4 bg-teal-50 rounded-2xl border border-teal-100">
-									<CheckCircle2 className="w-6 h-6 text-teal-600 flex-shrink-0 mt-0.5" />
-									<div>
-										<h4 className="font-extrabold text-teal-900 text-sm">
-											Verified Record
-										</h4>
-										<p className="text-xs text-teal-700/80 font-medium leading-relaxed">
-											This certificate is a valid
-											credential issued by SQL90 upon the
-											recipient's successful completion of
-											the full practice curriculum.
-										</p>
-									</div>
-								</div>
-							</div>
+							<CertificateTemplate
+								name={displayName}
+								earnedOn={earnedOn}
+								certId={certId}
+								className="w-full h-auto aspect-[1.58/1] shadow-lg"
+							/>
 						) : (
-							<div className="text-center space-y-6 py-4">
-								<p className="text-slate-500 font-medium">
+							<div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-12 text-center h-full flex flex-col items-center justify-center min-h-[500px]">
+								<div className="bg-slate-50 p-6 rounded-full mb-6">
+									<AlertCircle className="w-16 h-16 text-slate-300" />
+								</div>
+								<h2 className="text-2xl font-bold text-slate-700 mb-2">
+									Certificate Not Found
+								</h2>
+								<p className="text-slate-500 max-w-md mx-auto mb-8">
 									We could not find a verified certificate
-									associated with the identification: <br />
-									<span className="font-mono text-slate-800 font-bold break-all">
+									associated with ID:{" "}
+									<span className="font-mono font-bold text-slate-700">
 										{certId}
 									</span>
 								</p>
-								<div className="pt-4">
-									<Link
-										to="/"
-										className="inline-block px-8 py-4 bg-slate-900 text-white rounded-2xl font-bold hover:bg-slate-800 transition-all shadow-lg hover:scale-[1.02]"
-									>
-										Start Practicing
-									</Link>
-								</div>
+								<Link
+									to="/"
+									className="px-8 py-3 bg-[#007C7C] text-white rounded-lg font-bold hover:bg-[#006666] transition-colors"
+								>
+									Go to Home
+								</Link>
 							</div>
 						)}
 					</div>
 
-					{/* Internal Status Footer */}
-					<div className="bg-slate-50 px-8 py-5 flex items-center justify-between border-t border-slate-100">
-						<div className="flex items-center gap-2 opacity-30 select-none">
-							<Database size={16} className="text-slate-900" />
-							<span className="text-xs font-bold text-slate-900 tracking-tighter uppercase">
-								SQL90 Authority
-							</span>
-						</div>
-						<span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-							Digital Credential
-						</span>
-					</div>
-				</div>
+					{/* Right Column: Verification Status */}
+					<div className="lg:col-span-1">
+						<div className="bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden sticky top-8">
+							{/* Status Banner */}
+							<div
+								className={`py-8 px-6 text-center ${isValid ? "bg-teal-500" : "bg-red-500"}`}
+							>
+								<div className="flex justify-center mb-4">
+									{isValid ? (
+										<div className="bg-white/20 p-3 rounded-full backdrop-blur-sm">
+											<ShieldCheck className="w-12 h-12 text-white" />
+										</div>
+									) : (
+										<div className="bg-white/20 p-3 rounded-full backdrop-blur-sm">
+											<AlertCircle className="w-12 h-12 text-white" />
+										</div>
+									)}
+								</div>
+								<h1 className="text-2xl font-extrabold text-white tracking-tight">
+									{isValid
+										? "Authentic Certificate"
+										: "Invalid Certificate"}
+								</h1>
+								<p className="text-white/80 font-medium mt-1">
+									{isValid
+										? "Official SQL90 Certification"
+										: "No record found for this ID"}
+								</p>
+							</div>
 
-				<div className="mt-8 text-center">
-					<p className="text-slate-400 text-xs font-medium">
-						Learn more about our certification standards at{" "}
-						<a href="/" className="text-teal-600 hover:underline">
-							sql90.com
-						</a>
-					</p>
+							{/* Verification Content */}
+							{isValid && (
+								<div className="p-8">
+									<div className="space-y-6">
+										<div className="flex flex-col gap-1 border-b border-slate-50 pb-4">
+											<span className="text-xs uppercase tracking-widest font-bold text-slate-400">
+												Recipient Name
+											</span>
+											<span className="text-xl font-bold text-slate-800 break-words">
+												{displayName}
+											</span>
+										</div>
+
+										<div className="flex flex-col gap-1">
+											<span className="text-xs uppercase tracking-widest font-bold text-slate-400">
+												Achievement
+											</span>
+											<span className="text-md font-bold text-slate-700">
+												90 SQL Questions Mastered
+											</span>
+										</div>
+
+										<div className="flex flex-col gap-1">
+											<span className="text-xs uppercase tracking-widest font-bold text-slate-400">
+												Issuance Date
+											</span>
+											<span className="text-md font-bold text-slate-700">
+												{earnedOn}
+											</span>
+										</div>
+
+										<div className="flex flex-col gap-1 bg-slate-50 p-4 rounded-xl border border-slate-100">
+											<span className="text-xs uppercase tracking-widest font-bold text-slate-400">
+												Security Identification
+											</span>
+											<span className="font-mono text-xs font-bold text-slate-600 break-all">
+												{certId}
+											</span>
+										</div>
+
+										<div className="flex items-start gap-4 p-4 bg-teal-50 rounded-xl border border-teal-100">
+											<CheckCircle2 className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
+											<div>
+												<h4 className="font-extrabold text-teal-900 text-sm">
+													Verified Record
+												</h4>
+												<p className="text-xs text-teal-700/80 font-medium leading-relaxed mt-1">
+													This certificate is a valid
+													credential issued by SQL90
+													upon successful completion
+													of the curriculum.
+												</p>
+											</div>
+										</div>
+									</div>
+								</div>
+							)}
+						</div>
+					</div>
 				</div>
 			</div>
 
