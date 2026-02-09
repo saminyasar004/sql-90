@@ -9,6 +9,7 @@ interface BadgeProps {
 	currentProgress: number;
 	totalProgress: number;
 	color: string;
+	deepColor: string;
 	isActive: boolean;
 }
 
@@ -18,43 +19,101 @@ function Badge({
 	currentProgress,
 	totalProgress,
 	color,
+	deepColor,
 	isActive,
 }: BadgeProps) {
+	const size = 96;
+	const strokeWidth = 6;
+	const radius = (size - strokeWidth) / 2;
+	const circumference = 2 * Math.PI * radius;
+	const percentage = Math.min(
+		Math.max(currentProgress / totalProgress, 0),
+		1,
+	);
+	const offset = circumference - percentage * circumference;
+	const isCompleted = currentProgress >= totalProgress;
+	const displayColor = isCompleted ? deepColor : color;
+
 	return (
 		<div className="flex flex-col items-center text-center space-y-3">
 			<div
 				className={cn(
-					"w-24 h-24 rounded-full border-[6px] flex items-center justify-center transition-all duration-300 bg-white",
-					isActive ? "shadow-sm" : "opacity-40 grayscale-[0.5]",
+					"relative w-24 h-24 flex items-center justify-center transition-all duration-300",
 				)}
-				style={{ borderColor: color, color: color }}
 			>
-				{/* Custom Medal/Ribbon SVG to match design */}
+				{/* Circular Progress SVG */}
 				<svg
-					width="42"
-					height="42"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					strokeWidth="2.5"
-					strokeLinecap="round"
-					strokeLinejoin="round"
+					width={size}
+					height={size}
+					className="absolute inset-0 -rotate-90 pointer-events-none"
 				>
-					<circle cx="12" cy="8" r="6" />
-					<path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11" />
+					{/* Track (Background Circle) - Theme color with low opacity */}
+					<circle
+						cx={size / 2}
+						cy={size / 2}
+						r={radius}
+						fill="none"
+						stroke={color}
+						strokeWidth={strokeWidth}
+						className="opacity-20"
+					/>
+					{/* Progress bar - Deep color */}
+					<circle
+						cx={size / 2}
+						cy={size / 2}
+						r={radius}
+						fill="none"
+						stroke={deepColor}
+						strokeWidth={strokeWidth}
+						strokeDasharray={circumference}
+						strokeDashoffset={offset}
+						strokeLinecap="round"
+						className="transition-all duration-1000 ease-out"
+					/>
 				</svg>
+
+				<div
+					style={{
+						color: isCompleted ? deepColor : color,
+						opacity: isCompleted ? 1 : 0.6,
+					}}
+				>
+					{/* Custom Medal/Ribbon SVG to match design */}
+					<svg
+						width="42"
+						height="42"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						strokeWidth="2.5"
+						strokeLinecap="round"
+						strokeLinejoin="round"
+					>
+						<circle cx="12" cy="8" r="6" />
+						<path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11" />
+					</svg>
+				</div>
 			</div>
 			<div className="flex flex-col items-center space-y-1">
 				<h3
-					className="text-[15px] font-bold tracking-tight"
-					style={{ color: color }}
+					className={cn(
+						"text-[15px] font-bold tracking-tight transition-opacity duration-300",
+						!isCompleted && "opacity-60",
+					)}
+					style={{ color: displayColor }}
 				>
 					{title}
 				</h3>
 				<p className="text-[12px] text-slate-400 font-medium whitespace-nowrap">
 					{description}
 				</p>
-				<p className="text-[12px] font-bold" style={{ color: color }}>
+				<p
+					className={cn(
+						"text-[12px] font-bold transition-opacity duration-300",
+						!isCompleted && "opacity-60",
+					)}
+					style={{ color: displayColor }}
+				>
 					{currentProgress}/{totalProgress}
 				</p>
 			</div>
@@ -83,6 +142,14 @@ export function BadgesSection() {
 				"Window Wizard": "#94A3B8",
 			};
 
+			const deepColorMap: Record<string, string> = {
+				"SQL Novice": "#065F46",
+				"SQL Intermediate": "#92400E",
+				"SQL Advanced": "#1E40AF",
+				"Join Master": "#9A3412",
+				"Window Wizard": "#334155",
+			};
+
 			const descMap: Record<string, string> = {
 				"SQL Novice": "Complete questions 1-40",
 				"SQL Intermediate": "Complete questions 41-70",
@@ -97,6 +164,7 @@ export function BadgesSection() {
 				currentProgress: b.progress,
 				totalProgress: b.total,
 				color: colorMap[b.name] || "#94A3B8",
+				deepColor: deepColorMap[b.name] || "#334155",
 				isActive: b.progress > 0,
 			}));
 		}
@@ -147,7 +215,8 @@ export function BadgesSection() {
 				description: "Complete questions 1-40",
 				currentProgress: noviceCompleted,
 				totalProgress: 40,
-				color: "#10B981", // Teal
+				color: "#10B981", // Teal base
+				deepColor: "#065F46", // Teal deep
 				isActive: noviceCompleted > 0,
 			},
 			{
@@ -155,7 +224,8 @@ export function BadgesSection() {
 				description: "Complete questions 41-70",
 				currentProgress: intermediateCompleted,
 				totalProgress: 30,
-				color: "#F59E0B", // Amber
+				color: "#F59E0B", // Amber base
+				deepColor: "#92400E", // Amber deep
 				isActive: intermediateCompleted > 0,
 			},
 			{
@@ -163,7 +233,8 @@ export function BadgesSection() {
 				description: "Complete questions 71-90",
 				currentProgress: advancedCompleted,
 				totalProgress: 20,
-				color: "#3B82F6", // Blue
+				color: "#3B82F6", // Blue base
+				deepColor: "#1E40AF", // Blue deep
 				isActive: advancedCompleted > 0,
 			},
 			{
@@ -171,7 +242,8 @@ export function BadgesSection() {
 				description: "Complete 20 Join questions",
 				currentProgress: Math.min(joinCompleted, joinTarget),
 				totalProgress: joinTarget,
-				color: "#F97316", // Orange
+				color: "#F97316", // Orange base
+				deepColor: "#9A3412", // Orange deep
 				isActive: joinCompleted > 0,
 			},
 			{
@@ -179,7 +251,8 @@ export function BadgesSection() {
 				description: "At least 10 window function questions",
 				currentProgress: Math.min(windowCompleted, windowTarget),
 				totalProgress: windowTarget,
-				color: "#94A3B8", // Silver/Grey
+				color: "#94A3B8", // Silver/Grey base
+				deepColor: "#334155", // Silver/Grey deep
 				isActive: windowCompleted > 0,
 			},
 		];
