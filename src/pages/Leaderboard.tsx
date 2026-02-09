@@ -83,21 +83,21 @@ export function Leaderboard({ setActiveView }) {
 			return (
 				<div className="flex items-center justify-center gap-2">
 					<TrophyIcon size={20} className="text-yellow-500" />
-					<span className="text-base text-foreground">#{rank}</span>
+					<span className="text-base text-foreground">{rank}</span>
 				</div>
 			);
 		} else if (rank === 2) {
 			return (
 				<div className="flex items-center justify-center gap-2">
 					<TrophyIcon size={20} className="text-gray-400" />
-					<span className="text-base text-foreground">#{rank}</span>
+					<span className="text-base text-foreground">{rank}</span>
 				</div>
 			);
 		} else if (rank === 3) {
 			return (
 				<div className="flex items-center justify-center gap-2">
 					<TrophyIcon size={20} className="text-amber-700" />
-					<span className="text-base text-foreground">#{rank}</span>
+					<span className="text-base text-foreground">{rank}</span>
 				</div>
 			);
 		} else {
@@ -354,7 +354,7 @@ export function Leaderboard({ setActiveView }) {
 									<div className="flex justify-between items-center">
 										<div className="flex items-center gap-2">
 											<div className="w-8 h-8 flex items-center justify-center">
-												#{renderRank(user.rank)}
+												{renderRank(user.rank)}
 											</div>
 											<span className="font-medium text-gray-900">
 												{formatUsername(user.username)}
