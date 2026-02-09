@@ -23,6 +23,7 @@ interface GameContextType {
 	certificateData: any;
 	fetchCertificateAndBadges: () => Promise<void>;
 	updateCertificateName: (name: string) => Promise<boolean>;
+	updateLeaderboardVisibility: (show: boolean) => Promise<boolean>;
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -152,6 +153,32 @@ export function GameProvider({ children }: { children: ReactNode }) {
 		}
 	};
 
+	const updateLeaderboardVisibility = async (show: boolean) => {
+		try {
+			const headers: HeadersInit = { "Content-Type": "application/json" };
+			if (accessToken) {
+				headers["Authorization"] = `Bearer ${accessToken}`;
+			}
+
+			const response = await fetch(
+				`${baseURL}/auth/profile/leaderboard-visibility/`,
+				{
+					method: "PATCH",
+					headers,
+					body: JSON.stringify({ show_on_leaderboard: show }),
+				},
+			);
+
+			return response.ok;
+		} catch (err: any) {
+			console.error(
+				"Error updating leaderboard visibility:",
+				err.message,
+			);
+			return false;
+		}
+	};
+
 	return (
 		<GameContext.Provider
 			value={{
@@ -169,6 +196,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
 				certificateData,
 				fetchCertificateAndBadges,
 				updateCertificateName,
+				updateLeaderboardVisibility,
 			}}
 		>
 			{children}

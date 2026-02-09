@@ -29,7 +29,8 @@ import {
 
 export function Leaderboard({ setActiveView }) {
 	const [searchQuery, setSearchQuery] = useState("");
-	const { leaderboard, loading, error } = useLeaderboard();
+	const { leaderboard, loading, error, refetchLeaderboard } =
+		useLeaderboard();
 	const { deleteAccount } = useAuth();
 	const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 	const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
@@ -39,9 +40,18 @@ export function Leaderboard({ setActiveView }) {
 		return saved === null ? true : saved === "true";
 	});
 
-	const handleToggleProfile = (checked: boolean) => {
-		setShowProfile(checked);
-		localStorage.setItem("showProfileOnLeaderboard", String(checked));
+	const handleToggleProfile = async (checked: boolean) => {
+		const success = await updateLeaderboardVisibility(checked);
+		if (success) {
+			setShowProfile(checked);
+			localStorage.setItem("showProfileOnLeaderboard", String(checked));
+			await fetchUserProgress();
+			await refetchLeaderboard();
+		} else {
+			// Revert switch state if API fails (optional, but good UX)
+			// For now, we just don't update the state
+			console.error("Failed to update leaderboard visibility");
+		}
 	};
 
 	const {
@@ -50,6 +60,8 @@ export function Leaderboard({ setActiveView }) {
 		totalPoints,
 		accuracy,
 		your_position,
+		fetchUserProgress,
+		updateLeaderboardVisibility,
 	} = useGame();
 
 	const rankedLeaderboard = useMemo(() => {
