@@ -267,7 +267,7 @@ export function Leaderboard({ setActiveView }) {
 															"username",
 														),
 													)
-												: "Anonymous"}
+												: "SQL Learner"}
 											)
 										</span>
 									</div>
@@ -311,7 +311,7 @@ export function Leaderboard({ setActiveView }) {
 													"username",
 												),
 											)
-										: "Anonymous"}
+										: "SQL Learner"}
 									)
 								</span>
 							</div>
