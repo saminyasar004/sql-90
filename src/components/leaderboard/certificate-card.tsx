@@ -32,20 +32,20 @@ export function CertificateCard() {
 	}, []);
 
 	useEffect(() => {
-		if (
-			certificateData?.full_name ||
-			certificateData?.name_on_certificate
-		) {
+		if (certificateData) {
 			setEditValue(
-				certificateData.full_name ||
-					certificateData.name_on_certificate,
+				certificateData.name_on_certificate ||
+					certificateData.full_name ||
+					certificateData.username ||
+					"",
 			);
 		}
 	}, [certificateData]);
 
 	const name =
-		certificateData?.full_name ||
 		certificateData?.name_on_certificate ||
+		certificateData?.full_name ||
+		certificateData?.username ||
 		"Your Name";
 	const certId = certificateData?.certificate_id || "LOADING...";
 	const earnedOn = certificateData?.certificate_earned_on
