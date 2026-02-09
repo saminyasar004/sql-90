@@ -227,14 +227,6 @@ export function CertificateCard() {
 						</p>
 					</div>
 				</div>
-				<div className="mt-8 text-center">
-					<p className="text-slate-400 text-xs font-medium">
-						Learn more about our certification standards at{" "}
-						<a href="/" className="text-teal-600 hover:underline">
-							sql90.com
-						</a>
-					</p>
-				</div>
 
 				{/* Certificate Preview Container */}
 				<div className="flex justify-center mb-4">
