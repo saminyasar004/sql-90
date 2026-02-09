@@ -1,5 +1,6 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { toPng } from "html-to-image";
+import { jsPDF } from "jspdf";
 import {
 	DownloadIcon,
 	Share2Icon,
@@ -9,7 +10,6 @@ import {
 	TrophyIcon,
 } from "lucide-react";
 import { useGame } from "@/hooks/use-game";
-import { useEffect } from "react";
 import { toast } from "sonner";
 import { CertificateTemplate } from "./CertificateTemplate";
 
@@ -99,9 +99,11 @@ export function CertificateCard() {
 	const handleDownload = async () => {
 		if (!certificateRef.current) return;
 
+		let toastId: string | number | undefined;
+
 		try {
 			setIsDownloading(true);
-			const toastId = toast.loading("Preparing your certificate...");
+			toastId = toast.loading("Preparing your certificate...");
 
 			// Wait for fonts to be ready
 			if (document.fonts) {
@@ -127,10 +129,22 @@ export function CertificateCard() {
 
 			const dataUrl = await toPng(certificateRef.current, options);
 
-			const link = document.createElement("a");
-			link.download = `SQL90-Certificate-${name.replace(/\s+/g, "-")}.png`;
-			link.href = dataUrl;
-			link.click();
+			// Init jsPDF with orientation landscape, units px, and format matching the image dimensions
+			// We'll calculate dimensions after loading the image to be precise, or just use the element's scrollWidth/Height
+			// But since we have dataUrl, we can load it into an Image object to get natural dims,
+			// OR just use the ref's dimensions.
+			// Better: Create PDF with dimensions of the captured element to maintain 1:1 scale
+			const imgWidth = certificateRef.current.scrollWidth;
+			const imgHeight = certificateRef.current.scrollHeight;
+
+			const pdf = new jsPDF({
+				orientation: "landscape",
+				unit: "px",
+				format: [imgWidth, imgHeight],
+			});
+
+			pdf.addImage(dataUrl, "PNG", 0, 0, imgWidth, imgHeight);
+			pdf.save(`SQL90-Certificate-${name.replace(/\s+/g, "-")}.pdf`);
 
 			toast.success("Certificate downloaded successfully!", {
 				id: toastId,
@@ -150,12 +164,26 @@ export function CertificateCard() {
 						backgroundColor: "#ffffff",
 						skipFonts: true,
 					});
-					const link = document.createElement("a");
-					link.download = `SQL90-Certificate-${name.replace(/\s+/g, "-")}.png`;
-					link.href = dataUrl;
-					link.click();
+
+					const imgWidth = certificateRef.current!.scrollWidth;
+					const imgHeight = certificateRef.current!.scrollHeight;
+
+					const pdf = new jsPDF({
+						orientation: "landscape",
+						unit: "px",
+						format: [imgWidth, imgHeight],
+					});
+
+					pdf.addImage(dataUrl, "PNG", 0, 0, imgWidth, imgHeight);
+					pdf.save(
+						`SQL90-Certificate-${name.replace(/\s+/g, "-")}.pdf`,
+					);
+
 					toast.success(
-						"Certificate downloaded (system fonts used).",
+						"Certificate downloaded (compatibility mode)!",
+						{
+							id: toastId,
+						},
 					);
 					return;
 				} catch (retryErr) {
@@ -198,6 +226,14 @@ export function CertificateCard() {
 							Download or share your certificate of completion
 						</p>
 					</div>
+				</div>
+				<div className="mt-8 text-center">
+					<p className="text-slate-400 text-xs font-medium">
+						Learn more about our certification standards at{" "}
+						<a href="/" className="text-teal-600 hover:underline">
+							sql90.com
+						</a>
+					</p>
 				</div>
 
 				{/* Certificate Preview Container */}
