@@ -18,7 +18,7 @@ export const CertificateTemplate = forwardRef<
 		<div
 			ref={ref}
 			className={cn(
-				"relative bg-white rounded-lg border-2 border-gray-200 p-4 sm:p-10 shadow-sm w-full max-w-5xl overflow-hidden flex flex-col justify-center",
+				"relative bg-white rounded-lg border-2 border-gray-200 p-4 sm:p-10 shadow-sm w-full max-w-5xl overflow-hidden flex flex-col justify-center items-center",
 				className,
 			)}
 		>

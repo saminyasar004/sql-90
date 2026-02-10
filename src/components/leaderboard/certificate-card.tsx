@@ -129,13 +129,16 @@ export function CertificateCard() {
 
 			const dataUrl = await toPng(certificateRef.current, options);
 
-			// Init jsPDF with orientation landscape, units px, and format matching the image dimensions
-			// We'll calculate dimensions after loading the image to be precise, or just use the element's scrollWidth/Height
-			// But since we have dataUrl, we can load it into an Image object to get natural dims,
-			// OR just use the ref's dimensions.
-			// Better: Create PDF with dimensions of the captured element to maintain 1:1 scale
-			const imgWidth = certificateRef.current.scrollWidth;
-			const imgHeight = certificateRef.current.scrollHeight;
+			// Load the image to get actual dimensions
+			const img = new Image();
+			await new Promise<void>((resolve) => {
+				img.onload = () => resolve();
+				img.src = dataUrl;
+			});
+
+			// Use actual image dimensions for PDF (not scrollWidth/scrollHeight)
+			const imgWidth = img.width;
+			const imgHeight = img.height;
 
 			const pdf = new jsPDF({
 				orientation: "landscape",
@@ -165,8 +168,15 @@ export function CertificateCard() {
 						skipFonts: true,
 					});
 
-					const imgWidth = certificateRef.current!.scrollWidth;
-					const imgHeight = certificateRef.current!.scrollHeight;
+					// Load the image to get actual dimensions
+					const img = new Image();
+					await new Promise<void>((resolve) => {
+						img.onload = () => resolve();
+						img.src = dataUrl;
+					});
+
+					const imgWidth = img.width;
+					const imgHeight = img.height;
 
 					const pdf = new jsPDF({
 						orientation: "landscape",
