@@ -62,7 +62,13 @@ export function Leaderboard({ setActiveView }) {
 		your_position,
 		fetchUserProgress,
 		updateLeaderboardVisibility,
+		fetchCertificateAndBadges,
 	} = useGame();
+
+	// Auto-refresh certificate and badges data when visiting leaderboard
+	useEffect(() => {
+		fetchCertificateAndBadges();
+	}, []);
 
 	const rankedLeaderboard = useMemo(() => {
 		const sorted = [...leaderboard].sort((a, b) => b.points - a.points);
