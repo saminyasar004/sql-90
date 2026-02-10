@@ -235,6 +235,7 @@ export function CertificateCard() {
 						name={name}
 						earnedOn={earnedOn}
 						certId={certId}
+						className="w-full h-auto aspect-[1.58/1]"
 					/>
 				</div>
 
