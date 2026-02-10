@@ -89,7 +89,7 @@ export function CertificateCard() {
 						Certificate Locked
 					</h3>
 					<p className="text-slate-500 max-w-md mx-auto">
-						Complete all the 90 questions to earn your certificate.
+						Complete all 90 questions to earn your certificate.
 					</p>
 				</div>
 			</div>
