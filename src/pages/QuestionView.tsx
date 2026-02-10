@@ -35,7 +35,7 @@ export function QuestionView({
 	const { fetchUserProgress } = useGame();
 
 	const [question, setQuestion] = useState<IndividualQuestionProps | null>(
-		null
+		null,
 	);
 	const [showSchema, setShowSchema] = useState(false);
 	const [sqlQuery, setSqlQuery] = useState("");
@@ -43,7 +43,7 @@ export function QuestionView({
 		| [
 				{
 					[key: string]: string | number | null;
-				}
+				},
 		  ]
 		| null
 	>(null);
@@ -113,7 +113,7 @@ export function QuestionView({
 
 	const handleNavigate = (direction: "prev" | "next") => {
 		const currentIndex = questions.findIndex(
-			(q) => q.id === Number(questionId)
+			(q) => q.id === Number(questionId),
 		);
 		if (direction === "prev" && currentIndex > 0) {
 			const prevQuestion = questions[currentIndex - 1];
@@ -184,13 +184,13 @@ export function QuestionView({
 				) {
 					addToast(
 						`✅ You solved Question ${question.id}!`,
-						"success"
+						"success",
 					);
 					const pointsEarned =
 						question.id <= 40 ? 10 : question.id <= 70 ? 20 : 40;
 					addToast(
 						`🎉 +${pointsEarned} points added to your score!`,
-						"success"
+						"success",
 					);
 				}
 			}
@@ -257,13 +257,13 @@ export function QuestionView({
 				) {
 					addToast(
 						`✅ You solved Question ${question.id}!`,
-						"success"
+						"success",
 					);
 					const pointsEarned =
 						question.id <= 40 ? 10 : question.id <= 70 ? 20 : 40;
 					addToast(
 						`🎉 +${pointsEarned} points added to your score!`,
-						"success"
+						"success",
 					);
 				}
 			}
@@ -278,7 +278,7 @@ export function QuestionView({
 			const data = await fetchUserProgress();
 			console.log(
 				"🚀 ~ QuestionView.tsx:263 ~ handleCheckAnswer ~ const:",
-				data
+				data,
 			);
 		}
 	};
@@ -298,7 +298,7 @@ export function QuestionView({
 					`${baseURL}/api/problems/${questionId}/`,
 					{
 						headers,
-					}
+					},
 				);
 
 				if (!response.ok) {
@@ -351,8 +351,8 @@ export function QuestionView({
 							question.id <= 40
 								? "bg-green-100 text-green-700"
 								: question.id <= 70
-								? "bg-yellow-100 text-yellow-700"
-								: "bg-blue-100 text-blue-700"
+									? "bg-yellow-100 text-yellow-700"
+									: "bg-blue-100 text-blue-700"
 						}`}
 					>
 						{question?.difficulty}
@@ -449,8 +449,8 @@ export function QuestionView({
 					{showingSolution && hasFreeAccess
 						? "Solution Shown"
 						: hasFreeAccess
-						? "Show Solution"
-						: "Show Solution 🔒"}
+							? "Show Solution"
+							: "Show Solution 🔒"}
 				</button>
 
 				<div className="flex w-full sm:w-auto mt-2 sm:mt-0 sm:ml-auto">
@@ -525,7 +525,7 @@ export function QuestionView({
 							}`}
 						>
 							{isCorrect
-								? "Correct! Your query matches the expected output."
+								? "🎉 Correct! Your query matches the expected output."
 								: "Incorrect. Try again!"}
 						</div>
 					)}

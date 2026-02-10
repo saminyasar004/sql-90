@@ -26,7 +26,7 @@ export default function TermsPage() {
 							</a>
 
 							<Badge className="bg-white text-[#007C7C] hover:border-white hover:text-white font-medium rounded-md">
-								Join 10,000+ data professionals
+								Join data professionals worldwide
 							</Badge>
 						</div>
 					</div>

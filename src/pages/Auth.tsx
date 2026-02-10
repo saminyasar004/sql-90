@@ -242,7 +242,7 @@ export default function Auth() {
 						</a>
 
 						<Badge className="bg-white text-[#007C7C] hover:border-white hover:text-white font-medium rounded-md">
-							Join 10,000+ data professionals
+							Join data professionals worldwide
 						</Badge>
 					</div>
 				</div>
@@ -254,12 +254,12 @@ export default function Auth() {
 					<div className="space-y-8 lg:space-y-14">
 						<div className="space-y-4">
 							<h2 className="text-3xl lg:text-4xl font-bold text-gray-900 leading-snug">
-								Master SQL with interactive challenges
+								Master SQL with 90 Practice Questions
 							</h2>
 							<p className="text-lg text-gray-600">
-								Join thousands of developers improving their SQL
-								skills through hands-on practice, real-world
-								scenarios, and instant feedback.
+								Build practical, job-ready SQL skills by solving
+								real-world questions designed for data
+								professionals and analysts.
 							</p>
 						</div>
 
@@ -288,8 +288,8 @@ export default function Auth() {
 										Progress Tracking
 									</h3>
 									<p className="text-gray-600 text-base">
-										Track your learning journey with
-										detailed progress analytics
+										Track your learning journey with clear
+										progress analytics
 									</p>
 								</div>
 							</div>
@@ -303,8 +303,8 @@ export default function Auth() {
 										Community Leaderboard
 									</h3>
 									<p className="text-gray-600 text-base">
-										Compete with developers worldwide and
-										climb the rankings
+										Compete with data professionals
+										worldwide and climb the rankings
 									</p>
 								</div>
 							</div>
@@ -320,7 +320,7 @@ export default function Auth() {
 							<div className="flex items-center gap-4">
 								<CheckCircle className="w-8 h-8 text-[#007C7C]" />
 								<span className="text-base font-medium text-gray-700">
-									Real Databases
+									Real Database
 								</span>
 							</div>
 							<div className="flex items-center gap-4">

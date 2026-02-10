@@ -14,7 +14,7 @@ export default function PaymentSuccess() {
 		const syncUserInfo = async () => {
 			try {
 				await refreshUserInfo();
-				toast.success("Subscription updated successfully!");
+				toast.success("Payment successful!");
 			} catch (error) {
 				console.error("Error syncing user info:", error);
 				toast.error("An error occurred while syncing your account.");
