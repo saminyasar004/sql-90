@@ -302,6 +302,7 @@ export function CertificateCard() {
 							onClick={() => {
 								const url = `${window.location.origin}/verify/${certId}`;
 								navigator.clipboard.writeText(url);
+								window.open(url, "_blank");
 								toast.success(
 									"Certificate link copied to clipboard",
 								);
