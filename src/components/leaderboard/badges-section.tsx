@@ -143,10 +143,10 @@ export function BadgesSection() {
 			};
 
 			const deepColorMap: Record<string, string> = {
-				"SQL Novice": "#065F46",
-				"SQL Intermediate": "#92400E",
-				"SQL Advanced": "#1E40AF",
-				"Join Master": "#9A3412",
+				"SQL Novice": "#10B981",
+				"SQL Intermediate": "#F59E0B",
+				"SQL Advanced": "#3B82F6",
+				"Join Master": "#F97316",
 				"Window Wizard": "#334155",
 			};
 
