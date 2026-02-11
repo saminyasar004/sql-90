@@ -36,9 +36,9 @@ export function CongratulationsModal({
 							Incredible Achievement!
 						</DialogTitle>
 						<DialogDescription className="text-slate-500 text-lg font-medium">
-							You've mastered SQL by completing all 90 practice
-							questions. Your dedication to excellence has paid
-							off!
+							You've done an incredible job completing all 90
+							practice questions. Your certificate is ready to
+							view and share.
 						</DialogDescription>
 					</DialogHeader>
 
