@@ -79,72 +79,72 @@ export const CertificateTemplate = forwardRef<
 			</div>
 
 			{/* Certificate Body */}
-			<div className="text-center relative z-10 w-full px-4 sm:px-10">
-				<div className="mb-2 sm:mb-6">
-					<div className="inline-flex items-center justify-center mb-1 sm:mb-4 scale-90 sm:scale-100">
-						<span className="text-xl sm:text-4xl font-bold text-teal-600">
+			<div className="text-center relative z-10 w-full px-4 md:px-10 flex flex-col justify-between h-full py-2 md:py-8">
+				<div className="mt-auto">
+					<div className="inline-flex items-center justify-center mb-0.5 md:mb-4 scale-[0.6] md:scale-100 origin-center">
+						<span className="text-xl md:text-4xl font-bold text-teal-600">
 							SQL
 						</span>
-						<span className="text-xl sm:text-4xl font-bold text-green-500">
+						<span className="text-xl md:text-4xl font-bold text-green-500">
 							90
 						</span>
 					</div>
-					<h3 className="text-sm sm:text-3xl font-bold text-slate-800 mb-1 sm:mb-2 whitespace-nowrap">
+					<h3 className="text-[10px] md:text-3xl font-bold text-slate-800 mb-0.5 md:mb-2 whitespace-nowrap leading-none">
 						Certificate of Completion
 					</h3>
-					<div className="w-10 sm:w-24 h-0.5 sm:h-1 bg-teal-500 mx-auto rounded-full"></div>
+					<div className="w-8 md:w-24 h-px md:h-1 bg-teal-500 mx-auto rounded-full"></div>
 				</div>
 
-				<div className="mb-2 sm:mb-8">
-					<p className="text-[10px] sm:text-base text-slate-600 mb-1 sm:mb-4">
+				<div className="my-auto py-1 md:py-4">
+					<p className="text-[7px] md:text-base text-slate-600 mb-0.5 md:mb-2 leading-none uppercase tracking-tighter md:tracking-normal font-medium">
 						This certifies that
 					</p>
-					<p className="text-base sm:text-4xl font-bold text-slate-900 mb-1 sm:mb-4 px-2 sm:px-4 break-words leading-tight">
+					<p className="text-[12px] md:text-4xl font-black text-slate-900 mb-0.5 md:mb-4 px-1 md:px-4 break-words leading-tight">
 						{name}
 					</p>
-					<p className="text-[10px] sm:text-base text-slate-600 mb-0.5 sm:mb-2">
+					<p className="text-[7px] md:text-base text-slate-600 mb-0.5 md:mb-1 leading-none">
 						has successfully completed all
 					</p>
-					<p className="text-xs sm:text-2xl font-semibold text-teal-600 mb-1 sm:mb-4 whitespace-nowrap">
+					<p className="text-[10px] md:text-2xl font-extrabold text-teal-600 mb-0.5 md:mb-3 whitespace-nowrap leading-none">
 						90 SQL Practice Questions
 					</p>
-					<p className="text-[10px] sm:text-base text-slate-600">
+					<p className="text-[7px] md:text-base text-slate-600 leading-none">
 						on <span className="font-semibold">SQL90.com</span>
 					</p>
 				</div>
 
 				{/* Footer Information */}
-				<div className="flex flex-col items-center w-full">
-					<div className="w-[85%] sm:w-[70%] border-t border-slate-100 mb-1 sm:mb-6"></div>
-					<div className="flex flex-wrap justify-center items-center gap-x-2 gap-y-1 sm:gap-x-8 sm:gap-y-2 text-[8px] sm:text-sm text-slate-500 w-full px-2">
-						<div className="flex items-center gap-1 sm:gap-2">
-							<span className="font-medium text-slate-700">
+				<div className="mb-auto w-full flex flex-col items-center">
+					<div className="w-[85%] md:w-[70%] border-t border-slate-100 mb-0.5 md:mb-4"></div>
+					<div className="flex flex-wrap justify-center items-center gap-x-1.5 gap-y-0.5 md:gap-x-8 md:gap-y-2 text-[6px] md:text-sm text-slate-500 w-full px-1">
+						<div className="flex items-center gap-0.5 md:gap-2">
+							<span className="font-bold text-slate-700">
 								Earned on:
 							</span>
 							<span className="whitespace-nowrap">
 								{earnedOn}
 							</span>
 						</div>
-						<div className="flex items-center gap-1 sm:gap-2">
-							<span className="font-medium text-slate-700">
-								Certification ID:
+						<div className="flex items-center gap-0.5 md:gap-2">
+							<span className="font-bold text-slate-700">
+								ID:
 							</span>
-							<span className="font-mono text-[7px] sm:text-xs break-all">
+							<span className="font-mono text-[5px] md:text-xs break-all opacity-80">
 								{certId}
 							</span>
 						</div>
 					</div>
-					<div className="w-[85%] sm:w-[70%] border-t border-slate-100 mt-1 sm:mt-6"></div>
-				</div>
+					<div className="w-[85%] md:w-[70%] border-t border-slate-100 mt-0.5 md:mt-4"></div>
 
-				{/* Verification Link */}
-				<div className="mt-1 sm:mt-6">
-					<p className="text-[7px] sm:text-xs text-slate-400">
-						Verify at:{" "}
-						<span className="font-mono text-[7px] sm:text-xs text-slate-500">
-							sql90.com/verify/{certId}
-						</span>
-					</p>
+					{/* Verification Link */}
+					<div className="mt-1 md:mt-4">
+						<p className="text-[5px] md:text-xs text-slate-400 font-medium">
+							Verify at:{" "}
+							<span className="font-mono text-[5px] md:text-xs text-slate-500 opacity-70">
+								sql90.com/verify/{certId}
+							</span>
+						</p>
+					</div>
 				</div>
 			</div>
 		</div>

@@ -105,23 +105,23 @@ export default function CertificateVerificationView() {
 								/>
 							</div>
 						) : (
-							<div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-12 text-center h-full flex flex-col items-center justify-center min-h-[500px]">
-								<div className="bg-slate-50 p-6 rounded-full mb-6">
-									<AlertCircle className="w-16 h-16 text-slate-300" />
+							<div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-6 sm:p-12 text-center w-full max-w-4xl mx-auto lg:mx-0 flex flex-col items-center justify-center aspect-[1.58/1]">
+								<div className="bg-slate-50 p-4 sm:p-6 rounded-full mb-4 sm:mb-6">
+									<AlertCircle className="w-8 h-8 sm:w-16 sm:h-16 text-slate-300" />
 								</div>
-								<h2 className="text-2xl font-bold text-slate-700 mb-2">
+								<h2 className="text-xl sm:text-2xl font-bold text-slate-700 mb-1 sm:mb-2 text-balance leading-tight">
 									Certificate Not Found
 								</h2>
-								<p className="text-slate-500 max-w-md mx-auto mb-8">
+								<div className="text-slate-500 max-w-md mx-auto mb-4 sm:mb-8 text-xs sm:text-base px-2">
 									We could not find a verified certificate
 									associated with ID:{" "}
-									<span className="font-mono font-bold text-slate-700">
+									<span className="font-mono font-bold text-slate-700 break-all">
 										{certId}
 									</span>
-								</p>
+								</div>
 								<Link
 									to="/"
-									className="px-8 py-3 bg-[#007C7C] text-white rounded-lg font-bold hover:bg-[#006666] transition-colors"
+									className="px-6 py-2 sm:px-8 sm:py-3 bg-[#007C7C] text-white rounded-lg font-bold hover:bg-[#006666] transition-colors text-sm sm:text-base"
 								>
 									Go to Home
 								</Link>
@@ -130,7 +130,7 @@ export default function CertificateVerificationView() {
 					</div>
 
 					{/* Right Column: Verification Status */}
-					<div className="lg:col-span-1">
+					<div className="lg:col-span-1 h-full">
 						<div className="bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden sticky top-8">
 							{/* Status Banner */}
 							<div
