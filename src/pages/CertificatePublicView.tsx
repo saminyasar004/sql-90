@@ -73,24 +73,28 @@ export default function CertificatePublicView() {
 		: "N/A";
 
 	return (
-		<div className="min-h-screen bg-slate-50 py-12 px-4 font-sans">
+		<div className="min-h-screen bg-slate-50 py-8 sm:py-12 px-4 font-sans">
 			<div className="container mx-auto max-w-5xl">
-				<div className="flex justify-center mb-8">
+				<div className="flex justify-center mb-8 sm:mb-12">
 					<Link to="/">
-						<div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-xl shadow-sm border border-slate-100 hover:scale-105 transition-transform">
+						<div className="inline-flex items-center gap-2 px-6 py-3 bg-[#007C7C] text-white rounded-2xl shadow-xl hover:scale-105 transition-all">
 							<Logo />
 						</div>
 					</Link>
 				</div>
 
-				<CertificateTemplate
-					name={
-						data.name_on_certificate || data.full_name || "Achiever"
-					}
-					earnedOn={earnedOn}
-					certId={certId || ""}
-					className="w-full h-auto aspect-[1.58/1] shadow-xl"
-				/>
+				<div className="w-full max-w-4xl mx-auto">
+					<CertificateTemplate
+						name={
+							data.name_on_certificate ||
+							data.full_name ||
+							"Achiever"
+						}
+						earnedOn={earnedOn}
+						certId={certId || ""}
+						className="w-full shadow-2xl"
+					/>
+				</div>
 
 				<div className="mt-12 text-center">
 					<p className="text-slate-500 mb-4 font-medium">

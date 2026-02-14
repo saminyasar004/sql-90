@@ -239,14 +239,16 @@ export function CertificateCard() {
 				</div>
 
 				{/* Certificate Preview Container */}
-				<div className="flex justify-center mb-4">
-					<CertificateTemplate
-						ref={certificateRef}
-						name={name}
-						earnedOn={earnedOn}
-						certId={certId}
-						className="w-full h-auto aspect-[1.58/1]"
-					/>
+				<div className="flex justify-center mb-8">
+					<div className="w-full max-w-4xl">
+						<CertificateTemplate
+							ref={certificateRef}
+							name={name}
+							earnedOn={earnedOn}
+							certId={certId}
+							className="w-full shadow-xl"
+						/>
+					</div>
 				</div>
 
 				{/* Edit Name Section */}

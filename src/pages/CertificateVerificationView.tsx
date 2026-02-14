@@ -64,14 +64,14 @@ export default function CertificateVerificationView() {
 
 	return (
 		<div className="min-h-screen bg-slate-50 font-sans flex flex-col">
-			<header className="bg-[#007C7C] text-white py-3 shadow-sm mb-12">
-				<div className="container mx-auto flex items-center justify-between">
+			<header className="bg-[#007C7C] text-white py-5 sm:py-3 shadow-sm mb-8 sm:mb-12 transition-all">
+				<div className="container mx-auto px-4 flex items-center justify-between">
 					<Logo />
 
-					<div className="flex items-center space-x-4">
+					<div className="flex items-center space-x-2 sm:space-x-4">
 						<Link
 							to="/"
-							className="px-4 py-2 text-white rounded-md font-medium hover:bg-[#006666] transition-colors flex items-center gap-2"
+							className="px-3 sm:px-4 py-2 text-white rounded-md font-medium hover:bg-[#006666] transition-colors flex items-center gap-2 text-sm sm:text-base"
 						>
 							<ArrowLeft size={16} />
 							<span className="hidden sm:inline">
@@ -92,16 +92,18 @@ export default function CertificateVerificationView() {
 			</header>
 
 			<div className="flex-1 container mx-auto px-4 pb-12">
-				<div className="grid grid-cols-1 lg:grid-cols-3 gap-5 items-start">
+				<div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 items-start">
 					{/* Left Column: Certificate Display */}
 					<div className="lg:col-span-2 flex flex-col">
 						{isValid ? (
-							<CertificateTemplate
-								name={displayName}
-								earnedOn={earnedOn}
-								certId={certId}
-								className="w-full h-auto aspect-[1.58/1] shadow-lg"
-							/>
+							<div className="w-full max-w-4xl mx-auto lg:mx-0">
+								<CertificateTemplate
+									name={displayName}
+									earnedOn={earnedOn}
+									certId={certId}
+									className="w-full shadow-2xl"
+								/>
+							</div>
 						) : (
 							<div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-12 text-center h-full flex flex-col items-center justify-center min-h-[500px]">
 								<div className="bg-slate-50 p-6 rounded-full mb-6">
