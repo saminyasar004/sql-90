@@ -17,6 +17,8 @@ import { useAuth } from "@/hooks/use-auth";
 import { baseURL } from "@/config/dotenv";
 import { Link } from "react-router-dom";
 
+import { CertificateEarnedModal } from "@/components/leaderboard/CertificateEarnedModal";
+
 interface IndividualQuestionProps extends QuestionProps {
 	description: string;
 }
@@ -32,7 +34,8 @@ export function QuestionView({
 }) {
 	const { questions, fetchQuestions, isLoading } = useQuestion();
 	const { accessToken, hasUnlockedSolutions } = useAuth();
-	const { fetchUserProgress } = useGame();
+	const { fetchUserProgress, certificateData, fetchCertificateAndBadges } =
+		useGame();
 
 	const [question, setQuestion] = useState<IndividualQuestionProps | null>(
 		null,
@@ -58,6 +61,7 @@ export function QuestionView({
 	const [dbType, setDbType] = useState("mysql");
 	const { addToast } = useGame();
 	const [showLoginModal, setShowLoginModal] = useState(false);
+	const [showCertificateModal, setShowCertificateModal] = useState(false);
 
 	// Load SQL query from localStorage when component mounts or questionId changes
 	useEffect(() => {
@@ -175,6 +179,11 @@ export function QuestionView({
 				setIsCorrect(false);
 			}
 
+			if (data?.newly_earned_certificate === true) {
+				await fetchCertificateAndBadges();
+				setShowCertificateModal(true);
+			}
+
 			if (typeof data?.is_correct === "boolean") {
 				setIsCorrect(data.is_correct);
 				if (
@@ -246,6 +255,11 @@ export function QuestionView({
 				return;
 			} else {
 				setIsCorrect(false);
+			}
+
+			if (data?.newly_earned_certificate === true) {
+				await fetchCertificateAndBadges();
+				setShowCertificateModal(true);
 			}
 
 			if (typeof data?.is_correct === "boolean") {
@@ -568,6 +582,32 @@ export function QuestionView({
 						Try running this query to see the results!
 					</p>
 				</div>
+			)}
+
+			{/* Certificate Earned Modal */}
+			{showCertificateModal && (
+				<CertificateEarnedModal
+					isOpen={showCertificateModal}
+					onClose={() => setShowCertificateModal(false)}
+					name={
+						certificateData?.name_on_certificate ||
+						certificateData?.full_name ||
+						certificateData?.username ||
+						"Your Name"
+					}
+					earnedOn={
+						certificateData?.certificate_earned_on
+							? new Date(
+									certificateData.certificate_earned_on,
+								).toLocaleDateString("en-US", {
+									year: "numeric",
+									month: "long",
+									day: "numeric",
+								})
+							: "Today"
+					}
+					certId={certificateData?.certificate_id || "LOADING..."}
+				/>
 			)}
 		</div>
 	);
