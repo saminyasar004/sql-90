@@ -33,7 +33,7 @@ export function CongratulationsModal({
 
 					<DialogHeader className="space-y-2">
 						<DialogTitle className="text-3xl font-extrabold text-slate-900 tracking-tight">
-							Incredible Achievement!
+							Congratulations!
 						</DialogTitle>
 						<DialogDescription className="text-slate-500 text-lg font-medium">
 							You've done an incredible job completing all 90
