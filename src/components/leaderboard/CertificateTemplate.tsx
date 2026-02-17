@@ -120,16 +120,16 @@ export const CertificateTemplate = forwardRef<
 				</div>
 
 				<div className="my-auto py-1 md:py-4">
-					<p className="text-[7px] md:text-base text-gray-600 mb-0.5 md:mb-2 leading-none font-medium">
+					<p className="text-[7px] md:text-base text-gray-600 mb-1.5 md:mb-2 leading-none font-medium">
 						This certifies that
 					</p>
-					<p className="text-[12px] md:text-4xl font-bold text-gray-900 mb-0.5 md:mb-4 px-1 md:px-4 break-words leading-tight">
+					<p className="text-[12px] md:text-4xl font-bold text-gray-900 mb-1.5 md:mb-4 px-1 md:px-4 break-words leading-tight">
 						{name}
 					</p>
-					<p className="text-[7px] md:text-base text-gray-600 mb-0.5 md:mb-1 leading-none">
+					<p className="text-[7px] md:text-base text-gray-600 mb-1.5 md:mb-1 leading-none">
 						has successfully completed all
 					</p>
-					<p className="text-[10px] md:text-2xl font-semibold text-teal-600 mb-0.5 md:mb-3 whitespace-nowrap leading-none uppercase">
+					<p className="text-[10px] md:text-2xl font-semibold text-teal-600 mb-1.5 md:mb-3 whitespace-nowrap leading-none">
 						90 SQL Practice Questions
 					</p>
 					<p className="text-[7px] md:text-base text-gray-600 leading-none">
