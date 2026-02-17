@@ -97,7 +97,7 @@ export function CertificateEarnedModal({
 
 	return (
 		<Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-			<DialogContent className="max-w-4xl p-0 overflow-hidden border-none bg-transparent shadow-none sm:rounded-none">
+			<DialogContent className="max-w-4xl p-0 overflow-hidden border-none bg-transparent shadow-none sm:rounded-none [&>button]:hidden">
 				{isOpen && (
 					<Confetti
 						width={width}
@@ -108,14 +108,6 @@ export function CertificateEarnedModal({
 					/>
 				)}
 				<div className="relative bg-white rounded-3xl p-6 sm:p-10 shadow-2xl m-4 border border-teal-100 overflow-hidden">
-					{/* Close Button */}
-					<button
-						onClick={onClose}
-						className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors z-50"
-					>
-						<X size={20} />
-					</button>
-
 					<div className="text-center mb-8">
 						<div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-teal-50 mb-4 animate-bounce">
 							<span className="text-4xl">🏆</span>
@@ -160,6 +152,14 @@ export function CertificateEarnedModal({
 							Close & Continue
 						</Button>
 					</div>
+
+					{/* Close Button */}
+					<button
+						onClick={onClose}
+						className="absolute top-5 right-5 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors z-50"
+					>
+						<X size={20} />
+					</button>
 
 					<p className="text-center text-gray-400 text-xs mt-8">
 						You can also view and download this certificate anytime
