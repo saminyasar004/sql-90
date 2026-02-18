@@ -114,7 +114,7 @@ export const CertificateTemplate = forwardRef<
 						</span>
 					</div>
 					<h3 className="text-[10px] md:text-3xl font-bold text-gray-800 mb-0.5 md:mb-2 whitespace-nowrap leading-none">
-						Certificate of Completion
+						SQL Proficiency Certification
 					</h3>
 					<div className="w-8 md:w-24 h-px md:h-1 bg-teal-500 mx-auto rounded-full"></div>
 				</div>
